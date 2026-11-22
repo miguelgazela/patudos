@@ -34,6 +34,341 @@ export type Database = {
   };
   public: {
     Tables: {
+      care_presets: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          id: string;
+          interval_months: number;
+          name: string;
+          sort_order: number;
+          species: string;
+          type: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          interval_months: number;
+          name: string;
+          sort_order?: number;
+          species: string;
+          type: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          interval_months?: number;
+          name?: string;
+          sort_order?: number;
+          species?: string;
+          type?: string;
+        };
+        Relationships: [];
+      };
+      documents: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          document_date: string | null;
+          id: string;
+          kind: string;
+          mime_type: string | null;
+          pet_id: string;
+          storage_path: string;
+          title: string;
+          updated_at: string;
+          vet_visit_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          document_date?: string | null;
+          id?: string;
+          kind: string;
+          mime_type?: string | null;
+          pet_id: string;
+          storage_path: string;
+          title: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          document_date?: string | null;
+          id?: string;
+          kind?: string;
+          mime_type?: string | null;
+          pet_id?: string;
+          storage_path?: string;
+          title?: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "documents_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "documents_vet_visit_id_pet_id_fkey";
+            columns: ["vet_visit_id", "pet_id"];
+            isOneToOne: false;
+            referencedRelation: "vet_visits";
+            referencedColumns: ["id", "pet_id"];
+          },
+        ];
+      };
+      expense_splits: {
+        Row: {
+          amount_cents: number;
+          created_at: string;
+          created_by: string | null;
+          expense_id: string;
+          pet_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_cents: number;
+          created_at?: string;
+          created_by?: string | null;
+          expense_id: string;
+          pet_id: string;
+        };
+        Update: {
+          amount_cents?: number;
+          created_at?: string;
+          created_by?: string | null;
+          expense_id?: string;
+          pet_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "expense_splits_expense_id_fkey";
+            columns: ["expense_id"];
+            isOneToOne: false;
+            referencedRelation: "expenses";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "expense_splits_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      expenses: {
+        Row: {
+          amount_cents: number;
+          category: string;
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          document_id: string | null;
+          id: string;
+          paid_by: string | null;
+          spent_on: string;
+          updated_at: string;
+          vet_visit_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_cents: number;
+          category: string;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          document_id?: string | null;
+          id?: string;
+          paid_by?: string | null;
+          spent_on?: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+        };
+        Update: {
+          amount_cents?: number;
+          category?: string;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          document_id?: string | null;
+          id?: string;
+          paid_by?: string | null;
+          spent_on?: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "expenses_document_id_fkey";
+            columns: ["document_id"];
+            isOneToOne: false;
+            referencedRelation: "documents";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "expenses_paid_by_fkey";
+            columns: ["paid_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "expenses_vet_visit_id_fkey";
+            columns: ["vet_visit_id"];
+            isOneToOne: false;
+            referencedRelation: "vet_visits";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      health_events: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          next_due_on: string | null;
+          notes: string | null;
+          occurred_on: string;
+          pet_id: string;
+          preset_id: string | null;
+          product: string | null;
+          remind: boolean;
+          title: string;
+          type: string;
+          updated_at: string;
+          vet_visit_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          next_due_on?: string | null;
+          notes?: string | null;
+          occurred_on?: string;
+          pet_id: string;
+          preset_id?: string | null;
+          product?: string | null;
+          remind?: boolean;
+          title: string;
+          type: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          next_due_on?: string | null;
+          notes?: string | null;
+          occurred_on?: string;
+          pet_id?: string;
+          preset_id?: string | null;
+          product?: string | null;
+          remind?: boolean;
+          title?: string;
+          type?: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "health_events_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "health_events_preset_id_fkey";
+            columns: ["preset_id"];
+            isOneToOne: false;
+            referencedRelation: "care_presets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "health_events_vet_visit_id_pet_id_fkey";
+            columns: ["vet_visit_id", "pet_id"];
+            isOneToOne: false;
+            referencedRelation: "vet_visits";
+            referencedColumns: ["id", "pet_id"];
+          },
+        ];
+      };
+      medications: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          dose: string | null;
+          ends_on: string | null;
+          id: string;
+          name: string;
+          notes: string | null;
+          pet_id: string;
+          remind: boolean;
+          schedule_rrule: string | null;
+          starts_on: string;
+          updated_at: string;
+          vet_visit_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          dose?: string | null;
+          ends_on?: string | null;
+          id?: string;
+          name: string;
+          notes?: string | null;
+          pet_id: string;
+          remind?: boolean;
+          schedule_rrule?: string | null;
+          starts_on?: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          dose?: string | null;
+          ends_on?: string | null;
+          id?: string;
+          name?: string;
+          notes?: string | null;
+          pet_id?: string;
+          remind?: boolean;
+          schedule_rrule?: string | null;
+          starts_on?: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "medications_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "medications_vet_visit_id_pet_id_fkey";
+            columns: ["vet_visit_id", "pet_id"];
+            isOneToOne: false;
+            referencedRelation: "vet_visits";
+            referencedColumns: ["id", "pet_id"];
+          },
+        ];
+      };
       pet_members: {
         Row: {
           created_at: string;
@@ -154,13 +489,143 @@ export type Database = {
         };
         Relationships: [];
       };
+      vet_visits: {
+        Row: {
+          clinic: string | null;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          notes: string | null;
+          pet_id: string;
+          reason: string | null;
+          updated_at: string;
+          vet_name: string | null;
+          visited_on: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          clinic?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          notes?: string | null;
+          pet_id: string;
+          reason?: string | null;
+          updated_at?: string;
+          vet_name?: string | null;
+          visited_on?: string;
+        };
+        Update: {
+          clinic?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          notes?: string | null;
+          pet_id?: string;
+          reason?: string | null;
+          updated_at?: string;
+          vet_name?: string | null;
+          visited_on?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "vet_visits_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      weights: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          measured_on: string;
+          pet_id: string;
+          updated_at: string;
+          vet_visit_id: string | null;
+          weight_kg: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          measured_on?: string;
+          pet_id: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+          weight_kg: number;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          measured_on?: string;
+          pet_id?: string;
+          updated_at?: string;
+          vet_visit_id?: string | null;
+          weight_kg?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "weights_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "weights_vet_visit_id_pet_id_fkey";
+            columns: ["vet_visit_id", "pet_id"];
+            isOneToOne: false;
+            referencedRelation: "vet_visits";
+            referencedColumns: ["id", "pet_id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
+      can_be_payer: { Args: { p_user_id: string }; Returns: boolean };
+      can_edit_expense: { Args: { p_expense_id: string }; Returns: boolean };
+      can_edit_pet_record: {
+        Args: { p_created_by: string; p_pet_id: string };
+        Returns: boolean;
+      };
+      can_see_expense: { Args: { p_expense_id: string }; Returns: boolean };
+      expense_has_splits: { Args: { p_expense_id: string }; Returns: boolean };
+      insert_health_event: {
+        Args: {
+          p_default_date: string;
+          p_item: Json;
+          p_pet_id: string;
+          p_vet_visit_id: string;
+        };
+        Returns: string;
+      };
       is_pet_member: { Args: { p_pet_id: string }; Returns: boolean };
       is_pet_owner: { Args: { p_pet_id: string }; Returns: boolean };
+      record_home_treatment: { Args: { payload: Json }; Returns: string };
+      record_pet_expense: {
+        Args: {
+          p_amount_cents: number;
+          p_category: string;
+          p_description: string;
+          p_document_id: string;
+          p_paid_by: string;
+          p_pet_id: string;
+          p_spent_on: string;
+          p_vet_visit_id: string;
+        };
+        Returns: string;
+      };
+      record_vet_visit: { Args: { payload: Json }; Returns: string };
+      record_weight: { Args: { payload: Json }; Returns: string };
       shares_pet_with: { Args: { p_user_id: string }; Returns: boolean };
       storage_pet_id: { Args: { p_name: string }; Returns: string };
     };
