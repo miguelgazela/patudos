@@ -10,7 +10,7 @@ import { ErrorBanner, FieldError } from "./banner";
 import { CodeInput } from "./code-input";
 
 const RESEND_SECONDS = 59;
-type Problem = "wrong" | "expired" | "send" | null;
+type Problem = "wrong" | "expired" | "send" | "limit" | null;
 
 function formatCountdown(seconds: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
@@ -43,12 +43,12 @@ export function CodeForm({ email }: { email: string }) {
   function resend() {
     setProblem(null);
     startResend(async () => {
-      const { ok } = await resendCode();
+      const { ok, rateLimited } = await resendCode();
       if (ok) {
         setSecondsLeft(RESEND_SECONDS);
         setAttempt((n) => n + 1);
       } else {
-        setProblem("send");
+        setProblem(rateLimited ? "limit" : "send");
       }
     });
   }
@@ -70,6 +70,12 @@ export function CodeForm({ email }: { email: string }) {
           }
         >
           O código expirou. Pede um novo.
+        </ErrorBanner>
+      )}
+      {problem === "limit" && (
+        <ErrorBanner>
+          Pediste códigos a mais em pouco tempo. Espera um minuto e tenta de
+          novo.
         </ErrorBanner>
       )}
       {problem === "send" && (

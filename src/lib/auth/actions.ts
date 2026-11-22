@@ -14,6 +14,18 @@ import {
   savePendingLogin,
 } from "./pending-login";
 
+const RATE_LIMIT_MESSAGE =
+  "Pediste códigos a mais em pouco tempo. Espera um minuto e tenta de novo.";
+
+/** O Supabase limita os códigos por email (1 por minuto) e por hora. */
+function isRateLimit(error: { status?: number; code?: string }): boolean {
+  return (
+    error.status === 429 ||
+    error.code === "over_email_send_rate_limit" ||
+    error.code === "over_request_rate_limit"
+  );
+}
+
 export type RequestCodeState = {
   email?: string;
   /** `invalid`: email mal escrito · `send`: falhou o envio. */
@@ -45,7 +57,9 @@ export async function requestCode(
     return {
       email: raw,
       error: "send",
-      message: "Não conseguimos enviar o código. Tenta de novo.",
+      message: isRateLimit(error)
+        ? RATE_LIMIT_MESSAGE
+        : "Não conseguimos enviar o código. Tenta de novo.",
     };
   }
 
@@ -83,7 +97,10 @@ export async function verifyCode(code: string): Promise<VerifyCodeResult> {
 }
 
 /** Ecrã 3: reenvia o código para o mesmo email. */
-export async function resendCode(): Promise<{ ok: boolean }> {
+export async function resendCode(): Promise<{
+  ok: boolean;
+  rateLimited?: boolean;
+}> {
   const pending = await readPendingLogin();
   if (!pending) redirect("/entrar");
 
@@ -92,7 +109,7 @@ export async function resendCode(): Promise<{ ok: boolean }> {
     email: pending.email,
     options: { shouldCreateUser: true },
   });
-  if (error) return { ok: false };
+  if (error) return { ok: false, rateLimited: isRateLimit(error) };
 
   await savePendingLogin(pending.email);
   return { ok: true };
