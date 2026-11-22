@@ -541,6 +541,40 @@ export type Database = {
         };
         Relationships: [];
       };
+      push_subscriptions: {
+        Row: {
+          auth: string;
+          created_at: string;
+          endpoint: string;
+          id: string;
+          last_used_at: string | null;
+          p256dh: string;
+          user_agent: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          auth: string;
+          created_at?: string;
+          endpoint: string;
+          id?: string;
+          last_used_at?: string | null;
+          p256dh: string;
+          user_agent?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          auth?: string;
+          created_at?: string;
+          endpoint?: string;
+          id?: string;
+          last_used_at?: string | null;
+          p256dh?: string;
+          user_agent?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       reminder_occurrences: {
         Row: {
           created_at: string;
@@ -766,6 +800,7 @@ export type Database = {
         Returns: boolean;
       };
       can_see_expense: { Args: { p_expense_id: string }; Returns: boolean };
+      claim_due_reminders: { Args: { p_limit?: number }; Returns: Json };
       complete_occurrence: {
         Args: { p_occurrence_id: string; p_treatment?: Json };
         Returns: string;
@@ -800,6 +835,16 @@ export type Database = {
       };
       is_pet_member: { Args: { p_pet_id: string }; Returns: boolean };
       is_pet_owner: { Args: { p_pet_id: string }; Returns: boolean };
+      push_subscriptions_for: {
+        Args: { p_user_ids: string[] };
+        Returns: {
+          auth: string;
+          endpoint: string;
+          id: string;
+          p256dh: string;
+          user_id: string;
+        }[];
+      };
       record_home_treatment: { Args: { payload: Json }; Returns: string };
       record_pet_expense: {
         Args: {
@@ -820,9 +865,26 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: number;
       };
+      release_reminder_claim: {
+        Args: { p_channel: string; p_occurrence_id: string };
+        Returns: undefined;
+      };
       resync_health_event_reminder: {
         Args: { p_event_id: string };
         Returns: undefined;
+      };
+      run_reminder_cycle: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
+      save_push_subscription: {
+        Args: {
+          p_auth: string;
+          p_endpoint: string;
+          p_p256dh: string;
+          p_user_agent?: string;
+        };
+        Returns: string;
       };
       save_reminder: { Args: { payload: Json }; Returns: string };
       shares_pet_with: { Args: { p_user_id: string }; Returns: boolean };

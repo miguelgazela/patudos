@@ -78,6 +78,8 @@ export type HojeData = {
   treatments: Record<string, TreatmentInfo>;
   /** Nome de quem marcou «Feito» («ti» para o próprio). */
   names: Record<string, string>;
+  /** Algum dispositivo do utilizador já recebe notificações. */
+  hasPush: boolean;
 };
 
 export async function getHoje(): Promise<HojeData> {
@@ -100,7 +102,7 @@ export async function getHoje(): Promise<HojeData> {
     recentlyDone: [],
   };
   if (!pets.length)
-    return { ...base, groups: empty, treatments: {}, names: {} };
+    return { ...base, groups: empty, treatments: {}, names: {}, hasPush: true };
 
   // Garante as ocorrências recorrentes (o cron do passo 2 faz o mesmo para todos).
   await supabase.rpc("refresh_my_occurrences");
@@ -175,7 +177,10 @@ export async function getHoje(): Promise<HojeData> {
         p.id === profile.id ? "ti" : p.name?.trim() || "outra pessoa";
     }
   }
-  return { ...base, groups, treatments, names };
+  const { count: pushCount } = await supabase
+    .from("push_subscriptions")
+    .select("id", { count: "exact", head: true });
+  return { ...base, groups, treatments, names, hasPush: (pushCount ?? 0) > 0 };
 }
 
 /** Datas previstas do animal que têm ocorrência por fazer (para o «Feito» da ficha). */

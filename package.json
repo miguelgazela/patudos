@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "test:db": "supabase test db"
+    "test:db": "supabase test db",
+    "test:functions": "deno test --allow-net --allow-env supabase/functions/send-reminders/index.deno.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

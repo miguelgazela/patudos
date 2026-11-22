@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { PetAvatar } from "@/components/pets/pet-avatar";
@@ -16,6 +17,9 @@ import {
 import { colorStyles } from "@/lib/pets/constants";
 import type { PetCard } from "@/lib/pets/data";
 import { cn } from "@/lib/utils";
+
+import { Sheet } from "@/components/consulta/ui";
+import { Button } from "@/components/ui/button";
 
 import { FeitoSheet } from "./feito-sheet";
 
@@ -212,7 +216,57 @@ function Section({
   );
 }
 
+/** Confirmação rápida de «Feito» para lembretes sem registo (medicação, manuais), vinda de uma notificação. */
+function ConfirmFeitoSheet({
+  entry,
+  pet,
+  busy,
+  error,
+  onConfirm,
+  onClose,
+}: {
+  entry: HojeEntry;
+  pet: PetCard;
+  busy: boolean;
+  error: string | null;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <Sheet
+      open
+      onOpenChange={(o) => !o && onClose()}
+      title="Marcar como feito?"
+    >
+      <div className="flex items-center gap-3">
+        <PetFace pet={pet} size="size-14 text-[20px]" />
+        <div className="min-w-0">
+          <p
+            className={cn(
+              "text-etiqueta font-extrabold",
+              colorStyles[pet.color].text,
+            )}
+          >
+            {pet.name}
+          </p>
+          <p className="text-seccao">{entry.title}</p>
+        </div>
+      </div>
+      {error ? (
+        <p role="alert" className="text-etiqueta text-atraso">
+          {error}
+        </p>
+      ) : null}
+      <Button size="feito" onClick={onConfirm} disabled={busy}>
+        <Check className="size-6" strokeWidth={3} aria-hidden />
+        Marcar como feito
+      </Button>
+    </Sheet>
+  );
+}
+
 export function HojeList({
+  focusId = null,
   groups,
   pets,
   treatments,
@@ -222,6 +276,8 @@ export function HojeList({
   allClear,
   clearAction,
 }: {
+  /** `?ocorrencia=<id>` (notificação ou email): abre logo a confirmação dessa ocorrência. */
+  focusId?: string | null;
   groups: HojeGroups;
   pets: Record<string, PetCard>;
   treatments: Record<string, TreatmentInfo>;
@@ -231,7 +287,21 @@ export function HojeList({
   allClear: React.ReactNode;
   clearAction: React.ReactNode;
 }) {
-  const [sheet, setSheet] = useState<HojeEntry | null>(null);
+  const router = useRouter();
+  const pendingEntries = [
+    ...groups.overdue,
+    ...groups.today,
+    ...groups.upcoming,
+  ];
+  const focused = focusId
+    ? pendingEntries.find((e) => e.id === focusId)
+    : undefined;
+  const [sheet, setSheet] = useState<HojeEntry | null>(
+    focused && treatments[focused.id] ? focused : null,
+  );
+  const [confirm, setConfirm] = useState<HojeEntry | null>(
+    focused && !treatments[focused.id] ? focused : null,
+  );
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
@@ -256,6 +326,24 @@ export function HojeList({
       const res = await undoOccurrence(e.id);
       if (!res.ok) setError(res.message);
       setBusyId(null);
+    });
+  }
+
+  // Tira o `?ocorrencia=` do endereço ao fechar, para um refresh não voltar a abrir.
+  function closeFocus() {
+    setSheet(null);
+    setConfirm(null);
+    if (focusId) router.replace("/");
+  }
+
+  function confirmFeito(e: HojeEntry) {
+    setBusyId(e.id);
+    setError(null);
+    startTransition(async () => {
+      const res = await completeOccurrence(e.id);
+      setBusyId(null);
+      if (!res.ok) setError(res.message);
+      else closeFocus();
     });
   }
 
@@ -322,11 +410,23 @@ export function HojeList({
         <FeitoSheet
           key={sheet.id}
           open
-          onOpenChange={(o) => !o && setSheet(null)}
+          onOpenChange={(o) => !o && closeFocus()}
           occurrenceId={sheet.id}
           pet={sheetPet}
           info={sheetInfo}
           today={today}
+        />
+      ) : null}
+
+      {confirm && pets[confirm.petId] ? (
+        <ConfirmFeitoSheet
+          key={confirm.id}
+          entry={confirm}
+          pet={pets[confirm.petId]!}
+          busy={busyId === confirm.id}
+          error={error}
+          onConfirm={() => confirmFeito(confirm)}
+          onClose={closeFocus}
         />
       ) : null}
     </>

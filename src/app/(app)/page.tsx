@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 
 import { HojeList } from "@/components/hoje/hoje-list";
+import { PushPrompt } from "@/components/hoje/push-prompt";
 import { EmptyState } from "@/components/nav/empty-state";
 import { PetAvatar } from "@/components/pets/pet-avatar";
 import { buttonVariants } from "@/components/ui/button";
@@ -11,10 +12,10 @@ import { greeting, longDate, todayISO } from "@/lib/dates";
 import { getHoje } from "@/lib/lembretes/data";
 
 // Hoje (ecrã 5): em atraso · hoje · próximos 30 dias, de todos os animais.
-export default function HojePage() {
+export default function HojePage({ searchParams }: PageProps<"/">) {
   return (
     <Suspense fallback={<HojeSkeleton />}>
-      <Hoje />
+      <Hoje searchParams={searchParams} />
     </Suspense>
   );
 }
@@ -36,9 +37,12 @@ function HojeSkeleton() {
   );
 }
 
-async function Hoje() {
+async function Hoje({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
   await connection();
   const data = await getHoje();
+  // Vem do toque numa notificação ou do botão do email: abre logo a confirmação «Feito».
+  const { ocorrencia } = await searchParams;
+  const focusId = typeof ocorrencia === "string" ? ocorrencia : null;
   const now = new Date();
   const pets = Object.values(data.pets);
 
@@ -85,7 +89,14 @@ async function Hoje() {
               </li>
             ))}
           </ul>
+          {!data.hasPush &&
+          (data.groups.overdue.length ||
+            data.groups.today.length ||
+            data.groups.upcoming.length) ? (
+            <PushPrompt />
+          ) : null}
           <HojeList
+            focusId={focusId}
             groups={data.groups}
             pets={data.pets}
             treatments={data.treatments}

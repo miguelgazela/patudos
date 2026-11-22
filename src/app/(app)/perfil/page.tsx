@@ -1,4 +1,5 @@
-import { ChevronRight, ShieldCheck } from "lucide-react";
+import { Bell, ChevronRight, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { EditNameForm } from "@/components/perfil/edit-name-form";
@@ -33,6 +34,24 @@ async function Perfil() {
       </dl>
 
       <ul className="overflow-hidden rounded-cartao border-[1.5px] border-linha bg-branco">
+        <li className="border-b-[1.5px] border-linha-suave">
+          <Link
+            href="/perfil/notificacoes"
+            className="focus-visible:shadow-foco flex min-h-16 w-full items-center gap-3 px-4 py-3 outline-none"
+          >
+            <Bell
+              className="size-6 text-pinheiro"
+              strokeWidth={2.2}
+              aria-hidden
+            />
+            <span className="flex-1 text-corpo font-bold">Notificações</span>
+            <ChevronRight
+              className="size-5 text-tinta-suave"
+              strokeWidth={2.2}
+              aria-hidden
+            />
+          </Link>
+        </li>
         <li>
           <button
             type="button"

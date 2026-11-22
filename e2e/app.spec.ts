@@ -171,7 +171,14 @@ test("nada fica escondido pela barra a 390 px; sem ligação mostra aviso", asyn
     .click();
 
   const logout = page.getByRole("button", { name: "Terminar sessão" });
-  await logout.scrollIntoViewIfNeeded();
+  await expect(logout).toBeVisible();
+  // Vai ao fim da página (a lista do Perfil já pode precisar de scroll): o botão tem de ficar acima da barra.
+  await page.evaluate(() => {
+    for (const el of document.querySelectorAll("*")) {
+      if (el.scrollHeight > el.clientHeight + 1) el.scrollTop = el.scrollHeight;
+    }
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
   const nav = await page
     .getByRole("navigation", { name: "Principal" })
     .boundingBox();
