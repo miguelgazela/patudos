@@ -2,7 +2,7 @@
 
 import { Archive, Bell, Ellipsis, Pencil, Users } from "lucide-react";
 import Link from "next/link";
-import { useState, useTransition, type ReactNode } from "react";
+import { useState, useTransition } from "react";
 
 import { ConfirmDialog, Sheet } from "@/components/consulta/ui";
 import { archivePet } from "@/lib/pets/actions";
@@ -10,27 +10,9 @@ import { archivePet } from "@/lib/pets/actions";
 const rowClass =
   "flex min-h-14 w-full items-center gap-3 rounded-campo px-3 text-left text-corpo font-bold";
 
-function Disabled({ icon, children }: { icon: ReactNode; children: string }) {
-  return (
-    <li>
-      <button
-        type="button"
-        disabled
-        className={`${rowClass} text-desativado-texto`}
-      >
-        {icon}
-        <span className="flex-1">{children}</span>
-        <span className="rounded-capsula bg-desativado px-2.5 py-1 text-legenda">
-          Em breve
-        </span>
-      </button>
-    </li>
-  );
-}
-
 /**
  * Menu «⋯» da ficha. O dono edita, gere pessoas e arquiva; o cuidador só vê
- * «Pessoas» (leitura). «Lembretes» aparece desativado até à Fase 3.
+ * «Pessoas» (leitura). «Lembretes» abre o ecrã 22.
  */
 export function PetMenu({
   petId,
@@ -88,11 +70,20 @@ export function PetMenu({
               Pessoas
             </Link>
           </li>
-          <Disabled
-            icon={<Bell className="size-6" strokeWidth={2.2} aria-hidden />}
-          >
-            Lembretes
-          </Disabled>
+          <li>
+            <Link
+              href={`/animais/${petId}/lembretes`}
+              onClick={() => setOpen(false)}
+              className={`${rowClass} focus-visible:shadow-foco outline-none active:bg-linha-suave`}
+            >
+              <Bell
+                className="size-6 text-pinheiro"
+                strokeWidth={2.2}
+                aria-hidden
+              />
+              Lembretes
+            </Link>
+          </li>
           {isOwner ? (
             <li>
               <button

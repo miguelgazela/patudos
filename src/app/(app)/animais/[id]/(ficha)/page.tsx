@@ -11,13 +11,15 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense, type ReactNode } from "react";
 
+import { DueFeito } from "@/components/ficha/due-feito";
 import { Sparkline } from "@/components/ficha/weight-chart";
 import { buttonVariants } from "@/components/ui/button";
 import { formatISODate, todayISO } from "@/lib/dates";
-import { getSummary } from "@/lib/ficha/data";
+import { getPetHeader, getSummary } from "@/lib/ficha/data";
 import { dueLabel, upcomingDates, type DueStatus } from "@/lib/ficha/due";
 import { eventTypeLabel } from "@/lib/ficha/labels";
 import { formatDelta, weightVariation } from "@/lib/ficha/weights";
+import { getOpenTreatmentOccurrences } from "@/lib/lembretes/data";
 import { formatKg } from "@/lib/units";
 import { describeRRule } from "@/lib/vet-visits/schedule";
 import { cn } from "@/lib/utils";
@@ -104,7 +106,11 @@ async function Resumo({
   const { id } = await params;
   const today = todayISO();
   const base = `/animais/${id}`;
-  const summary = await getSummary(id, today);
+  const [summary, open, head] = await Promise.all([
+    getSummary(id, today),
+    getOpenTreatmentOccurrences(id),
+    getPetHeader(id),
+  ]);
 
   const due = upcomingDates(summary.events, today);
   const weights = summary.weights;
@@ -127,11 +133,19 @@ async function Resumo({
           <ul className={cardClass}>
             {due.map((d) => {
               const Icon = typeIcon(d.type);
+              const occ = open[d.id];
               return (
-                <li key={d.id}>
+                <li
+                  key={d.id}
+                  className={
+                    occ
+                      ? "flex items-center border-b-[1.5px] border-linha-suave last:border-b-0"
+                      : undefined
+                  }
+                >
                   <Link
                     href={`${base}/registo/evento/${d.id}`}
-                    className={rowClass}
+                    className={cn(rowClass, occ && "min-w-0 flex-1 border-b-0")}
                   >
                     <IconBubble icon={Icon} />
                     <span className="flex min-w-0 flex-1 flex-col items-start gap-0.5">
@@ -151,8 +165,22 @@ async function Resumo({
                         {dueLabel(d.next_due_on, today)}
                       </span>
                     </span>
-                    <MoreIcon />
+                    {occ ? null : <MoreIcon />}
                   </Link>
+                  {occ ? (
+                    <DueFeito
+                      occurrenceId={occ.occurrenceId}
+                      info={occ.info}
+                      today={today}
+                      pet={{
+                        id: head.id,
+                        name: head.name,
+                        color: head.color,
+                        photoUrl: head.photoUrl,
+                        species: head.species,
+                      }}
+                    />
+                  ) : null}
                 </li>
               );
             })}

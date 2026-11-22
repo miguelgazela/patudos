@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { greeting, longDate } from "./dates";
+import {
+  greeting,
+  lisbonDate,
+  lisbonTime,
+  longDate,
+  relativeDay,
+} from "./dates";
 
 describe("longDate", () => {
   it("escreve a data por extenso em Europe/Lisbon", () => {
@@ -25,5 +31,24 @@ describe("greeting", () => {
     expect(greeting(new Date("2026-11-21T09:00:00Z"))).toBe("Bom dia");
     expect(greeting(new Date("2026-11-21T15:00:00Z"))).toBe("Boa tarde");
     expect(greeting(new Date("2026-11-21T22:00:00Z"))).toBe("Boa noite");
+  });
+});
+
+describe("lisbonDate / lisbonTime", () => {
+  it("convertem um instante para a hora de Lisboa", () => {
+    expect(lisbonDate("2026-07-21T23:30:00Z")).toBe("2026-07-22");
+    expect(lisbonTime("2026-07-21T23:30:00Z")).toBe("00:30");
+    expect(lisbonDate("2026-11-21T09:00:00Z")).toBe("2026-11-21");
+    expect(lisbonTime("2026-11-21T09:00:00Z")).toBe("09:00");
+  });
+});
+
+describe("relativeDay", () => {
+  it("escreve a distância em dias", () => {
+    expect(relativeDay("2026-11-21", "2026-11-21")).toBe("hoje");
+    expect(relativeDay("2026-11-22", "2026-11-21")).toBe("amanhã");
+    expect(relativeDay("2026-11-20", "2026-11-21")).toBe("ontem");
+    expect(relativeDay("2026-11-19", "2026-11-21")).toBe("há 2 dias");
+    expect(relativeDay("2026-12-03", "2026-11-21")).toBe("daqui a 12 dias");
   });
 });

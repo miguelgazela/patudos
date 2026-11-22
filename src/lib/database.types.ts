@@ -541,6 +541,118 @@ export type Database = {
         };
         Relationships: [];
       };
+      reminder_occurrences: {
+        Row: {
+          created_at: string;
+          done_at: string | null;
+          done_by: string | null;
+          email_sent_at: string | null;
+          id: string;
+          pet_id: string;
+          push_sent_at: string | null;
+          reminder_id: string;
+          scheduled_for: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          done_at?: string | null;
+          done_by?: string | null;
+          email_sent_at?: string | null;
+          id?: string;
+          pet_id: string;
+          push_sent_at?: string | null;
+          reminder_id: string;
+          scheduled_for: string;
+        };
+        Update: {
+          created_at?: string;
+          done_at?: string | null;
+          done_by?: string | null;
+          email_sent_at?: string | null;
+          id?: string;
+          pet_id?: string;
+          push_sent_at?: string | null;
+          reminder_id?: string;
+          scheduled_for?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reminder_occurrences_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reminder_occurrences_reminder_id_fkey";
+            columns: ["reminder_id"];
+            isOneToOne: false;
+            referencedRelation: "reminders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reminders: {
+        Row: {
+          active: boolean;
+          channels: string[];
+          created_at: string;
+          created_by: string | null;
+          due_at: string;
+          ended_at: string | null;
+          ends_on: string | null;
+          id: string;
+          pet_id: string;
+          rrule: string | null;
+          source_id: string | null;
+          source_type: string | null;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          active?: boolean;
+          channels?: string[];
+          created_at?: string;
+          created_by?: string | null;
+          due_at: string;
+          ended_at?: string | null;
+          ends_on?: string | null;
+          id?: string;
+          pet_id: string;
+          rrule?: string | null;
+          source_id?: string | null;
+          source_type?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          channels?: string[];
+          created_at?: string;
+          created_by?: string | null;
+          due_at?: string;
+          ended_at?: string | null;
+          ends_on?: string | null;
+          id?: string;
+          pet_id?: string;
+          rrule?: string | null;
+          source_id?: string | null;
+          source_type?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reminders_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       vet_visits: {
         Row: {
           clinic: string | null;
@@ -654,7 +766,25 @@ export type Database = {
         Returns: boolean;
       };
       can_see_expense: { Args: { p_expense_id: string }; Returns: boolean };
+      complete_occurrence: {
+        Args: { p_occurrence_id: string; p_treatment?: Json };
+        Returns: string;
+      };
+      expand_rrule: {
+        Args: {
+          p_from: string;
+          p_rrule: string;
+          p_start: string;
+          p_to: string;
+          p_until?: string;
+        };
+        Returns: string[];
+      };
       expense_has_splits: { Args: { p_expense_id: string }; Returns: boolean };
+      generate_reminder_occurrences: {
+        Args: { p_from?: string; p_reminder_id?: string; p_to?: string };
+        Returns: number;
+      };
       insert_health_event: {
         Args: {
           p_default_date: string;
@@ -686,8 +816,21 @@ export type Database = {
       };
       record_vet_visit: { Args: { payload: Json }; Returns: string };
       record_weight: { Args: { payload: Json }; Returns: string };
+      refresh_my_occurrences: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
+      resync_health_event_reminder: {
+        Args: { p_event_id: string };
+        Returns: undefined;
+      };
+      save_reminder: { Args: { payload: Json }; Returns: string };
       shares_pet_with: { Args: { p_user_id: string }; Returns: boolean };
       storage_pet_id: { Args: { p_name: string }; Returns: string };
+      uncomplete_occurrence: {
+        Args: { p_occurrence_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;

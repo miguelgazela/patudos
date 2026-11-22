@@ -40,3 +40,45 @@ export function formatISODate(iso: string): string {
   const [y, m, d] = iso.split("-");
   return y && m && d ? `${d}/${m}/${y}` : iso;
 }
+
+function partsIn(date: Date | string) {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  })
+    .formatToParts(d)
+    .reduce<Record<string, string>>((acc, p) => {
+      acc[p.type] = p.value;
+      return acc;
+    }, {});
+}
+
+/** Dia em Europe/Lisbon de um instante, como `yyyy-MM-dd`. */
+export function lisbonDate(date: Date | string): string {
+  const p = partsIn(date);
+  return `${p.year}-${p.month}-${p.day}`;
+}
+
+/** Hora em Europe/Lisbon de um instante, como `HH:mm`. */
+export function lisbonTime(date: Date | string): string {
+  const p = partsIn(date);
+  return `${p.hour}:${p.minute}`;
+}
+
+/** Data relativa em PT-PT: «há 2 dias», «ontem», «hoje», «amanhã», «daqui a 12 dias». */
+export function relativeDay(iso: string, today: string): string {
+  const d = Math.round(
+    (Date.parse(`${iso}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) /
+      86_400_000,
+  );
+  if (d === 0) return "hoje";
+  if (d === 1) return "amanhã";
+  if (d === -1) return "ontem";
+  return d < 0 ? `há ${-d} dias` : `daqui a ${d} dias`;
+}
