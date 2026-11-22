@@ -198,3 +198,15 @@ body {
   line-height: 1.45;
   font-variant-numeric: tabular-nums;
 }
+
+/* iOS Safari dá largura intrínseca ao input de data e ignora w-full:
+   o campo sai do ecrã. Força o tamanho do contentor. */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  max-width: 100%;
+  display: block;
+}
