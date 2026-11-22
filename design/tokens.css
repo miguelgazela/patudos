@@ -1,0 +1,164 @@
+/* Patudos · direção «Prado» · só modo claro.
+ * Fonte de verdade: design/referencia/prado.css. Guia: design/DESIGN.md.
+ *
+ * Uso previsto (Fase 0, passo 2): copiar o ficheiro inteiro (ou os blocos A, B e C)
+ * para src/app/globals.css, a seguir a `@import "tailwindcss";`.
+ * Tailwind v4 + shadcn/ui. A fonte vem de next/font com `variable: "--font-jakarta"`.
+ *
+ * A. @theme: valores de design (geram utilitários e também variáveis CSS em :root).
+ * B. @theme inline: nomes semânticos do shadcn/ui.
+ * C. :root: mapeamento shadcn/ui + base.
+ */
+
+/* ───────── A. Valores de design ───────── */
+@theme {
+  --color-*: initial; /* remove a paleta por defeito: só existem as cores do design */
+
+  /* Marca */
+  --color-pinheiro: #0b6b5f;         /* ação principal; branco por cima: 6,4:1 */
+  --color-pinheiro-escuro: #0b4f46;  /* texto sobre Menta: 7,8:1 */
+  --color-menta: #d5eee9;            /* realce, botão secundário, anel de foco */
+  --color-sol: #ffc53d;              /* só botão «+» e destaques; texto SEMPRE Tinta (10,8:1) */
+  --color-nevoa: #f2f5f4;            /* fundo da app */
+  --color-branco: #ffffff;           /* cartões, campos, barras */
+  --color-tinta: #0e1f1c;            /* texto principal: 15,5:1 sobre Névoa */
+  --color-tinta-suave: #475a56;      /* texto secundário: 6,7:1 sobre Névoa */
+  --color-placeholder: #5f6f6b;      /* 5,3:1 sobre branco */
+
+  /* Linhas e superfícies neutras */
+  --color-linha: #d6e0dd;            /* contorno de cartões e campos */
+  --color-linha-suave: #e6ecea;      /* separadores, chips neutros, segmentos */
+  --color-esqueleto: #e1e8e5;
+  --color-desativado: #e3e9e7;
+  --color-desativado-texto: #6e7c79; /* só em controlos desativados (isento de AA) */
+  --color-pega: #c3cfcb;             /* pega do painel */
+  --color-interruptor-off: #b9c6c2;
+
+  /* Estados */
+  --color-atraso: #a61b12;           /* 7,5:1 sobre branco */
+  --color-atraso-fundo: #fde3e0;
+  --color-atraso-borda: #f3c2bc;
+  --color-atraso-campo: #fff7f6;     /* fundo do campo com erro */
+  --color-atraso-banner: #6e140d;    /* texto de aviso sobre atraso-fundo */
+  --color-feito: #17703a;            /* ícones e realces; 6,2:1 sobre branco */
+  --color-feito-texto: #0f5a2c;      /* texto sobre feito-fundo; 7,0:1 */
+  --color-feito-fundo: #d9f2df;
+  --color-aviso: #6b4a00;            /* 7,2:1 sobre aviso-fundo */
+  --color-aviso-fundo: #fff1c7;
+  --color-aviso-banner: #5a3e00;
+
+  /* Animais — cor: anel/ponto/gráficos · texto: AA ≥ 4,5:1 sobre branco e sobre fundo · fundo: avatar/etiqueta */
+  --color-pet-laranja: #d9580f;    --color-pet-laranja-texto: #b14609;    --color-pet-laranja-fundo: #fde7d9;
+  --color-pet-azul: #2563eb;       --color-pet-azul-texto: #1d4fc4;       --color-pet-azul-fundo: #dee8fd;
+  --color-pet-uva: #8b3fd9;        --color-pet-uva-texto: #7a30c4;        --color-pet-uva-fundo: #ede1fb;
+  --color-pet-framboesa: #c92a6e;  --color-pet-framboesa-texto: #ab245e;  --color-pet-framboesa-fundo: #f6dde8;
+  --color-pet-relva: #2f8a3e;      --color-pet-relva-texto: #287535;      --color-pet-relva-fundo: #deece0;
+  --color-pet-mar: #0e7f96;        --color-pet-mar-texto: #0c6c80;        --color-pet-mar-fundo: #d8ebee;
+  --color-pet-mel: #b07800;        --color-pet-mel-texto: #8b5f00;        --color-pet-mel-fundo: #f2e9d6;
+  --color-pet-ardosia: #52606d;    --color-pet-ardosia-texto: #46525d;    --color-pet-ardosia-fundo: #e3e6e8;
+
+  /* Raios (utilitários rounded-campo, rounded-cartao, rounded-capsula, …) */
+  --radius-campo: 16px;
+  --radius-cartao: 24px;
+  --radius-dialogo: 28px;
+  --radius-painel: 32px;             /* só cantos de cima: rounded-t-painel */
+  --radius-capsula: 999px;           /* botões, chips, etiquetas, toasts */
+
+  /* Espaçamento: p-1 = 4, p-2 = 8, p-3 = 12, p-4 = 16, p-5 = 20 (margem lateral), p-6 = 24, p-8 = 32 */
+  --spacing: 4px;
+
+  /* Escala tipográfica (text-ecra, text-titulo, …) */
+  --text-ecra: 32px;      --text-ecra--line-height: 1.15;     --text-ecra--font-weight: 800;
+  --text-titulo: 26px;    --text-titulo--line-height: 1.2;    --text-titulo--font-weight: 800;
+  --text-seccao: 20px;    --text-seccao--line-height: 1.3;    --text-seccao--font-weight: 800;
+  --text-corpo: 17px;     --text-corpo--line-height: 1.45;
+  --text-etiqueta: 15px;  --text-etiqueta--line-height: 1.4;  --text-etiqueta--font-weight: 700;
+  --text-legenda: 14px;   --text-legenda--line-height: 1.4;   --text-legenda--font-weight: 600;
+
+  /* Tamanhos de toque (h-botao, h-campo, h-chip, …; todos ≥ 44 px) */
+  --height-botao: 58px;
+  --height-feito: 52px;
+  --height-campo: 56px;
+  --height-chip: 46px;
+  --height-icone-botao: 44px;
+  --height-barra-inferior: 90px;
+}
+
+/* ───────── B. Nomes semânticos do shadcn/ui ───────── */
+@theme inline {
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ───────── C. Mapeamento shadcn/ui (modo claro) + base ───────── */
+:root {
+  --radius: 1rem; /* 16 px = campos; cartões usam rounded-cartao */
+
+  --background: var(--color-nevoa);
+  --foreground: var(--color-tinta);
+  --card: var(--color-branco);
+  --card-foreground: var(--color-tinta);
+  --popover: var(--color-branco);
+  --popover-foreground: var(--color-tinta);
+  --primary: var(--color-pinheiro);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-menta);
+  --secondary-foreground: var(--color-pinheiro-escuro);
+  --muted: var(--color-linha-suave);
+  --muted-foreground: var(--color-tinta-suave);
+  --accent: var(--color-menta);
+  --accent-foreground: var(--color-pinheiro-escuro);
+  --destructive: var(--color-atraso);
+  --destructive-foreground: #ffffff;
+  --border: var(--color-linha);
+  --input: var(--color-linha);
+  --ring: var(--color-pinheiro);
+  --chart-1: var(--color-pet-laranja);
+  --chart-2: var(--color-pet-azul);
+  --chart-3: var(--color-pet-uva);
+  --chart-4: var(--color-pet-relva);
+  --chart-5: var(--color-pet-mar);
+
+  /* Outros valores usados em componentes (não geram utilitários) */
+  --margem-lateral: 20px;
+  --shadow-foco: 0 0 0 4px var(--color-menta);
+  --shadow-segmento: 0 1px 3px rgb(14 31 28 / 0.15);
+  --scrim: rgb(14 31 28 / 0.55);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}

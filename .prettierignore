@@ -1,0 +1,11 @@
+.next
+node_modules
+package-lock.json
+design
+PLAN.md
+ECRAS.md
+CLAUDE.md
+AGENTS.md
+public
+playwright-report
+test-results
