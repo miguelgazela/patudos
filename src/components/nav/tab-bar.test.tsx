@@ -48,7 +48,7 @@ describe("TabBar", () => {
       "page",
     );
     unmount();
-    pathname.value = "/registar/peso";
+    pathname.value = "/registar/despesa";
     const second = render(<TabBar />);
     expect(
       screen.getAllByRole("link").some((l) => l.hasAttribute("aria-current")),
@@ -56,11 +56,14 @@ describe("TabBar", () => {
     second.unmount();
   });
 
-  it("o registo de consulta esconde a barra (tem a sua barra de ação)", () => {
-    pathname.value = "/registar/consulta";
-    render(<TabBar />);
-    expect(screen.queryByRole("navigation")).toBeNull();
-  });
+  it.each(["consulta", "tratamento", "peso"])(
+    "o registo de %s esconde a barra (tem a sua barra de ação)",
+    (r) => {
+      pathname.value = `/registar/${r}`;
+      render(<TabBar />);
+      expect(screen.queryByRole("navigation")).toBeNull();
+    },
+  );
 });
 
 describe("Painel do +", () => {

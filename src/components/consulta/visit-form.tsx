@@ -37,6 +37,7 @@ import { TreatmentSheet } from "./treatment-sheet";
 import {
   Chip,
   ConfirmDialog,
+  PetPicker,
   ReasonField,
   Sheet,
   Switch,
@@ -356,60 +357,7 @@ export function VisitForm(props: {
           </ErrorBanner>
         ) : null}
 
-        {/* Animal */}
-        {pets.length > 1 ? (
-          <div
-            role="radiogroup"
-            aria-label="Animal"
-            className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1"
-          >
-            {pets.map((p) => {
-              const on = p.id === d.petId;
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={on}
-                  onClick={() => choosePet(p.id)}
-                  className={cn(
-                    "focus-visible:shadow-foco flex h-chip shrink-0 items-center gap-2 rounded-capsula pr-4 pl-1.5 text-etiqueta font-bold outline-none",
-                    on
-                      ? "bg-pinheiro text-branco"
-                      : "bg-linha-suave text-tinta",
-                  )}
-                >
-                  <PetAvatar
-                    name={p.name}
-                    color={p.color}
-                    photoUrl={p.photoUrl}
-                    species={p.species}
-                    petId={p.id}
-                    ring={false}
-                    className="size-9 text-[15px]"
-                  />
-                  {p.name}
-                  {on ? (
-                    <Check className="size-4" strokeWidth={3} aria-hidden />
-                  ) : null}
-                </button>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            <PetAvatar
-              name={pet.name}
-              color={pet.color}
-              photoUrl={pet.photoUrl}
-              species={pet.species}
-              petId={pet.id}
-              ring={false}
-              className="size-10 text-[16px]"
-            />
-            <p className="text-seccao">{pet.name}</p>
-          </div>
-        )}
+        <PetPicker pets={pets} value={d.petId} onChange={choosePet} />
 
         <TextField
           id="visited_on"

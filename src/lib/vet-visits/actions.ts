@@ -8,7 +8,12 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
 import { LAST_PET_COOKIE } from "./data";
-import { vetVisitSchema, visitEditSchema } from "./schema";
+import {
+  homeTreatmentSchema,
+  quickWeightSchema,
+  vetVisitSchema,
+  visitEditSchema,
+} from "./schema";
 
 export type SaveResult =
   | { ok: true; visitId: string; petId: string }
@@ -114,4 +119,58 @@ export async function deleteVetVisit(visitId: string): Promise<SaveResult> {
   revalidatePath(`/animais/${row.pet_id}`);
   revalidatePath("/animais");
   return { ok: true, visitId: row.id, petId: row.pet_id };
+}
+
+async function rememberPet(petId: string) {
+  (await cookies()).set(LAST_PET_COOKIE, petId, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  });
+}
+
+export type QuickResult =
+  | { ok: true; id: string; petId: string }
+  | { ok: false; message: string; errors?: Record<string, string> };
+
+/** Ecrã 17: peso fora de consulta (RPC `record_weight`). */
+export async function saveWeight(input: unknown): Promise<QuickResult> {
+  const parsed = quickWeightSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      message: "Confirma os campos assinalados.",
+      errors: fieldErrors(parsed.error),
+    };
+  }
+  const supabase = await requireUser();
+  const { data, error } = await supabase.rpc("record_weight", {
+    payload: parsed.data,
+  });
+  if (error || !data) return { ok: false, message: GENERIC };
+  await rememberPet(parsed.data.pet_id);
+  revalidatePath("/animais");
+  revalidatePath(`/animais/${parsed.data.pet_id}`);
+  return { ok: true, id: data, petId: parsed.data.pet_id };
+}
+
+/** Ecrã 16: tratamento em casa, com despesa opcional (RPC `record_home_treatment`). */
+export async function saveHomeTreatment(input: unknown): Promise<QuickResult> {
+  const parsed = homeTreatmentSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      message: "Confirma os campos assinalados.",
+      errors: fieldErrors(parsed.error),
+    };
+  }
+  const supabase = await requireUser();
+  const { data, error } = await supabase.rpc("record_home_treatment", {
+    payload: parsed.data,
+  });
+  if (error || !data) return { ok: false, message: GENERIC };
+  await rememberPet(parsed.data.pet_id);
+  revalidatePath("/animais");
+  revalidatePath(`/animais/${parsed.data.pet_id}`);
+  return { ok: true, id: data, petId: parsed.data.pet_id };
 }

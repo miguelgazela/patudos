@@ -72,6 +72,13 @@ async function Animal({
         <h1 className="text-ecra tracking-tight">{pet.name}</h1>
       </header>
 
+      <Link
+        href={`/registar/peso?animal=${pet.id}`}
+        className={buttonVariants({ variant: "secondary" })}
+      >
+        Registar peso
+      </Link>
+
       <section className="flex flex-col gap-3" aria-labelledby="consultas">
         <h2 id="consultas" className="text-seccao">
           Consultas

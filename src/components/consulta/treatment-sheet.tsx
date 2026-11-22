@@ -49,7 +49,7 @@ export function TreatmentSheet({
       title="Vacina ou desparasitação"
     >
       {open ? (
-        <Body
+        <TreatmentBody
           key={initialTab}
           initialTab={initialTab}
           species={species}
@@ -66,13 +66,19 @@ export function TreatmentSheet({
   );
 }
 
-function Body({
+/** Campos do painel 14, reutilizados no ecrã 16 (com barra fixa e campos extra). */
+export function TreatmentBody({
   initialTab,
   species,
   presets,
   products,
   visitDate,
   onAdd,
+  submitLabel = "Adicionar",
+  fixedFooter = false,
+  pending = false,
+  extra,
+  banner,
 }: {
   initialTab: Tab;
   species: "dog" | "cat";
@@ -80,6 +86,13 @@ function Body({
   products: string[];
   visitDate: string;
   onAdd: (item: TreatmentItem) => void;
+  submitLabel?: string;
+  /** Botão numa barra fixa no fundo (ecrã 16) em vez de no fim do painel. */
+  fixedFooter?: boolean;
+  pending?: boolean;
+  /** Campos extra antes do botão (custo). */
+  extra?: React.ReactNode;
+  banner?: React.ReactNode;
 }) {
   const forSpecies = presets.filter((p) => p.species === species);
   const listFor = (tab: Tab) =>
@@ -288,9 +301,22 @@ function Body({
         </div>
       </div>
 
-      <Button type="button" onClick={add}>
-        Adicionar
-      </Button>
+      {extra}
+
+      {fixedFooter ? (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t-[1.5px] border-linha bg-branco">
+          <div className="mx-auto flex w-full max-w-md flex-col gap-2 px-5 pt-3 pb-[max(env(safe-area-inset-bottom),12px)]">
+            {banner}
+            <Button type="button" onClick={add} disabled={pending}>
+              {pending ? "A guardar…" : submitLabel}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <Button type="button" onClick={add}>
+          {submitLabel}
+        </Button>
+      )}
     </div>
   );
 }
