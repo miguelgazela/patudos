@@ -4,6 +4,7 @@ import { todayISO } from "../src/lib/dates";
 import { addDaysISO, suggestNextDue } from "../src/lib/vet-visits/next-due";
 
 import { rows } from "./db";
+import { waitForHydratedForm } from "./hydrated";
 import { latestCode } from "./mailpit";
 
 async function signIn(page: Page, name = "Rita") {
@@ -32,6 +33,7 @@ async function gotoApp(page: Page, url: string) {
 
 async function createPet(page: Page, name: string, species: "Cão" | "Gato") {
   await gotoApp(page, "/animais/novo");
+  await waitForHydratedForm(page);
   await page.getByLabel("Nome").fill(name);
   await page.getByText(species, { exact: true }).click();
   await page.getByRole("button", { name: "Guardar" }).click();
