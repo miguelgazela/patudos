@@ -1,4 +1,10 @@
-import { Bell, CalendarDays, ChevronRight, ShieldCheck } from "lucide-react";
+import {
+  Bell,
+  CalendarDays,
+  ChevronRight,
+  FolderOpen,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -63,6 +69,24 @@ async function Perfil() {
               aria-hidden
             />
             <span className="flex-1 text-corpo font-bold">Calendário</span>
+            <ChevronRight
+              className="size-5 text-tinta-suave"
+              strokeWidth={2.2}
+              aria-hidden
+            />
+          </Link>
+        </li>
+        <li className="border-b-[1.5px] border-linha-suave">
+          <Link
+            href="/documentos"
+            className="focus-visible:shadow-foco flex min-h-16 w-full items-center gap-3 px-4 py-3 outline-none"
+          >
+            <FolderOpen
+              className="size-6 text-pinheiro"
+              strokeWidth={2.2}
+              aria-hidden
+            />
+            <span className="flex-1 text-corpo font-bold">Documentos</span>
             <ChevronRight
               className="size-5 text-tinta-suave"
               strokeWidth={2.2}

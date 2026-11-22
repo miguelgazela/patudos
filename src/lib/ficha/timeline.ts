@@ -44,8 +44,6 @@ export type TimelineEntry = {
   summary: string;
   /** `null` = sem ecrã de detalhe. */
   href: string | null;
-  /** Abre noutro separador (documentos, por URL assinada). */
-  external?: boolean;
   createdBy: string | null;
   /** Filtros em que aparece (além de «Tudo»). */
   tags: Exclude<FilterKey, "tudo">[];
@@ -117,8 +115,6 @@ export type RawTimeline = {
   documents: RawDocument[];
   /** id do utilizador → nome. */
   names: Map<string, string>;
-  /** id do documento → URL assinada. */
-  documentUrls: Map<string, string>;
 };
 
 function eventTag(type: string): "vacinas" | "desparasitacoes" | null {
@@ -241,7 +237,6 @@ export function buildTimeline(raw: RawTimeline): TimelineEntry[] {
       addChild(d.vet_visit_id, "anexo", "documentos");
       continue;
     }
-    const url = raw.documentUrls.get(d.id) ?? null;
     entries.push({
       key: `doc-${d.id}`,
       kind: "document",
@@ -249,8 +244,7 @@ export function buildTimeline(raw: RawTimeline): TimelineEntry[] {
       createdAt: d.created_at,
       title: d.title,
       summary: DOCUMENT_KIND_LABEL[d.kind] ?? "Documento",
-      href: url,
-      external: !!url,
+      href: `/documentos/${d.id}`,
       createdBy: who(d.created_by),
       tags: ["documentos"],
     });

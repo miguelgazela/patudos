@@ -1,6 +1,5 @@
 import {
   ChevronRight,
-  ExternalLink,
   Pencil,
   Pill,
   Scale,
@@ -181,13 +180,7 @@ async function Consulta({
           <ul className="overflow-hidden rounded-cartao border-[1.5px] border-linha bg-branco">
             {d.documents.map((doc) => (
               <li key={doc.id}>
-                {doc.url ? (
-                  <a
-                    href={doc.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={rowClass}
-                  >
+                <Link href={`/documentos/${doc.id}`} className={rowClass}>
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-[17px] font-bold">
                         {doc.title}
@@ -196,13 +189,12 @@ async function Consulta({
                         {DOCUMENT_KIND_LABEL[doc.kind] ?? "Documento"}
                       </span>
                     </span>
-                    <ExternalLink
-                      className="size-5 shrink-0 text-tinta-suave"
-                      strokeWidth={2.2}
-                      aria-hidden
-                    />
-                  </a>
-                ) : null}
+                  <ChevronRight
+                    className="size-5 shrink-0 text-tinta-suave"
+                    strokeWidth={2.2}
+                    aria-hidden
+                  />
+                </Link>
               </li>
             ))}
           </ul>

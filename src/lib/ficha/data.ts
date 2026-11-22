@@ -168,7 +168,7 @@ export async function getTimeline(petId: string): Promise<TimelineEntry[]> {
     supabase
       .from("documents")
       .select(
-        "id, kind, title, document_date, storage_path, vet_visit_id, created_by, created_at",
+        "id, kind, title, document_date, vet_visit_id, created_by, created_at",
       )
       .eq("pet_id", petId),
   ]);
@@ -177,9 +177,7 @@ export async function getTimeline(petId: string): Promise<TimelineEntry[]> {
   const expenses: RawExpense[] = (splits.data ?? []).flatMap((s) =>
     s.expenses ? [{ ...s.expenses, amount_cents: s.amount_cents }] : [],
   );
-  const documents = (docs.data ?? []) as (RawDocument & {
-    storage_path: string;
-  })[];
+  const documents = (docs.data ?? []) as RawDocument[];
 
   const raw = {
     petId,
@@ -193,23 +191,20 @@ export async function getTimeline(petId: string): Promise<TimelineEntry[]> {
     expenses,
     documents,
   };
-  const [names, documentUrls] = await Promise.all([
-    namesFor(
-      supabase,
-      [
-        ...raw.visits,
-        ...raw.events,
-        ...raw.medications,
-        ...raw.weights,
-        ...raw.expenses,
-        ...raw.documents,
-      ].map((r) => r.created_by),
-      profile.id,
-    ),
-    signDocuments(supabase, documents),
-  ]);
+  const names = await namesFor(
+    supabase,
+    [
+      ...raw.visits,
+      ...raw.events,
+      ...raw.medications,
+      ...raw.weights,
+      ...raw.expenses,
+      ...raw.documents,
+    ].map((r) => r.created_by),
+    profile.id,
+  );
 
-  return buildTimeline({ ...raw, names, documentUrls });
+  return buildTimeline({ ...raw, names });
 }
 
 export type SummaryData = {
@@ -317,25 +312,6 @@ export async function getWeights(petId: string): Promise<WeightRow[]> {
   }));
 }
 
-export async function getDocuments(petId: string) {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("documents")
-    .select("id, kind, title, document_date, storage_path, created_at")
-    .eq("pet_id", petId)
-    .order("created_at", { ascending: false });
-  const docs = data ?? [];
-  const urls = await signDocuments(supabase, docs);
-  return docs.map((d) => ({
-    id: d.id,
-    kind: d.kind,
-    title: d.title,
-    date: d.document_date ?? d.created_at.slice(0, 10),
-    url: urls.get(d.id) ?? null,
-    isImage: /\.(jpe?g|png|webp|heic)$/i.test(d.storage_path),
-  }));
-}
-
 /** Pode este utilizador editar/apagar um registo (dono, ou quem o criou)? */
 export function canEditRecord(
   head: Pick<PetHeader, "isOwner" | "meId">,
@@ -383,10 +359,11 @@ export async function getVisitDetail(petId: string, visitId: string) {
       .order("created_at"),
   ]);
   const expense = expenses.data?.[0] ?? null;
-  const [names, urls] = await Promise.all([
-    namesFor(supabase, [visit.created_by, expense?.paid_by ?? null], head.meId),
-    signDocuments(supabase, docs.data ?? []),
-  ]);
+  const names = await namesFor(
+    supabase,
+    [visit.created_by, expense?.paid_by ?? null],
+    head.meId,
+  );
 
   return {
     head,
@@ -406,7 +383,6 @@ export async function getVisitDetail(petId: string, visitId: string) {
       id: d.id,
       title: d.title,
       kind: d.kind,
-      url: urls.get(d.id) ?? null,
     })),
     canEdit: canEditRecord(head, visit.created_by),
   };

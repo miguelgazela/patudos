@@ -18,7 +18,6 @@ const empty: RawTimeline = {
   expenses: [],
   documents: [],
   names: new Map([["u1", "Mãe"]]),
-  documentUrls: new Map(),
 };
 
 describe("agrupar por mês", () => {

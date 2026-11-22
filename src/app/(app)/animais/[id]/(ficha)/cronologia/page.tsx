@@ -2,7 +2,6 @@ import {
   Bug,
   CalendarClock,
   ChevronRight,
-  ExternalLink,
   FileText,
   Pill,
   Receipt,
@@ -71,32 +70,17 @@ function EntryRow({ entry }: { entry: TimelineEntry }) {
         ) : null}
       </span>
       {entry.href ? (
-        entry.external ? (
-          <ExternalLink
-            className="size-5 shrink-0 text-tinta-suave"
-            strokeWidth={2.2}
-            aria-hidden
-          />
-        ) : (
-          <ChevronRight
-            className="size-5 shrink-0 text-tinta-suave"
-            strokeWidth={2.2}
-            aria-hidden
-          />
-        )
+        <ChevronRight
+          className="size-5 shrink-0 text-tinta-suave"
+          strokeWidth={2.2}
+          aria-hidden
+        />
       ) : null}
     </>
   );
   const cls =
     "flex min-h-16 items-center gap-3 border-b-[1.5px] border-linha-suave px-3.5 py-3 last:border-b-0 focus-visible:shadow-foco outline-none";
   if (!entry.href) return <div className={cls}>{inner}</div>;
-  if (entry.external) {
-    return (
-      <a href={entry.href} target="_blank" rel="noreferrer" className={cls}>
-        {inner}
-      </a>
-    );
-  }
   return (
     <Link href={entry.href} className={cls}>
       {inner}

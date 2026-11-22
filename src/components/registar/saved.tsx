@@ -10,12 +10,15 @@ export function QuickSaved({
   petId,
   onAnother,
   testId,
+  doneHref,
 }: {
   title: string;
   detail: string;
   petId: string;
   onAnother: () => void;
   testId: string;
+  /** Para onde vai «Concluir» (por defeito, a ficha do animal). */
+  doneHref?: string;
 }) {
   return (
     <div className="flex flex-1 flex-col gap-5 pt-6" data-testid={testId}>
@@ -31,7 +34,7 @@ export function QuickSaved({
           Registar outro
         </Button>
         <Link
-          href={`/animais/${petId}`}
+          href={doneHref ?? `/animais/${petId}`}
           className={buttonVariants({ variant: "link" })}
         >
           Concluir
