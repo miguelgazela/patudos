@@ -208,5 +208,14 @@ input[type="datetime-local"] {
   appearance: none;
   min-width: 0;
   max-width: 100%;
-  display: block;
+  display: flex;
+  align-items: center;
+}
+
+/* Com appearance: none o iOS alinha o valor ao topo e centra-o à esquerda. */
+input[type="date"]::-webkit-date-and-time-value,
+input[type="time"]::-webkit-date-and-time-value,
+input[type="datetime-local"]::-webkit-date-and-time-value {
+  text-align: left;
+  margin: 0;
 }

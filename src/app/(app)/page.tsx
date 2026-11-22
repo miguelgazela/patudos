@@ -69,7 +69,7 @@ async function Hoje({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
         </EmptyState>
       ) : (
         <>
-          <ul className="-mx-5 flex gap-5 overflow-x-auto px-5">
+          <ul className="-mx-5 flex gap-5 overflow-x-auto px-5 py-1.5">
             {pets.map((p) => (
               <li key={p.id}>
                 <Link
