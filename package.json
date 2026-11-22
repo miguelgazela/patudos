@@ -10,7 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:db": "supabase test db"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
