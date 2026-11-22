@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -126,4 +127,37 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/entrar");
+}
+
+export type UpdateNameState = {
+  name?: string;
+  message?: string;
+  saved?: boolean;
+};
+
+/** Ecrã 29: edita o nome no perfil (fica no ecrã). */
+export async function updateName(
+  _prev: UpdateNameState,
+  formData: FormData,
+): Promise<UpdateNameState> {
+  const raw = String(formData.get("name") ?? "");
+  const parsed = nameSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { name: raw, message: parsed.error.issues[0]?.message };
+  }
+
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  if (!data?.claims) redirect("/entrar");
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ name: parsed.data })
+    .eq("id", data.claims.sub);
+  if (error) {
+    return { name: raw, message: "Não conseguimos guardar. Tenta de novo." };
+  }
+
+  revalidatePath("/", "layout");
+  return { name: parsed.data, saved: true };
 }

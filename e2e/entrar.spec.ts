@@ -59,15 +59,20 @@ test("fluxo completo: código, nome, Bom dia, sair e voltar a entrar", async ({
 
   await expect(page).toHaveURL(/\/$/);
   await expect(
-    page.getByRole("heading", { name: "Bom dia, Ana" }),
+    page.getByRole("heading", { name: /^(Bom dia|Boa tarde|Boa noite), Ana$/ }),
   ).toBeVisible();
 
   // A sessão mantém-se ao recarregar.
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Bom dia, Ana" }),
+    page.getByRole("heading", { name: /^(Bom dia|Boa tarde|Boa noite), Ana$/ }),
   ).toBeVisible();
 
+  // «Terminar sessão» fica no Perfil.
+  await page
+    .getByRole("navigation", { name: "Principal" })
+    .getByRole("link", { name: "Perfil" })
+    .click();
   await page.getByRole("button", { name: "Terminar sessão" }).click();
   await expect(page).toHaveURL(/\/entrar$/);
 
@@ -79,7 +84,7 @@ test("fluxo completo: código, nome, Bom dia, sair e voltar a entrar", async ({
   await page.getByLabel("Dígito 1 de 6").click();
   await page.keyboard.type(await latestCode(email, secondSentAt));
   await expect(
-    page.getByRole("heading", { name: "Bom dia, Ana" }),
+    page.getByRole("heading", { name: /^(Bom dia|Boa tarde|Boa noite), Ana$/ }),
   ).toBeVisible();
 });
 
