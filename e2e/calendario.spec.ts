@@ -22,8 +22,17 @@ async function signIn(page: Page, name: string) {
   await expect(page).toHaveURL(/\/$/);
 }
 
+/** `goto` com uma segunda tentativa: logo a seguir ao início de sessão pode haver uma navegação ainda a terminar. */
+async function gotoApp(page: Page, url: string) {
+  try {
+    await page.goto(url);
+  } catch {
+    await page.goto(url);
+  }
+}
+
 async function createPet(page: Page, name: string) {
-  await page.goto("/animais/novo");
+  await gotoApp(page, "/animais/novo");
   await waitForHydratedForm(page);
   await page.getByLabel("Nome").fill(name);
   await page.getByText("Cão", { exact: true }).click();

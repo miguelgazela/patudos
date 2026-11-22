@@ -163,6 +163,7 @@ test("o dono convida a Mãe, ela entra, regista uma consulta e o dono vê-a", as
 
   // «Pago por» lista as duas pessoas (no registo do dono)
   await gotoApp(owner, "/registar/consulta");
+  await waitForHydratedForm(owner);
   await owner.getByLabel("Custo em euros").fill("30");
   await expect(owner.getByRole("button", { name: "Mãe" })).toBeVisible();
 
