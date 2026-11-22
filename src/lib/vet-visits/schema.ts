@@ -170,3 +170,12 @@ export const homeTreatmentSchema = z
     },
   );
 export type HomeTreatmentPayload = z.output<typeof homeTreatmentSchema>;
+
+/** Campos editáveis de uma consulta já gravada. */
+export const visitEditSchema = z.object({
+  visited_on: isoDate().optional(),
+  reason: vetVisitSchema.shape.reason,
+  vet_name: vetVisitSchema.shape.vet_name,
+  notes: vetVisitSchema.shape.notes,
+});
+export type VisitEditInput = z.input<typeof visitEditSchema>;

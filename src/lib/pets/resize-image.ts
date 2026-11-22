@@ -1,12 +1,15 @@
 const MAX_SIDE = 1024;
 
 /** Reduz para no máximo 1024 px no lado maior e converte para JPEG (respeita a rotação EXIF). */
-export async function resizeToJpeg(file: File): Promise<Blob> {
+export async function resizeToJpeg(
+  file: File,
+  maxSide: number = MAX_SIDE,
+): Promise<Blob> {
   const bitmap = await createImageBitmap(file, {
     imageOrientation: "from-image",
   });
   try {
-    const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
     const width = Math.max(1, Math.round(bitmap.width * scale));
     const height = Math.max(1, Math.round(bitmap.height * scale));
     const canvas = document.createElement("canvas");

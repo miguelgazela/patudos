@@ -132,7 +132,10 @@ test("separadores, menu + e terminar sessão a partir do Perfil", async ({
   await dialog.getByRole("link", { name: /^Consulta\./ }).click();
   await expect(page).toHaveURL(/\/registar\/consulta$/);
   await expect(dialog).toBeHidden();
-  await expect(page.getByRole("heading", { name: "Em breve" })).toBeVisible();
+  // Sem animais ainda: convida a adicionar o primeiro (o formulário só abre com animais).
+  await expect(
+    page.getByRole("heading", { name: "Primeiro, adiciona um animal" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Voltar" }).click();
   await expect(page).toHaveURL(/\/$/);
 

@@ -63,6 +63,9 @@ export function TabBar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  // O registo de consulta tem a sua própria barra de ação fixa no fundo.
+  if (pathname.startsWith("/registar/consulta")) return null;
+
   return (
     <>
       <nav

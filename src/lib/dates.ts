@@ -24,3 +24,19 @@ export function greeting(date: Date): string {
   if (hour >= 13 && hour < 20) return "Boa tarde";
   return "Boa noite";
 }
+
+/** Hoje em `Europe/Lisbon`, como `yyyy-MM-dd`. */
+export function todayISO(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+}
+
+/** `2026-11-21` → `21/11/2026` (sem converter fusos: já é uma data de calendário). */
+export function formatISODate(iso: string): string {
+  const [y, m, d] = iso.split("-");
+  return y && m && d ? `${d}/${m}/${y}` : iso;
+}
