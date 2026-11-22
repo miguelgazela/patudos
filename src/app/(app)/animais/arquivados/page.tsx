@@ -45,6 +45,8 @@ async function Arquivados() {
                   name={pet.name}
                   color={pet.color}
                   photoUrl={pet.photoUrl}
+                  species={pet.species}
+                  petId={pet.id}
                   className="size-[72px] text-[30px]"
                 />
                 <div className="min-w-0 flex-1">

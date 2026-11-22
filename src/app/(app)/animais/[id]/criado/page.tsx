@@ -28,7 +28,7 @@ async function Criado({
   const supabase = await createClient();
   const { data: pet } = await supabase
     .from("pets")
-    .select("id, name, color, photo_path")
+    .select("id, name, species, color, photo_path")
     .eq("id", id)
     .maybeSingle();
   if (!pet) notFound();
@@ -44,6 +44,8 @@ async function Criado({
             photoUrl={
               pet.photo_path ? (photos.get(pet.photo_path) ?? null) : null
             }
+            species={pet.species}
+            petId={pet.id}
             className="size-30 text-[52px]"
           />
           <span className="absolute -right-1 -bottom-1 flex size-11 items-center justify-center rounded-full bg-feito text-branco shadow-[0_0_0_4px_var(--color-nevoa)]">

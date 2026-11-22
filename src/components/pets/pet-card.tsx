@@ -14,6 +14,8 @@ export function PetCardItem({ pet }: { pet: Pet }) {
         name={pet.name}
         color={pet.color}
         photoUrl={pet.photoUrl}
+        species={pet.species}
+        petId={pet.id}
         className="size-20 text-[32px]"
       />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
