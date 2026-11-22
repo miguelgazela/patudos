@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Fotos já reduzidas no cliente (≤ 1,5 MB) vão no corpo da Server Action.
+  experimental: { serverActions: { bodySizeLimit: "2mb" } },
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

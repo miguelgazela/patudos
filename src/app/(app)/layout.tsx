@@ -15,7 +15,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-5 pt-[max(env(safe-area-inset-top),32px)] pb-[calc(max(env(safe-area-inset-bottom),12px)+110px)]">
         {children}
       </div>
-      <TabBar />
+      {/* O caminho atual só se conhece no pedido (rotas com :id). */}
+      <Suspense fallback={null}>
+        <TabBar />
+      </Suspense>
     </>
   );
 }

@@ -162,6 +162,7 @@ export type Database = {
       is_pet_member: { Args: { p_pet_id: string }; Returns: boolean };
       is_pet_owner: { Args: { p_pet_id: string }; Returns: boolean };
       shares_pet_with: { Args: { p_user_id: string }; Returns: boolean };
+      storage_pet_id: { Args: { p_name: string }; Returns: string };
     };
     Enums: {
       [_ in never]: never;
