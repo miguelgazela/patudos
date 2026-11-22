@@ -10,16 +10,26 @@ import { todayISO } from "@/lib/dates";
 import { getVisitFormData } from "@/lib/vet-visits/data";
 
 // Ecrã 13: registar uma consulta completa num só ecrã.
-export default function RegistarConsultaPage() {
+export default function RegistarConsultaPage({
+  searchParams,
+}: PageProps<"/registar/consulta">) {
   return (
     <Suspense fallback={<div className="flex-1" aria-hidden />}>
-      <Registar />
+      <Registar searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function Registar() {
-  const data = await getVisitFormData();
+async function Registar({
+  searchParams,
+}: {
+  searchParams: PageProps<"/registar/consulta">["searchParams"];
+}) {
+  // `?animal=<id>` (vindo da ficha) pré-seleciona esse animal.
+  const animal = (await searchParams).animal;
+  const data = await getVisitFormData(
+    typeof animal === "string" ? animal : undefined,
+  );
 
   if (data.pets.length === 0) {
     return (

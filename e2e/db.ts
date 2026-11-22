@@ -28,3 +28,16 @@ export async function storageObjectExists(
   });
   return res.ok;
 }
+
+/** Insere uma linha (service_role, ignora a RLS): para montar cenários como «cuidador do animal». */
+export async function insertRow(
+  table: string,
+  body: Record<string, unknown>,
+): Promise<void> {
+  const res = await fetch(`${API}/rest/v1/${table}`, {
+    method: "POST",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`${table}: ${res.status} ${await res.text()}`);
+}

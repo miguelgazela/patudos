@@ -338,6 +338,9 @@ test("vários animais: último usado pré-selecionado; editar e apagar consulta"
   // Editar: mudar o motivo
   await gotoApp(page, `/animais/${miauId}`);
   await page.getByRole("link", { name: /Doença/ }).click();
+  // A ficha mostra primeiro o detalhe (ecrã 18); daí abre-se a edição.
+  await expect(page).toHaveURL(/\/animais\/[0-9a-f-]+\/consulta\/[0-9a-f-]+$/);
+  await page.getByRole("link", { name: "Editar ou apagar" }).click();
   await expect(page).toHaveURL(/\/registar\/consulta\/[0-9a-f-]+$/);
   await shot(page, "9-editar");
   await page.getByLabel("Motivo").fill("Controlo anual");
@@ -349,6 +352,7 @@ test("vários animais: último usado pré-selecionado; editar e apagar consulta"
 
   // Apagar com confirmação: o peso fica, sem ligação à consulta
   await page.getByRole("link", { name: /Controlo anual/ }).click();
+  await page.getByRole("link", { name: "Editar ou apagar" }).click();
   await page.getByRole("button", { name: "Apagar consulta" }).click();
   const confirm = page.getByRole("dialog", { name: /Apagar a consulta/ });
   await expect(confirm).toContainText("ficam guardados");
