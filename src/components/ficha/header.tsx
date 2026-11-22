@@ -41,7 +41,7 @@ export function FichaHeader({ pet }: { pet: PetHeader }) {
           <ArrowLeft className="size-6" strokeWidth={2.2} aria-hidden />
           Animais
         </Link>
-        {pet.isOwner ? <PetMenu petId={pet.id} name={pet.name} /> : null}
+        <PetMenu petId={pet.id} name={pet.name} isOwner={pet.isOwner} />
       </div>
 
       <header className="flex items-center gap-4">

@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/nav/empty-state";
 import { PetCardItem } from "@/components/pets/pet-card";
 import { buttonVariants } from "@/components/ui/button";
 import { getCurrentProfile } from "@/lib/auth/current-profile";
+import { acceptPendingInvites } from "@/lib/people/accept";
 import { listPets } from "@/lib/pets/data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -21,6 +22,8 @@ export default function AnimaisPage() {
 async function Animais() {
   const profile = await getCurrentProfile();
   const supabase = await createClient();
+  // Quem já tinha sessão quando foi convidado passa a ver o animal ao abrir esta lista.
+  await acceptPendingInvites(supabase);
   const [pets, archived] = await Promise.all([
     listPets(profile.id, false),
     supabase

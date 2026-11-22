@@ -1,8 +1,11 @@
+import { Suspense } from "react";
+
 import { EmailForm } from "@/components/auth/email-form";
 import { AuthShell, Logo } from "@/components/auth/auth-shell";
 import { InstallGate } from "@/components/auth/install-gate";
+import { emailSchema } from "@/lib/auth/schemas";
 
-export default function EntrarPage() {
+export default function EntrarPage({ searchParams }: PageProps<"/entrar">) {
   return (
     <AuthShell>
       <InstallGate>
@@ -14,8 +17,21 @@ export default function EntrarPage() {
             palavra-passe.
           </p>
         </div>
-        <EmailForm />
+        <Suspense fallback={<EmailForm />}>
+          <PrefilledEmailForm searchParams={searchParams} />
+        </Suspense>
       </InstallGate>
     </AuthShell>
   );
+}
+
+/** O link do convite traz o email pré-preenchido (nunca um código). */
+async function PrefilledEmailForm({
+  searchParams,
+}: {
+  searchParams: PageProps<"/entrar">["searchParams"];
+}) {
+  const { email } = await searchParams;
+  const parsed = emailSchema.safeParse(typeof email === "string" ? email : "");
+  return <EmailForm defaultEmail={parsed.success ? parsed.data : undefined} />;
 }

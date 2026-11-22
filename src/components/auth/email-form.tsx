@@ -10,7 +10,7 @@ import { TextField } from "./text-field";
 
 const initial: RequestCodeState = {};
 
-export function EmailForm() {
+export function EmailForm({ defaultEmail }: { defaultEmail?: string }) {
   const [state, action, pending] = useActionState(requestCode, initial);
 
   return (
@@ -41,7 +41,7 @@ export function EmailForm() {
         autoCapitalize="none"
         autoCorrect="off"
         placeholder="ana@exemplo.pt"
-        defaultValue={state.email}
+        defaultValue={state.email ?? defaultEmail}
         key={state.email}
         error={state.error === "invalid" ? state.message : undefined}
         required

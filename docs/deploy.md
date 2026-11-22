@@ -12,6 +12,9 @@
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://zummozltkillcaaewnlo.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | chave `publishable` do projeto |
+| `RESEND_API_KEY` | API key do Resend (**só Production**, sem `NEXT_PUBLIC_`), para os emails de convite |
+
+`RESEND_API_KEY` é só de servidor: os convites são enviados por Server Actions, pela API HTTP do Resend, com o remetente `Patudos <patudos@miguelgazela.com>` (domínio já verificado). Sem esta variável o convite fica criado mas o email não sai, e o ecrã «Pessoas» avisa e oferece «Reenviar». Pode ser a mesma key usada no SMTP do Supabase, ou outra só de envio. Em local e nos testes e2e o envio vai para o Mailpit (`MAILPIT_URL=http://127.0.0.1:55324`, ver `.env.example`), nunca para o Resend.
 
 Nunca pôr a service role key (nem a `secret`) no Vercel nem no cliente. As variáveis `NEXT_PUBLIC_*` entram no build: depois de as mudar, é preciso novo deploy.
 

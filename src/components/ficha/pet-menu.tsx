@@ -29,10 +29,18 @@ function Disabled({ icon, children }: { icon: ReactNode; children: string }) {
 }
 
 /**
- * Menu «⋯» da ficha (só para o dono): editar e arquivar. «Pessoas» e «Lembretes»
- * aparecem desativados porque chegam nas Fases 2 e 3.
+ * Menu «⋯» da ficha. O dono edita, gere pessoas e arquiva; o cuidador só vê
+ * «Pessoas» (leitura). «Lembretes» aparece desativado até à Fase 3.
  */
-export function PetMenu({ petId, name }: { petId: string; name: string }) {
+export function PetMenu({
+  petId,
+  name,
+  isOwner,
+}: {
+  petId: string;
+  name: string;
+  isOwner: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -50,42 +58,56 @@ export function PetMenu({ petId, name }: { petId: string; name: string }) {
 
       <Sheet open={open} onOpenChange={setOpen} title={name}>
         <ul className="flex flex-col">
+          {isOwner ? (
+            <li>
+              <Link
+                href={`/animais/${petId}/editar`}
+                onClick={() => setOpen(false)}
+                className={`${rowClass} focus-visible:shadow-foco outline-none active:bg-linha-suave`}
+              >
+                <Pencil
+                  className="size-6 text-pinheiro"
+                  strokeWidth={2.2}
+                  aria-hidden
+                />
+                Editar ficha
+              </Link>
+            </li>
+          ) : null}
           <li>
             <Link
-              href={`/animais/${petId}/editar`}
+              href={`/animais/${petId}/pessoas`}
+              onClick={() => setOpen(false)}
               className={`${rowClass} focus-visible:shadow-foco outline-none active:bg-linha-suave`}
             >
-              <Pencil
+              <Users
                 className="size-6 text-pinheiro"
                 strokeWidth={2.2}
                 aria-hidden
               />
-              Editar ficha
+              Pessoas
             </Link>
           </li>
-          <Disabled
-            icon={<Users className="size-6" strokeWidth={2.2} aria-hidden />}
-          >
-            Pessoas
-          </Disabled>
           <Disabled
             icon={<Bell className="size-6" strokeWidth={2.2} aria-hidden />}
           >
             Lembretes
           </Disabled>
-          <li>
-            <button
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                setConfirm(true);
-              }}
-              className={`${rowClass} focus-visible:shadow-foco text-atraso outline-none active:bg-atraso-fundo`}
-            >
-              <Archive className="size-6" strokeWidth={2.2} aria-hidden />
-              Arquivar
-            </button>
-          </li>
+          {isOwner ? (
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setConfirm(true);
+                }}
+                className={`${rowClass} focus-visible:shadow-foco text-atraso outline-none active:bg-atraso-fundo`}
+              >
+                <Archive className="size-6" strokeWidth={2.2} aria-hidden />
+                Arquivar
+              </button>
+            </li>
+          ) : null}
         </ul>
       </Sheet>
 

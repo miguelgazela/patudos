@@ -23,3 +23,31 @@ export async function latestCode(to: string, notBefore = 0): Promise<string> {
   }
   throw new Error(`Sem email para ${to}`);
 }
+
+export type Mail = { Subject: string; Text: string; HTML: string };
+
+/** Espera pelo email mais recente para `to` cujo assunto contém `subject`. */
+export async function latestMail(
+  to: string,
+  subject: string,
+  notBefore = 0,
+): Promise<Mail> {
+  for (let i = 0; i < 40; i++) {
+    const res = await fetch(
+      `${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${to}`)}`,
+    );
+    const { messages = [] } = (await res.json()) as {
+      messages?: (Summary & { Subject: string })[];
+    };
+    const hit = messages.find(
+      (m) => Date.parse(m.Created) >= notBefore && m.Subject.includes(subject),
+    );
+    if (hit) {
+      return (await (
+        await fetch(`${MAILPIT}/api/v1/message/${hit.ID}`)
+      ).json()) as Mail;
+    }
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`Sem email «${subject}» para ${to}`);
+}

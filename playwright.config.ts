@@ -18,5 +18,7 @@ export default defineConfig({
     url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
+    // Os convites saem para o Mailpit local (nunca para o Resend).
+    env: { MAILPIT_URL: process.env.MAILPIT_URL ?? "http://127.0.0.1:55324" },
   },
 });

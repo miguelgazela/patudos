@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { acceptPendingInvites } from "@/lib/people/accept";
 import { createClient } from "@/lib/supabase/server";
 
 import { codeSchema, emailSchema, nameSchema } from "./schemas";
@@ -76,6 +77,8 @@ export async function verifyCode(code: string): Promise<VerifyCodeResult> {
   }
 
   await clearPendingLogin();
+  // Convites pendentes para este email: o cuidador entra e já vê o animal.
+  await acceptPendingInvites(supabase);
   redirect("/");
 }
 

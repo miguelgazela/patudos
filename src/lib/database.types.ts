@@ -369,6 +369,58 @@ export type Database = {
           },
         ];
       };
+      pet_invites: {
+        Row: {
+          accepted_at: string | null;
+          cancelled_at: string | null;
+          created_at: string;
+          email: string;
+          expires_at: string;
+          id: string;
+          invited_by: string | null;
+          pet_id: string;
+          role: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accepted_at?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          email: string;
+          expires_at?: string;
+          id?: string;
+          invited_by?: string | null;
+          pet_id: string;
+          role?: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          email?: string;
+          expires_at?: string;
+          id?: string;
+          invited_by?: string | null;
+          pet_id?: string;
+          role?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_invites_invited_by_fkey";
+            columns: ["invited_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_invites_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       pet_members: {
         Row: {
           created_at: string;
@@ -591,6 +643,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      accept_pet_invites: {
+        Args: Record<PropertyKey, never>;
+        Returns: string[];
+      };
       can_be_payer: { Args: { p_user_id: string }; Returns: boolean };
       can_edit_expense: { Args: { p_expense_id: string }; Returns: boolean };
       can_edit_pet_record: {
@@ -606,6 +662,10 @@ export type Database = {
           p_pet_id: string;
           p_vet_visit_id: string;
         };
+        Returns: string;
+      };
+      invite_to_pet: {
+        Args: { p_email: string; p_pet_id: string; p_role?: string };
         Returns: string;
       };
       is_pet_member: { Args: { p_pet_id: string }; Returns: boolean };

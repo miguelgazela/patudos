@@ -298,7 +298,7 @@ test("cuidador: não vê Editar ficha nem Arquivar, e só apaga o que registou",
   await page.getByRole("button", { name: "Mais opções" }).click();
   await expect(page.getByRole("link", { name: "Editar ficha" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Arquivar" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Pessoas/ })).toBeDisabled();
+  await expect(page.getByRole("link", { name: /Pessoas/ })).toBeVisible();
   await shot(page, "f11-menu");
   expect(ownerEmail).toContain("@");
 
@@ -322,11 +322,12 @@ test("cuidador: não vê Editar ficha nem Arquivar, e só apaga o que registou",
   await expect(
     caregiver.getByRole("link", { name: /Vacinação/ }),
   ).toContainText("Registada por Rita");
-  await expect(
-    caregiver.getByRole("button", { name: "Mais opções" }),
-  ).toHaveCount(0);
+  // O cuidador tem o menu, mas só com «Pessoas» (leitura)
+  await caregiver.getByRole("button", { name: "Mais opções" }).click();
+  await expect(caregiver.getByRole("link", { name: /Pessoas/ })).toBeVisible();
   await expect(caregiver.getByText("Editar ficha")).toHaveCount(0);
   await expect(caregiver.getByText("Arquivar")).toHaveCount(0);
+  await caregiver.keyboard.press("Escape");
   await shot(caregiver, "f12-cuidador");
 
   // A edição da ficha está fechada ao cuidador

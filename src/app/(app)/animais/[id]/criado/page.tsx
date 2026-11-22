@@ -78,21 +78,23 @@ async function Criado({
         <ChevronRight className="size-5 text-tinta-suave" aria-hidden />
       </Link>
 
-      {/* Convidar cuidadores chega na Fase 2: por agora fica desativado. */}
-      <div
-        aria-disabled="true"
-        className="flex items-center gap-3.5 rounded-cartao border-[1.5px] border-linha bg-branco p-4 text-desativado-texto"
+      <Link
+        href={`/animais/${pet.id}/pessoas/convidar`}
+        className="focus-visible:shadow-foco flex items-center gap-3.5 rounded-cartao border-[1.5px] border-linha bg-branco p-4 outline-none"
       >
-        <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-desativado">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-menta text-pinheiro-escuro">
           <UserPlus className="size-6" strokeWidth={2.2} aria-hidden />
         </span>
         <span className="flex-1">
           <span className="block text-corpo font-bold">
             Convidar alguém para cuidar de {pet.name}
           </span>
-          <span className="block text-legenda">Em breve</span>
+          <span className="block text-legenda text-tinta-suave">
+            Por email, sem configurar nada
+          </span>
         </span>
-      </div>
+        <ChevronRight className="size-5 text-tinta-suave" aria-hidden />
+      </Link>
 
       <Link
         href="/animais"

@@ -78,6 +78,9 @@ test("criar, editar, arquivar e reativar um animal", async ({ page }) => {
 
   // Editar: raça em «Mais detalhes»
   await card.click();
+  await expect(page).toHaveURL(/\/animais\/[0-9a-f-]+$/);
+  await page.getByRole("button", { name: "Mais opções" }).click();
+  await page.getByRole("link", { name: "Editar ficha" }).click();
   await expect(
     page.getByRole("heading", { name: "Editar Bolacha" }),
   ).toBeVisible();
@@ -96,6 +99,8 @@ test("criar, editar, arquivar e reativar um animal", async ({ page }) => {
 
   // Arquivar com confirmação
   await page.getByRole("link", { name: /Bolachinha/ }).click();
+  await page.getByRole("button", { name: "Mais opções" }).click();
+  await page.getByRole("link", { name: "Editar ficha" }).click();
   await page.getByRole("button", { name: "Arquivar Bolachinha" }).click();
   await expect(page.getByText("Arquivar Bolachinha?")).toBeVisible();
   await page.getByRole("button", { name: "Cancelar" }).click();
