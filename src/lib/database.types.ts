@@ -34,6 +34,28 @@ export type Database = {
   };
   public: {
     Tables: {
+      calendar_feeds: {
+        Row: {
+          created_at: string;
+          last_fetched_at: string | null;
+          token: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          last_fetched_at?: string | null;
+          token: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          last_fetched_at?: string | null;
+          token?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       care_presets: {
         Row: {
           created_at: string;
@@ -793,6 +815,7 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: string[];
       };
+      calendar_feed: { Args: { p_token: string }; Returns: Json };
       can_be_payer: { Args: { p_user_id: string }; Returns: boolean };
       can_edit_expense: { Args: { p_expense_id: string }; Returns: boolean };
       can_edit_pet_record: {
@@ -820,6 +843,7 @@ export type Database = {
         Args: { p_from?: string; p_reminder_id?: string; p_to?: string };
         Returns: number;
       };
+      get_calendar_token: { Args: Record<PropertyKey, never>; Returns: string };
       insert_health_event: {
         Args: {
           p_default_date: string;
@@ -835,6 +859,7 @@ export type Database = {
       };
       is_pet_member: { Args: { p_pet_id: string }; Returns: boolean };
       is_pet_owner: { Args: { p_pet_id: string }; Returns: boolean };
+      new_calendar_token: { Args: Record<PropertyKey, never>; Returns: string };
       push_subscriptions_for: {
         Args: { p_user_ids: string[] };
         Returns: {
@@ -864,6 +889,10 @@ export type Database = {
       refresh_my_occurrences: {
         Args: Record<PropertyKey, never>;
         Returns: number;
+      };
+      regenerate_calendar_token: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
       };
       release_reminder_claim: {
         Args: { p_channel: string; p_occurrence_id: string };

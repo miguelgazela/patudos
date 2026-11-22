@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildIcs > snapshot 1`] = `
+"BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Patudos//Calendario//PT
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Patudos
+X-WR-TIMEZONE:Europe/Lisbon
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+X-PUBLISHED-TTL:PT1H
+BEGIN:VEVENT
+UID:r1-20261128T100000Z@patudos
+DTSTAMP:20261122T120000Z
+DTSTART:20261128T100000Z
+DTEND:20261128T103000Z
+SUMMARY:Nina · Banho\\, escovar; tosquia\\nem casa
+DESCRIPTION:Abrir no Patudos: https://patudos.example
+URL:https://patudos.example
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Nina · Banho\\, escovar; tosquia\\nem casa
+TRIGGER:PT0M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:r2-20261231T090000Z@patudos
+DTSTAMP:20261122T120000Z
+DTSTART;VALUE=DATE:20261231
+DTEND;VALUE=DATE:20270101
+TRANSP:TRANSPARENT
+SUMMARY:Nina · Desparasitação externa
+DESCRIPTION:Abrir no Patudos: https://patudos.example
+URL:https://patudos.example
+END:VEVENT
+END:VCALENDAR
+"
+`;
