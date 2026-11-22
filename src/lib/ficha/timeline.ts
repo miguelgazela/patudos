@@ -42,7 +42,7 @@ export type TimelineEntry = {
   createdAt: string;
   title: string;
   summary: string;
-  /** `null` = sem ecrã de detalhe (despesas). */
+  /** `null` = sem ecrã de detalhe. */
   href: string | null;
   /** Abre noutro separador (documentos, por URL assinada). */
   external?: boolean;
@@ -230,7 +230,7 @@ export function buildTimeline(raw: RawTimeline): TimelineEntry[] {
         x.description?.trim() ||
         (EXPENSE_CATEGORY_LABEL[x.category] ?? "Despesa"),
       summary: formatCents(x.amount_cents),
-      href: null,
+      href: `/despesas/${x.id}`,
       createdBy: who(x.created_by),
       tags: ["despesas"],
     });

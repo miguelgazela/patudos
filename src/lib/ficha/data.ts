@@ -92,7 +92,7 @@ export const getPetHeader = cache(async (petId: string): Promise<PetHeader> => {
 });
 
 /** Nomes (perfis visíveis) por id; quem já não é visível fica de fora. */
-async function namesFor(
+export async function namesFor(
   supabase: Client,
   ids: (string | null)[],
   meId: string,

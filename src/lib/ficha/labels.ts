@@ -9,13 +9,13 @@ export const EVENT_TYPE_LABEL: Record<string, string> = {
 
 export const EXPENSE_CATEGORY_LABEL: Record<string, string> = {
   veterinary: "Veterinário",
-  medication: "Medicação",
+  medication: "Medicamentos",
   food: "Alimentação",
   hygiene: "Higiene",
   accessories: "Acessórios",
   insurance: "Seguro",
-  boarding: "Alojamento",
-  other: "Outra",
+  boarding: "Hotel / pet sitter",
+  other: "Outro",
 };
 
 export const DOCUMENT_KIND_LABEL: Record<string, string> = {

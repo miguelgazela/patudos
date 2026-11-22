@@ -839,6 +839,17 @@ export type Database = {
         Returns: string[];
       };
       expense_has_splits: { Args: { p_expense_id: string }; Returns: boolean };
+      expense_hidden_cents: { Args: { p_expense_id: string }; Returns: number };
+      expense_overview: {
+        Args: {
+          p_category?: string;
+          p_from: string;
+          p_paid_by?: string;
+          p_pet_id?: string;
+          p_to: string;
+        };
+        Returns: Json;
+      };
       generate_reminder_occurrences: {
         Args: { p_from?: string; p_reminder_id?: string; p_to?: string };
         Returns: number;
@@ -906,6 +917,7 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
       };
+      save_expense: { Args: { payload: Json }; Returns: string };
       save_push_subscription: {
         Args: {
           p_auth: string;
