@@ -9,6 +9,8 @@ export type InviteEmailInput = {
   link: string;
   /** Cor de fundo do animal (hex) para a inicial. */
   accent?: string;
+  /** O animal faleceu: o convite é para ver o tributo e deixar memórias. */
+  deceased?: boolean;
 };
 
 const esc = (s: string) =>
@@ -23,8 +25,14 @@ export function inviteLink(origin: string, email: string): string {
   return `${origin.replace(/\/$/, "")}/entrar?email=${encodeURIComponent(email)}`;
 }
 
-export function inviteSubject(inviterName: string, petName: string) {
-  return `${inviterName} convidou-te para cuidar de ${petName}`;
+export function inviteSubject(
+  inviterName: string,
+  petName: string,
+  deceased = false,
+) {
+  return deceased
+    ? `${inviterName} convidou-te para recordar ${petName}`
+    : `${inviterName} convidou-te para cuidar de ${petName}`;
 }
 
 export function inviteEmail(i: InviteEmailInput) {
@@ -34,6 +42,18 @@ export function inviteEmail(i: InviteEmailInput) {
   const link = esc(i.link);
   const accent = i.accent ?? "#D9580F";
   const initial = esc(i.petName.charAt(0).toUpperCase());
+  const title = i.deceased
+    ? `${inviter} convidou-te para recordar ${pet}`
+    : `${inviter} convidou-te para cuidar de ${pet}`;
+  const body = i.deceased
+    ? `No Patudos vais poder ver o tributo a ${pet}, o historial de saúde e deixar as tuas memórias.`
+    : `No Patudos vais poder ver o historial de ${pet}, registar consultas, pesos e despesas, e receber os lembretes.`;
+  const textTitle = i.deceased
+    ? `${i.inviterName} convidou-te para recordar ${i.petName}`
+    : `${i.inviterName} convidou-te para cuidar de ${i.petName}`;
+  const textBody = i.deceased
+    ? `No Patudos vais poder ver o tributo a ${i.petName}, o historial de saúde e deixar as tuas memórias.`
+    : `No Patudos vais poder ver o historial de ${i.petName}, registar consultas, pesos e despesas, e receber os lembretes.`;
 
   const html = `<!doctype html>
 <html lang="pt-PT"><body style="margin:0;background:#F2F5F4;font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#0E1F1C">
@@ -44,8 +64,8 @@ export function inviteEmail(i: InviteEmailInput) {
       <span style="display:inline-block;width:120px;height:120px;line-height:120px;border-radius:60px;background:${accent};color:#FFFFFF;font-size:52px;font-weight:800">${initial}</span>
     </div>
     <div style="padding:28px 32px 32px">
-      <h1 style="margin:0 0 14px;font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-.02em">${inviter} convidou-te para cuidar de ${pet}</h1>
-      <p style="margin:0 0 22px;font-size:17px;line-height:1.55;color:#2D403C">No Patudos vais poder ver o historial de ${pet}, registar consultas, pesos e despesas, e receber os lembretes.</p>
+      <h1 style="margin:0 0 14px;font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-.02em">${title}</h1>
+      <p style="margin:0 0 22px;font-size:17px;line-height:1.55;color:#2D403C">${body}</p>
       <a href="${link}" style="display:block;background:#0B6B5F;color:#FFFFFF;text-align:center;text-decoration:none;font-size:18px;font-weight:800;line-height:60px;border-radius:30px">Abrir o Patudos</a>
       <p style="margin:18px 0 0;font-size:15px;color:#475A56">Entras com este email: <b style="color:#0E1F1C">${to}</b>. Não precisas de palavra-passe: enviamos-te um código.</p>
     </div>
@@ -59,9 +79,9 @@ export function inviteEmail(i: InviteEmailInput) {
   <p style="margin:16px 0 0;font-size:13px;color:#475A56;text-align:center">Não conheces ${inviter}? Ignora este email.</p>
 </div></body></html>`;
 
-  const text = `${i.inviterName} convidou-te para cuidar de ${i.petName}
+  const text = `${textTitle}
 
-No Patudos vais poder ver o historial de ${i.petName}, registar consultas, pesos e despesas, e receber os lembretes.
+${textBody}
 
 Abre o Patudos: ${i.link}
 
@@ -74,5 +94,9 @@ No iPhone, instala assim:
 
 Não conheces ${i.inviterName}? Ignora este email.`;
 
-  return { subject: inviteSubject(i.inviterName, i.petName), html, text };
+  return {
+    subject: inviteSubject(i.inviterName, i.petName, i.deceased),
+    html,
+    text,
+  };
 }

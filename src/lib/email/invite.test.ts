@@ -31,6 +31,23 @@ describe("inviteEmail", () => {
   });
 });
 
+describe("inviteEmail de um animal que faleceu", () => {
+  const mail = inviteEmail({
+    inviterName: "Ana",
+    petName: "Nero",
+    to: "mae@exemplo.pt",
+    link: inviteLink("https://app.pt", "mae@exemplo.pt"),
+    deceased: true,
+  });
+
+  it("convida para recordar, não para cuidar", () => {
+    expect(mail.subject).toBe("Ana convidou-te para recordar Nero");
+    expect(mail.text).toContain("deixar as tuas memórias");
+    expect(mail.text).not.toMatch(/lembretes/);
+    expect(mail.html).not.toMatch(/lembretes/);
+  });
+});
+
 describe("getTransport", () => {
   it("sem configuração, falha em vez de fingir que enviou", async () => {
     await expect(

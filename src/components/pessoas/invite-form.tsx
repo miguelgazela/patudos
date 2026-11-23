@@ -20,9 +20,11 @@ const roles = [
 export function InviteForm({
   petId,
   petName,
+  deceased = false,
 }: {
   petId: string;
   petName: string;
+  deceased?: boolean;
 }) {
   const [state, action, pending] = useActionState(
     invitePerson.bind(null, petId),
@@ -81,9 +83,13 @@ export function InviteForm({
 
       <div className="flex flex-col gap-2 rounded-cartao bg-menta p-4 text-pinheiro-escuro">
         <p className="text-corpo font-semibold">
-          {role === "owner"
-            ? `Vai poder fazer tudo com ${petName}: editar a ficha, convidar e remover pessoas.`
-            : `Vai poder ver o historial de ${petName}, registar consultas e despesas, e receber lembretes.`}
+          {deceased
+            ? role === "owner"
+              ? `Vai poder ver o tributo e deixar memórias, editar o tributo, convidar e remover pessoas.`
+              : `Vai poder ver o tributo e o historial de ${petName} e deixar memórias.`
+            : role === "owner"
+              ? `Vai poder fazer tudo com ${petName}: editar a ficha, convidar e remover pessoas.`
+              : `Vai poder ver o historial de ${petName}, registar consultas e despesas, e receber lembretes.`}
         </p>
         <p className="text-etiqueta">
           Recebe um email com um código para entrar. Não precisa de configurar

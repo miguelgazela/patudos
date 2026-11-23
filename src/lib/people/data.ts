@@ -27,6 +27,7 @@ export type PendingInvite = {
 export type PeopleData = {
   petId: string;
   petName: string;
+  deceased: boolean;
   meId: string;
   isOwner: boolean;
   people: Person[];
@@ -43,7 +44,7 @@ export async function getPeople(petId: string): Promise<PeopleData> {
   const { data: pet } = await supabase
     .from("pets")
     .select(
-      "id, name, pet_members(user_id, role, notify, profiles(name, email))",
+      "id, name, deceased_on, pet_members(user_id, role, notify, profiles(name, email))",
     )
     .eq("id", petId)
     .maybeSingle();
@@ -86,6 +87,7 @@ export async function getPeople(petId: string): Promise<PeopleData> {
   return {
     petId: pet.id,
     petName: pet.name,
+    deceased: pet.deceased_on !== null,
     meId: me.id,
     isOwner,
     people,

@@ -192,6 +192,15 @@ test("«Em memória de…»: cria o tributo, deixa uma memória com foto e apare
     .fill("Dormia sempre ao sol.");
   await page.getByRole("button", { name: "Guardar" }).click();
   await expect(page.getByText("Dormia sempre ao sol.")).toBeVisible();
+
+  // Partilhar: convida quem conheceu o animal, com texto próprio de tributo
+  await page.goto(`/animais/${petId}/tributo`);
+  await page.getByRole("link", { name: /Partilhar com quem conheceu/ }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/animais/${petId}/pessoas/convidar$`),
+  );
+  await expect(page.getByText(/Com quem queres recordar/)).toBeVisible();
+  await expect(page.getByText(/deixar memórias/)).toBeVisible();
 });
 
 test("arquivar como «Faleceu», memórias do cuidador e permissões", async ({
@@ -268,6 +277,9 @@ test("arquivar como «Faleceu», memórias do cuidador e permissões", async ({
   await expect(mom.getByRole("link", { name: "Editar o tributo" })).toHaveCount(
     0,
   );
+  await expect(
+    mom.getByRole("link", { name: /Partilhar com quem conheceu/ }),
+  ).toHaveCount(0);
 
   // Falecidos não geram lembretes: nada ativo na BD para este animal
   const arch = await rows<{ archived_at: string; deceased_on: string }>(

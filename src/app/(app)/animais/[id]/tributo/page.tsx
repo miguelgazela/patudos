@@ -1,5 +1,5 @@
 import { PageSkeleton } from "@/components/nav/skeleton";
-import { ArrowLeft, HeartPulse, Pencil } from "lucide-react";
+import { ArrowLeft, HeartPulse, Pencil, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -90,6 +90,13 @@ async function Tributo({
         </Link>
         {t.isOwner ? (
           <>
+            <Link
+              href={`/animais/${t.id}/pessoas/convidar`}
+              className={buttonVariants({ variant: "secondary" })}
+            >
+              <UserPlus aria-hidden strokeWidth={2.2} />
+              Partilhar com quem conheceu {t.name}
+            </Link>
             <Link
               href={`/animais/${t.id}/tributo/editar`}
               className={buttonVariants({ variant: "link" })}

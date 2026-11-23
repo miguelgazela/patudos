@@ -40,9 +40,11 @@ async function Convidar({
         <h1 className="text-[22px] font-extrabold tracking-tight">Convidar</h1>
       </header>
       <p className="text-[22px] leading-tight font-extrabold tracking-tight">
-        Quem vai cuidar de {data.petName} contigo?
+        {data.deceased
+          ? `Com quem queres recordar ${data.petName}?`
+          : `Quem vai cuidar de ${data.petName} contigo?`}
       </p>
-      <InviteForm petId={id} petName={data.petName} />
+      <InviteForm petId={id} petName={data.petName} deceased={data.deceased} />
     </>
   );
 }

@@ -43,12 +43,17 @@ async function deliverInvite(
   try {
     const [{ data: me }, { data: pet }] = await Promise.all([
       supabase.from("profiles").select("name").eq("id", userId).single(),
-      supabase.from("pets").select("name").eq("id", petId).single(),
+      supabase
+        .from("pets")
+        .select("name, deceased_on")
+        .eq("id", petId)
+        .single(),
     ]);
     if (!pet) return false;
     const mail = inviteEmail({
       inviterName: me?.name?.trim() || "Alguém",
       petName: pet.name,
+      deceased: pet.deceased_on !== null,
       to: email,
       link: inviteLink(await appOrigin(), email),
     });
