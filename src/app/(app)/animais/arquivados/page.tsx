@@ -2,6 +2,7 @@ import { PageSkeleton } from "@/components/nav/skeleton";
 import { Suspense } from "react";
 
 import { BackButton } from "@/components/nav/back-button";
+import { MemorialRow } from "@/components/pets/memorial-row";
 import { PetAvatar } from "@/components/pets/pet-avatar";
 import { ReactivateButton } from "@/components/pets/reactivate-button";
 import { getCurrentProfile } from "@/lib/auth/current-profile";
@@ -24,18 +25,33 @@ export default function ArquivadosPage() {
 
 async function Arquivados() {
   const profile = await getCurrentProfile();
-  const pets = await listPets(profile.id, true);
+  const all = await listPets(profile.id, true);
+  const memorial = all.filter((p) => p.deceased);
+  const pets = all.filter((p) => !p.deceased);
 
   return (
     <>
       <p className="text-corpo text-tinta-suave">
-        Animais que já não estão contigo. O historial fica guardado, só para
-        consulta.
+        O historial fica guardado, só para consulta.
       </p>
-      {pets.length === 0 ? (
+      {memorial.length > 0 ? (
+        <section className="flex flex-col gap-3" aria-labelledby="em-memoria">
+          <h2 id="em-memoria" className="text-seccao">
+            Em memória
+          </h2>
+          <ul className="flex flex-col gap-3">
+            {memorial.map((pet) => (
+              <li key={pet.id}>
+                <MemorialRow pet={pet} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      {pets.length === 0 && memorial.length > 0 ? null : pets.length === 0 ? (
         <p className="text-corpo font-semibold">Não há animais arquivados.</p>
       ) : (
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-4" aria-label="Já não estão contigo">
           {pets.map((pet) => (
             <li
               key={pet.id}

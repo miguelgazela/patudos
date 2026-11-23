@@ -125,20 +125,22 @@ async function Resumo({
 
   return (
     <>
-      <Link
-        href={`/registar/consulta?animal=${id}`}
-        className={buttonVariants()}
-      >
-        <Stethoscope aria-hidden strokeWidth={2.2} />
-        Registar consulta
-      </Link>
+      {head.archived ? null : (
+        <Link
+          href={`/registar/consulta?animal=${id}`}
+          className={buttonVariants()}
+        >
+          <Stethoscope aria-hidden strokeWidth={2.2} />
+          Registar consulta
+        </Link>
+      )}
 
       <Section id="proximas" title="Próximas datas">
         {due.length ? (
           <ul className={cardClass}>
             {due.map((d) => {
               const Icon = typeIcon(d.type);
-              const occ = open[d.id];
+              const occ = head.archived ? undefined : open[d.id];
               return (
                 <li
                   key={d.id}
@@ -268,12 +270,14 @@ async function Resumo({
               Ainda não há pesagens.
             </p>
           )}
-          <Link
-            href={`/registar/peso?animal=${id}`}
-            className={buttonVariants({ variant: "secondary" })}
-          >
-            Registar peso
-          </Link>
+          {head.archived ? null : (
+            <Link
+              href={`/registar/peso?animal=${id}`}
+              className={buttonVariants({ variant: "secondary" })}
+            >
+              Registar peso
+            </Link>
+          )}
         </div>
       </Section>
 

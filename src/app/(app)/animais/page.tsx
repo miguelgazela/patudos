@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { EmptyState } from "@/components/nav/empty-state";
+import { MemorialRow } from "@/components/pets/memorial-row";
 import { PetCardItem } from "@/components/pets/pet-card";
 import { buttonVariants } from "@/components/ui/button";
 import { getCurrentProfile } from "@/lib/auth/current-profile";
@@ -27,12 +28,11 @@ async function Animais() {
   await acceptPendingInvites(supabase);
   const [pets, archived] = await Promise.all([
     listPets(profile.id, false),
-    supabase
-      .from("pets")
-      .select("id", { count: "exact", head: true })
-      .not("archived_at", "is", null),
+    listPets(profile.id, true),
   ]);
-  const archivedCount = archived.count ?? 0;
+  const memorial = archived.filter((p) => p.deceased);
+  // Os falecidos têm a sua secção; o link do arquivo é só para os restantes.
+  const archivedCount = archived.length - memorial.length;
 
   return (
     <>
@@ -52,7 +52,7 @@ async function Animais() {
         ) : null}
       </div>
 
-      {pets.length === 0 ? (
+      {pets.length === 0 && memorial.length === 0 ? (
         <EmptyState
           icon={PawPrint}
           title="Adiciona o teu primeiro patudo"
@@ -77,6 +77,21 @@ async function Animais() {
           ))}
         </ul>
       )}
+
+      {memorial.length > 0 ? (
+        <section className="flex flex-col gap-3" aria-labelledby="em-memoria">
+          <h2 id="em-memoria" className="text-seccao">
+            Em memória
+          </h2>
+          <ul className="flex flex-col gap-3">
+            {memorial.map((pet) => (
+              <li key={pet.id}>
+                <MemorialRow pet={pet} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {archivedCount > 0 ? (
         <Link

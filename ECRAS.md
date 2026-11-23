@@ -118,7 +118,7 @@ Mais: componentes e estados comuns, emails e notificações (no fim).
 
 ### 7. Animais
 - **Conteúdo:** cartões grandes por animal: foto, nome, espécie e idade, próxima coisa a fazer, e indicação "Partilhado com Mãe, Pai" ou "Cuidas com Pedro" (para cuidadores).
-- **Ações:** abrir animal; "Adicionar animal" (só cria animais próprios); link "Animais arquivados" no fim.
+- **Ações:** abrir animal; "Adicionar animal" (só cria animais próprios); secção "Em memória" (7b); link "Animais arquivados" no fim.
 - **Estados:** vazio ("Adiciona o teu primeiro patudo" com ilustração).
 
 ### 8. Ficha do animal — Resumo
@@ -151,9 +151,29 @@ Mais: componentes e estados comuns, emails e notificações (no fim).
 - **Ações:** "Guardar".
 - **Depois de criar:** sugestão opcional "Queres registar as últimas vacinas e desparasitações?" (abre 16) e "Convidar alguém para cuidar da *Nina*?" (abre 21).
 - **Papel:** só o dono edita.
+- **Fim do ecrã (só novo animal):** link «Em memória de…» (ecrã 37).
 
 ### 31. Animais arquivados
-- Lista dos animais arquivados (ex.: que faleceram ou foram dados), com historial só de leitura e opção "Reativar" (dono).
+- Dois grupos: **«Em memória»** (animais que faleceram: linha discreta com avatar, nome e «2012 – 2026», abre o tributo, ecrã 36) e os que **já não estão contigo** (cartão com «Arquivado a dd/mm/aaaa» e «Reativar», só o dono). O historial de ambos fica só de leitura.
+- Arquivar (menu «⋯» da ficha ou fim de «Editar ficha») abre um painel que pergunta o **motivo**: «Faleceu» (pede quando: Dia · Mês · Ano, por defeito hoje; passa a ter tributo) ou «Já não está comigo».
+
+### 36. Tributo (animal que faleceu)
+- **Tom:** calmo e respeitoso. Sem emojis, sem Sol nem cores vivas: Névoa, branco, Menta e Pinheiro. Texto sem frases feitas.
+- **Cabeçalho centrado:** foto grande (160 px, anel na cor do animal), «EM MEMÓRIA» (13/800, maiúsculas, tinta suave), nome (32/800), «2012 – 2026» (20/800), «Gato · Faleceu em setembro de 2026» (14, tinta suave).
+- **Palavras do dono:** cartão branco com o texto. Se estiver vazio, só o dono vê um convite a escrever.
+- **Memórias:** cartões brancos com foto opcional, texto e assinatura «Mãe · 12/10/2026» (a própria pessoa vê «Tu»). Botão «⋯» (44 px) em cada memória: o autor edita e apaga; o dono apaga qualquer uma. Vazio: «Ainda ninguém deixou uma memória. Podes ser tu a primeira.» Botão secundário «Deixar uma memória» (painel: texto até 600 letras, «Juntar foto»).
+- **Anular:** o dono tem «Afinal não faleceu» (ligação de texto, com diálogo de confirmação): o animal volta à lista de ativos; as **memórias são apagadas** (com as fotos); o texto do dono fica.
+- **Fim:** «Ver o historial de saúde» (ficha só de leitura, sem «Registar»; mostra faixa «Em memória de … · Ver tributo») e, para o dono, «Editar o tributo» (quando faleceu + palavras).
+- **Só dentro da app:** sem link público; quem quiser ver é convidado como membro (ecrã 21).
+- Animais falecidos não geram lembretes nem notificações, não aparecem em «Hoje» nem no calendário, e não contam para o limite de 30 animais ativos.
+
+### 37. Em memória de…
+- Acesso: link discreto «Em memória de…» no fim de «Novo animal» (ecrã 12). Para animais que nunca estiveram na app.
+- **Campos:** foto, nome, Cão/Gato, **quando faleceu** (Dia · Mês · Ano; obrigatório; por defeito Mês), «Mais detalhes»: quando nasceu (Dia · Mês · Ano, opcional), e «Umas palavras (opcional)».
+- Guardar abre logo o tributo (36).
+
+### 7b. Animais — secção «Em memória»
+- Entre a lista de animais e o link «Animais arquivados»: título «Em memória» e uma linha por animal falecido (foto 56 px, nome, «2012 – 2026»). Justificação: o tributo é um sítio a que se volta com carga emocional; não deve ficar enterrado ao lado dos animais dados. Só aparece se existir algum. O link «Animais arquivados (n)» conta só os restantes.
 
 ---
 

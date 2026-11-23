@@ -6,6 +6,9 @@ export const limitMessages = {
     "Este animal já tem 200 MB de ficheiros. Apaga documentos que já não precisas para juntar novos.",
   storage_user_limit:
     "Já usaste 1 GB de armazenamento. Apaga documentos que já não precisas para juntar novos.",
+  memory_pet_limit:
+    "Este tributo já tem 100 memórias. Apaga alguma para juntar outra.",
+  memory: "Deixaste muitas memórias numa hora. Tenta daqui a pouco.",
   invite: "Enviaste muitos convites hoje (máximo 20 por dia). Tenta amanhã.",
   export: "Já pediste 3 exportações na última hora. Tenta daqui a pouco.",
   test_push: "Espera um minuto antes de enviar outra notificação de teste.",

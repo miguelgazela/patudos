@@ -1,6 +1,8 @@
 import { PageSkeleton } from "@/components/nav/skeleton";
+import Link from "next/link";
 import { Suspense } from "react";
 
+import { buttonVariants } from "@/components/ui/button";
 import { FormHeader } from "@/components/pets/form-header";
 import { PetForm } from "@/components/pets/pet-form";
 import { nextFreeColor } from "@/lib/pets/constants";
@@ -20,22 +22,33 @@ export default function NovoAnimalPage() {
 async function Formulario() {
   const color = nextFreeColor(await usedColors());
   return (
-    <PetForm
-      photoUrl={null}
-      initial={{
-        name: "",
-        species: "",
-        birthMode: "exact",
-        birthDate: "",
-        approxValue: "",
-        approxUnit: "years",
-        breed: "",
-        sex: "",
-        neutered: "",
-        microchip: "",
-        color,
-        notes: "",
-      }}
-    />
+    <>
+      <PetForm
+        photoUrl={null}
+        initial={{
+          name: "",
+          species: "",
+          birthMode: "exact",
+          birthDate: "",
+          approxValue: "",
+          approxUnit: "years",
+          breed: "",
+          sex: "",
+          neutered: "",
+          microchip: "",
+          color,
+          notes: "",
+        }}
+      />
+      <Link
+        href="/animais/memoria"
+        className={buttonVariants({
+          variant: "link",
+          className: "self-center",
+        })}
+      >
+        Em memória de…
+      </Link>
+    </>
   );
 }

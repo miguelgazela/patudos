@@ -99,6 +99,7 @@ export async function getExportManifest(): Promise<ExportManifest | null> {
     splits,
     documents,
     clinics,
+    memories,
   ] = await Promise.all([
     all((f, t) =>
       supabase
@@ -142,6 +143,9 @@ export async function getExportManifest(): Promise<ExportManifest | null> {
       supabase.from("documents").select("*").order("id").range(f, t),
     ),
     all((f, t) => supabase.from("clinics").select("*").order("id").range(f, t)),
+    all((f, t) =>
+      supabase.from("pet_memories").select("*").order("id").range(f, t),
+    ),
   ]);
 
   const names: Record<string, string> = {};
@@ -171,6 +175,7 @@ export async function getExportManifest(): Promise<ExportManifest | null> {
     // Só as partes dos animais a que tenho acesso (a despesa pode ter mais animais).
     splits: mine(splits),
     documents: mine(documents),
+    memories: mine(memories),
   };
 
   const bundle = buildExport(raw);

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<title>Patudos · Tributo (referência)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="prado.css">
+<style>
+body{display:flex;gap:32px;padding:32px;background:#DDE5E2;flex-wrap:wrap;align-items:flex-start}
+.cap{font:800 14px 'Plus Jakarta Sans',sans-serif;color:#475A56;margin:0 0 8px}
+.hero{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding-top:8px}
+.photo{width:160px;height:160px;border-radius:50%;background:#FDE7D9;box-shadow:0 0 0 4px #D9580F;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.photo img{width:90%;height:90%}
+.label{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#475A56}
+.mem{background:#fff;border:1.5px solid #D6E0DD;border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.sig{font-size:14px;font-weight:600;color:#475A56}.sig b{color:#0E1F1C}
+.dots{width:44px;height:44px;border-radius:50%;background:#E6ECEA;display:flex;align-items:center;justify-content:center}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#E6ECEA;border-radius:999px;padding:4px}
+.seg span{height:44px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-weight:700;font-size:15px;color:#475A56}
+.seg .on{background:#fff;color:#0E1F1C;box-shadow:0 1px 3px rgba(14,31,28,.15)}
+.opt{border:2px solid #D6E0DD;background:#fff;border-radius:24px;padding:12px 16px;min-height:64px;display:flex;flex-direction:column;justify-content:center}
+.opt.on{border-color:#0B6B5F;background:#D5EEE9}
+.field{height:56px;border:2px solid #D6E0DD;background:#fff;border-radius:16px;padding:0 16px;display:flex;align-items:center;font-weight:600}
+.lbl{font-size:15px;font-weight:700;margin-bottom:8px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:32px 32px 0 0;padding:10px 20px 40px;display:flex;flex-direction:column;gap:16px}
+.scrim{position:absolute;inset:0;background:rgb(14 31 28/.55)}
+.grip{width:44px;height:5px;border-radius:999px;background:#C3CFCB;margin:0 auto}
+.band{background:#D5EEE9;border-radius:24px;padding:12px 16px;display:flex;justify-content:space-between;gap:12px;font-weight:800;color:#0B4F46}
+.mrow{background:#fff;border:1.5px solid #D6E0DD;border-radius:24px;padding:14px;display:flex;align-items:center;gap:16px;min-height:80px}
+</style>
+</head>
+<body>
+
+<section><p class="cap">36 · Tributo</p>
+<div class="ph tall"><div class="body" style="padding-top:20px;padding-bottom:40px">
+  <p style="color:#0B6B5F;font-weight:800">← Animais</p>
+  <div class="hero">
+    <div class="photo"><img src="simba.svg" alt=""></div>
+    <p class="label">Em memória</p>
+    <h1 class="h1">Nero</h1>
+    <p class="h2">2012 – 2026</p>
+    <p class="small">Gato · Faleceu em setembro de 2026</p>
+  </div>
+  <div class="card" style="padding:16px"><p>Dormia ao sol e esperava-nos sempre à porta. Ficou connosco catorze anos.</p></div>
+  <h2 class="h2">Memórias</h2>
+  <div class="stack">
+    <div class="mem"><p>Adorava a manta azul do sofá.</p>
+      <div class="between"><p class="sig"><b>Mãe</b> · 12/10/2026</p></div></div>
+    <div class="mem"><p>Subia ao meu colo sempre que me sentava a ler.</p>
+      <div class="between"><p class="sig"><b>Tu</b> · 14/10/2026</p>
+      <span class="dots"><svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span></div></div>
+  </div>
+  <button class="btn btn-s">+ Deixar uma memória</button>
+  <button class="btn btn-s">Ver o historial de saúde</button>
+  <p style="text-align:center;color:#0B6B5F;font-weight:800;text-decoration:underline;text-underline-offset:4px">Editar o tributo</p>
+</div></div></section>
+
+<section><p class="cap">31 · Arquivar com motivo (painel)</p>
+<div class="ph"><div class="scrim"></div>
+<div class="sheet"><div class="grip"></div>
+  <p style="font-size:22px;font-weight:800">Arquivar Rex</p>
+  <div><p class="lbl">Porque vais arquivar?</p>
+    <div class="stack">
+      <div class="opt on"><b>Faleceu</b><span class="small">Fica com uma página em sua memória.</span></div>
+      <div class="opt"><b>Já não está comigo</b><span class="small">Fica guardado, só para consulta.</span></div>
+    </div></div>
+  <div><p class="lbl">Quando faleceu</p>
+    <div class="seg"><span class="on">Dia</span><span>Mês</span><span>Ano</span></div></div>
+  <div><p class="lbl">Data</p><div class="field">23/11/2026</div>
+    <p class="small" style="margin-top:8px">Se não souberes o dia, escolhe Mês ou Ano.</p></div>
+  <button class="btn btn-p">Guardar</button>
+</div></div></section>
+
+<section><p class="cap">37 · Em memória de…</p>
+<div class="ph tall"><div class="body" style="padding-top:20px;padding-bottom:40px">
+  <div class="row"><span class="dots"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></span><p style="font-size:22px;font-weight:800">Em memória de…</p></div>
+  <p class="muted">Para guardar a memória de um animal que já não está cá, mesmo que nunca tenha estado no Patudos.</p>
+  <div class="center" style="display:flex;justify-content:center"><div class="photo" style="width:120px;height:120px;background:#fff;box-shadow:none;border:2px dashed #9FB1AC;color:#0B6B5F;font-weight:800;font-size:15px">Pôr foto</div></div>
+  <div><p class="lbl">Nome</p><div class="field" style="font-size:20px">Nero</div></div>
+  <div><p class="lbl">Era um…</p><div class="row"><div class="opt grow center" style="height:96px">Cão</div><div class="opt on grow center" style="height:96px">Gato</div></div></div>
+  <div><p class="lbl">Quando faleceu</p><div class="seg"><span>Dia</span><span class="on">Mês</span><span>Ano</span></div>
+    <p class="lbl" style="margin-top:12px">Mês e ano</p><div class="field">setembro de 2026</div></div>
+  <div class="card" style="padding:16px"><p class="h2">Mais detalhes</p><p class="small">Nascimento</p></div>
+  <div><p class="lbl">Umas palavras (opcional)</p><div class="field" style="height:120px;align-items:flex-start;padding-top:12px;color:#5F6F6B">&nbsp;</div>
+    <p class="small" style="margin-top:8px">Como era, o que lhe dava alegria, o que fica contigo.</p></div>
+  <button class="btn btn-p">Guardar</button>
+</div></div></section>
+
+<section><p class="cap">7b · Animais, com «Em memória»</p>
+<div class="ph tall"><div class="body" style="padding-top:20px;padding-bottom:40px">
+  <h1 class="h1">Animais</h1>
+  <div class="card" style="flex-direction:row;align-items:center;padding:16px"><div class="av nina" style="width:80px;height:80px"><img src="nina.svg" alt=""></div><div class="grow"><p style="font-size:24px;font-weight:800;line-height:1.2">Nina</p><p class="small">Cadela · Podengo · 4 anos</p></div></div>
+  <h2 class="h2">Em memória</h2>
+  <div class="mrow"><div class="av flat" style="width:56px;height:56px;background:#DEE8FD"><img src="simba.svg" alt=""></div><div class="grow"><p style="font-size:19px;font-weight:800">Nero</p><p class="small">2012 – 2026</p></div></div>
+  <p style="text-align:center;color:#0B6B5F;font-weight:800;text-decoration:underline;text-underline-offset:4px">Animais arquivados (1)</p>
+</div></div></section>
+
+<section><p class="cap">8 · Ficha de animal que faleceu (só leitura)</p>
+<div class="ph tall"><div class="body" style="padding-top:20px;padding-bottom:40px">
+  <div class="band"><span>Em memória de Nero</span><span style="text-decoration:underline;text-underline-offset:4px;font-size:15px">Ver tributo</span></div>
+  <div class="row"><div class="av flat" style="width:96px;height:96px;background:#DEE8FD;box-shadow:0 0 0 4px #2563EB"><img src="simba.svg" alt=""></div><div><h1 class="h1">Nero</h1><p class="muted">Gato · Europeu comum</p></div></div>
+  <p class="small">Sem botão «Registar consulta», «Registar peso» nem «Feito»: o historial fica só para consulta.</p>
+</div></div></section>
+
+</body>
+</html>

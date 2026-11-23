@@ -48,6 +48,10 @@ export type PetHeader = {
   people: PetPerson[];
   meId: string;
   isOwner: boolean;
+  /** Arquivado: a ficha fica só para consulta. */
+  archived: boolean;
+  /** Faleceu: tem tributo. */
+  deceased: boolean;
 };
 
 /** Cabeçalho da ficha (partilhado pelo layout e pelas páginas; 404 se não houver acesso). */
@@ -57,7 +61,7 @@ export const getPetHeader = cache(async (petId: string): Promise<PetHeader> => {
   const { data: pet } = await supabase
     .from("pets")
     .select(
-      "id, name, species, sex, breed, color, birth_date, neutered, microchip, photo_path, pet_members(user_id, role, profiles(name))",
+      "id, name, species, sex, breed, color, birth_date, neutered, microchip, photo_path, archived_at, deceased_on, pet_members(user_id, role, profiles(name))",
     )
     .eq("id", petId)
     .maybeSingle();
@@ -90,6 +94,8 @@ export const getPetHeader = cache(async (petId: string): Promise<PetHeader> => {
     people,
     meId: profile.id,
     isOwner: people.some((p) => p.id === profile.id && p.role === "owner"),
+    archived: !!pet.archived_at,
+    deceased: !!pet.deceased_on,
   };
 });
 

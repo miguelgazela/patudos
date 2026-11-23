@@ -129,3 +129,13 @@ Formatos PT-PT: data `21/11/2026` (apresentada em `Europe/Lisbon`); dinheiro `45
 ## Ícones da PWA (`icons/`)
 
 `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` (marca a 80 % centrada sobre o verde do ícone), `apple-touch-icon.png` (180), `favicon-32.png`, `favicon-16.png`. Origem: `icone-patudos-1024.png` (amarelo `#FFC53D` sobre verde `#0B6B5F`, cão e gato em coração). O fundo medido no ficheiro original é ligeiramente mais escuro (≈ `#026358`) e foi usado no preenchimento do maskable para não haver emenda. `theme_color` do manifesto: `#0B6B5F`; `background_color`: `#F2F5F4`.
+
+## Tributos (animais que faleceram)
+
+Referência visual: `referencia/tributo.html` (ecrãs 36, 37, 7b, 8 e o painel de arquivar do 31). Mesmo sistema, em registo mais calmo:
+
+- Só Névoa, branco, Menta e Pinheiro. **Sem Sol** e sem etiquetas de estado. Sem emojis nem frases feitas.
+- Cabeçalho centrado: foto 160 px com anel de 4 px na cor do animal, «EM MEMÓRIA» (13/800, maiúsculas, tracking .06em, tinta suave), nome 32/800, anos 20/800.
+- Memória = cartão branco (borda 1,5 px, raio 24, padding 16) com assinatura «Nome · dd/mm/aaaa» a 14/600; «Tu» para o próprio. Botão «⋯» 44 px só para quem pode editar/apagar.
+- Data parcial: segmento **Dia · Mês · Ano** (44 px) + campo com a etiqueta correspondente.
+- Faixa Menta («Em memória de … · Ver tributo») no topo da ficha de um animal que faleceu; cinzenta («Arquivado…») nos restantes arquivados.

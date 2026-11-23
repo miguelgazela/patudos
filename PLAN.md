@@ -73,7 +73,8 @@ Objetivo principal: ser **o mais simples e intuitiva possível**, sobretudo a re
 Identificadores em inglês; textos visíveis em português. Todos os registos têm `created_by` e `created_at`.
 
 - `profiles` — `id` (= `auth.users.id`), `name`, `email`
-- `pets` — `id`, `name`, `species` (`dog` | `cat`), `breed`, `sex`, `birth_date`, `neutered`, `microchip`, `photo_path`, `notes`, `archived_at`
+- `pets` — `id`, `name`, `species` (`dog` | `cat`), `breed`, `sex`, `birth_date`, `neutered`, `microchip`, `photo_path`, `notes`, `archived_at`, `deceased_on` + `deceased_precision` (`day` | `month` | `year`; só em animais arquivados), `tribute_text`
+- `pet_memories` — `id`, `pet_id`, `body`, `photo_path` (`fotos/{pet_id}/memorias/…`), `created_by`. Memórias dos membros no tributo de um animal que faleceu; cada pessoa edita/apaga as suas, o dono apaga qualquer uma
 - `pet_members` — `pet_id`, `user_id`, `role` (`owner` | `caregiver`), `notify` (recebe lembretes deste animal)
 - `pet_invites` — `id`, `pet_id`, `email`, `role`, `invited_by`, `token`, `expires_at`, `accepted_at`
 - `vet_visits` — `id`, `pet_id`, `visited_on`, `reason`, `vet_name`, `clinic`, `notes`
@@ -146,6 +147,9 @@ Regras gerais:
 - Ficha do animal em PDF (para veterinário, pet sitter, viagens).
 - Pesquisa e filtros.
 - Testes end-to-end (Playwright) dos fluxos principais, incluindo dono + cuidador.
+
+### Tributos (extra)
+- Dois caminhos: arquivar com motivo «Faleceu» e «Em memória de…» ao adicionar animal. Página de tributo com foto, datas, texto do dono e memórias dos membros. Só dentro da app (sem link público). Falecidos não geram lembretes, não contam para o limite de 30 e o historial fica só de leitura.
 
 ### Fase 6 — Abrir ao público
 - Onboarding, página de apresentação, termos e privacidade.

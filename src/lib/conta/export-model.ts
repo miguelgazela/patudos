@@ -33,6 +33,8 @@ export type ExportRaw = {
   expenses: Tables<"expenses">[];
   splits: Tables<"expense_splits">[];
   documents: Tables<"documents">[];
+  /** Memórias dos tributos dos meus animais. */
+  memories: Tables<"pet_memories">[];
 };
 
 export type ExportFile = {
@@ -157,6 +159,22 @@ export function buildExport(raw: ExportRaw): ExportBundle {
     files.push({ zipPath, bucket: "documentos", storagePath: d.storage_path });
   }
 
+  // Fotos das memórias
+  const memoryUsed = new Map<string, Set<string>>();
+  const memoryPhoto = new Map<string, string>();
+  for (const m of [...raw.memories].sort((a, b) =>
+    a.created_at.localeCompare(b.created_at),
+  )) {
+    const dir = folder.get(m.pet_id);
+    if (!dir || !m.photo_path) continue;
+    const names = memoryUsed.get(m.pet_id) ?? new Set<string>();
+    memoryUsed.set(m.pet_id, names);
+    const base = uniqueName(`${m.created_at.slice(0, 10)} memória`, names);
+    const zipPath = `${dir}/memorias/${base}${extensionOf(m.photo_path) || ".jpg"}`;
+    memoryPhoto.set(m.id, zipPath);
+    files.push({ zipPath, bucket: "fotos", storagePath: m.photo_path });
+  }
+
   // dados.json
   const stripIds = <T extends Record<string, unknown>>(
     row: T,
@@ -191,6 +209,9 @@ export function buildExport(raw: ExportRaw): ExportBundle {
       cor: p.color,
       notas: p.notes,
       arquivado_em: p.archived_at,
+      faleceu_em: p.deceased_on,
+      faleceu_precisao: p.deceased_on ? p.deceased_precision : null,
+      texto_do_tributo: p.tribute_text,
       criado_em: p.created_at,
       clinica_habitual_id: p.clinic_id,
       foto: photoOf.get(p.id) ?? null,
@@ -227,6 +248,11 @@ export function buildExport(raw: ExportRaw): ExportBundle {
           animal: petName(s.pet_id),
           amount_cents: s.amount_cents,
         })),
+    })),
+    memorias: raw.memories.map((m) => ({
+      ...stripIds(m, ["created_by"]),
+      animal: petName(m.pet_id),
+      ficheiro: memoryPhoto.get(m.id) ?? null,
     })),
     documentos: raw.documents.map((d) => ({
       ...stripIds(d, ["created_by"]),
@@ -344,7 +370,9 @@ function buildReadme(raw: ExportRaw, files: ExportFile[]): string {
     "  partilhados contigo), as pessoas de cada animal (só nomes e papéis),",
     "  consultas, pesos, vacinas e outros eventos de saúde, medicação,",
     "  lembretes e as vezes em que tocaram, despesas (com a parte de cada",
-    "  animal) e os dados dos documentos. Está em JSON, um formato que",
+    "  animal), os dados dos documentos e, nos animais que faleceram, o",
+    "  tributo e as memórias que lá ficaram (texto, nome de quem as",
+    "  escreveu e data). Está em JSON, um formato que",
     "  qualquer programa consegue ler.",
     "",
     "despesas.csv, pesos.csv, vacinas-e-desparasitacoes.csv",
@@ -352,7 +380,8 @@ function buildReadme(raw: ExportRaw, files: ExportFile[]): string {
     "  Google Sheets. Separador «;», datas dd/MM/yyyy, valores com vírgula.",
     "",
     "animais/",
-    "  Uma pasta por animal, com a foto e a subpasta «documentos» com os",
+    "  Uma pasta por animal, com a foto, a subpasta «memorias» (fotos das",
+    "  memórias do tributo) e a subpasta «documentos» com os",
     `  ficheiros que carregaste ou que foram carregados para esse animal`,
     `  (${files.length} ficheiro${files.length === 1 ? "" : "s"} no total, ${docs} documento${docs === 1 ? "" : "s"}).`,
     "",

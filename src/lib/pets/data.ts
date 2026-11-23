@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatAge } from "./age";
 import { isPetColor, type PetColor } from "./constants";
 import { sharedLine, type Member } from "./labels";
+import { lifeSpan } from "./tribute";
 
 type Client = Awaited<ReturnType<typeof createClient>>;
 
@@ -20,6 +21,9 @@ export type PetCard = {
   isOwner: boolean;
   shared: string;
   archivedAt: string | null;
+  /** Faleceu: tem tributo. «2012 – 2026». */
+  deceased: boolean;
+  lifeSpan: string | null;
 };
 
 /** URLs assinadas (1 h), criadas no servidor, por caminho. */
@@ -48,7 +52,7 @@ export async function listPets(
   let query = supabase
     .from("pets")
     .select(
-      "id, name, species, sex, breed, color, birth_date, photo_path, archived_at, pet_members(user_id, role, profiles(name))",
+      "id, name, species, sex, breed, color, birth_date, photo_path, archived_at, deceased_on, pet_members(user_id, role, profiles(name))",
     )
     .order("created_at", { ascending: true });
   query = archived
@@ -82,6 +86,8 @@ export async function listPets(
       isOwner: members.some((m) => m.user_id === meId && m.role === "owner"),
       shared: sharedLine(members, meId),
       archivedAt: r.archived_at,
+      deceased: !!r.deceased_on,
+      lifeSpan: r.deceased_on ? lifeSpan(r.birth_date, r.deceased_on) : null,
     };
   });
 }

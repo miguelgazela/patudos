@@ -1,11 +1,19 @@
 "use client";
 
-import { Archive, Bell, Ellipsis, FileText, Pencil, Users } from "lucide-react";
+import {
+  Archive,
+  Bell,
+  Ellipsis,
+  FileText,
+  Flower2,
+  Pencil,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 
-import { ConfirmDialog, Sheet } from "@/components/consulta/ui";
-import { archivePet } from "@/lib/pets/actions";
+import { Sheet } from "@/components/consulta/ui";
+import { ArchiveSheet } from "@/components/pets/archive-sheet";
 
 const rowClass =
   "flex min-h-14 w-full items-center gap-3 rounded-campo px-3 text-left text-corpo font-bold";
@@ -18,14 +26,17 @@ export function PetMenu({
   petId,
   name,
   isOwner,
+  archived,
+  deceased,
 }: {
   petId: string;
   name: string;
   isOwner: boolean;
+  archived: boolean;
+  deceased: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const [pending, startTransition] = useTransition();
 
   return (
     <>
@@ -40,6 +51,22 @@ export function PetMenu({
 
       <Sheet open={open} onOpenChange={setOpen} title={name}>
         <ul className="flex flex-col">
+          {deceased ? (
+            <li>
+              <Link
+                href={`/animais/${petId}/tributo`}
+                onClick={() => setOpen(false)}
+                className={`${rowClass} focus-visible:shadow-foco outline-none active:bg-linha-suave`}
+              >
+                <Flower2
+                  className="size-6 text-pinheiro"
+                  strokeWidth={2.2}
+                  aria-hidden
+                />
+                Ver tributo
+              </Link>
+            </li>
+          ) : null}
           {isOwner ? (
             <li>
               <Link
@@ -98,7 +125,7 @@ export function PetMenu({
               Ficha em PDF
             </Link>
           </li>
-          {isOwner ? (
+          {isOwner && !archived ? (
             <li>
               <button
                 type="button"
@@ -116,18 +143,12 @@ export function PetMenu({
         </ul>
       </Sheet>
 
-      <ConfirmDialog
+      <ArchiveSheet
         open={confirm}
         onOpenChange={setConfirm}
-        title={`Arquivar ${name}?`}
-        confirmLabel="Arquivar"
-        cancelLabel="Cancelar"
-        pending={pending}
-        onConfirm={() => startTransition(() => archivePet(petId))}
-      >
-        Deixa de aparecer na lista, mas o historial fica guardado. Podes
-        reativar quando quiseres.
-      </ConfirmDialog>
+        petId={petId}
+        name={name}
+      />
     </>
   );
 }

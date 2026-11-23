@@ -17,7 +17,7 @@ export default function PrivacidadePage() {
       title="Política de privacidade"
       other={{ href: "/termos", label: "Ler os Termos de utilização" }}
     >
-      <p className="text-tinta-suave">Última atualização: 23/11/2026</p>
+      <p className="text-tinta-suave">Última atualização: 24/11/2026</p>
 
       <Section title="Em resumo">
         <ul>
@@ -47,6 +47,12 @@ export default function PrivacidadePage() {
           <li>
             <b>Animais:</b> nome, espécie, raça, sexo, data de nascimento, chip,
             cor e foto.
+          </li>
+          <li>
+            <b>Tributos:</b> nos animais que faleceram, a data do falecimento,
+            as palavras do dono e as memórias que os membros do animal escrevem
+            (texto e foto opcional), com o nome de quem as escreveu e a data. Só
+            os membros do animal as veem.
           </li>
           <li>
             <b>Saúde e registos:</b> consultas, vacinas, desparasitações,

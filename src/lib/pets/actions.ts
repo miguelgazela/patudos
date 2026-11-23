@@ -140,21 +140,25 @@ export async function updatePet(
   redirect("/animais");
 }
 
-/** Arquivar (só dono). */
-export async function archivePet(petId: string) {
-  const { supabase } = await requireUser();
-  await supabase
-    .from("pets")
-    .update({ archived_at: new Date().toISOString() })
-    .eq("id", petId);
-  revalidatePath("/animais");
-  redirect("/animais");
-}
-
 /** Reativar (só dono). */
 export async function reactivatePet(petId: string) {
   const { supabase } = await requireUser();
-  await supabase.from("pets").update({ archived_at: null }).eq("id", petId);
+  const { data: memories } = await supabase
+    .from("pet_memories")
+    .select("photo_path")
+    .eq("pet_id", petId);
+  await supabase
+    .from("pets")
+    .update({
+      archived_at: null,
+      deceased_on: null,
+      deceased_precision: "day",
+    })
+    .eq("id", petId);
+  const photos = (memories ?? [])
+    .map((m) => m.photo_path)
+    .filter((p): p is string => !!p);
+  if (photos.length) await supabase.storage.from("fotos").remove(photos);
   revalidatePath("/animais");
   redirect("/animais");
 }

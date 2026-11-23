@@ -41,8 +41,30 @@ export function FichaHeader({ pet }: { pet: PetHeader }) {
           <ArrowLeft className="size-6" strokeWidth={2.2} aria-hidden />
           Animais
         </Link>
-        <PetMenu petId={pet.id} name={pet.name} isOwner={pet.isOwner} />
+        <PetMenu
+          petId={pet.id}
+          name={pet.name}
+          isOwner={pet.isOwner}
+          archived={pet.archived}
+          deceased={pet.deceased}
+        />
       </div>
+
+      {pet.deceased ? (
+        <Link
+          href={`/animais/${pet.id}/tributo`}
+          className="focus-visible:shadow-foco flex min-h-14 items-center justify-between gap-3 rounded-cartao bg-menta px-4 py-3 text-corpo font-extrabold text-pinheiro-escuro outline-none"
+        >
+          Em memória de {pet.name}
+          <span className="text-etiqueta underline underline-offset-4">
+            Ver tributo
+          </span>
+        </Link>
+      ) : pet.archived ? (
+        <p className="rounded-cartao bg-linha-suave px-4 py-3 text-etiqueta text-tinta-suave">
+          Arquivado. O historial fica só para consulta.
+        </p>
+      ) : null}
 
       <header className="flex items-center gap-4">
         <PetAvatar

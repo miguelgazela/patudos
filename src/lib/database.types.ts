@@ -514,6 +514,45 @@ export type Database = {
           },
         ];
       };
+      pet_memories: {
+        Row: {
+          body: string;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          pet_id: string;
+          photo_path: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          pet_id: string;
+          photo_path?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          pet_id?: string;
+          photo_path?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_memories_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       pets: {
         Row: {
           archived_at: string | null;
@@ -524,6 +563,8 @@ export type Database = {
           color: string;
           created_at: string;
           created_by: string | null;
+          deceased_on: string | null;
+          deceased_precision: string;
           id: string;
           microchip: string | null;
           name: string;
@@ -532,6 +573,7 @@ export type Database = {
           photo_path: string | null;
           sex: string | null;
           species: string;
+          tribute_text: string | null;
           updated_at: string;
         };
         ComputedFields: never;
@@ -544,6 +586,8 @@ export type Database = {
           color?: string;
           created_at?: string;
           created_by?: string | null;
+          deceased_on?: string | null;
+          deceased_precision?: string;
           id?: string;
           microchip?: string | null;
           name: string;
@@ -552,6 +596,7 @@ export type Database = {
           photo_path?: string | null;
           sex?: string | null;
           species: string;
+          tribute_text?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -563,6 +608,8 @@ export type Database = {
           color?: string;
           created_at?: string;
           created_by?: string | null;
+          deceased_on?: string | null;
+          deceased_precision?: string;
           id?: string;
           microchip?: string | null;
           name?: string;
@@ -571,6 +618,7 @@ export type Database = {
           photo_path?: string | null;
           sex?: string | null;
           species?: string;
+          tribute_text?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -955,6 +1003,7 @@ export type Database = {
       is_pet_member: { Args: { p_pet_id: string }; Returns: boolean };
       is_pet_owner: { Args: { p_pet_id: string }; Returns: boolean };
       new_calendar_token: { Args: Record<PropertyKey, never>; Returns: string };
+      pet_is_deceased: { Args: { p_pet_id: string }; Returns: boolean };
       push_subscriptions_for: {
         Args: { p_user_ids: string[] };
         Returns: {

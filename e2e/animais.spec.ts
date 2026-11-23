@@ -102,11 +102,15 @@ test("criar, editar, arquivar e reativar um animal", async ({ page }) => {
   await page.getByRole("button", { name: "Mais opções" }).click();
   await page.getByRole("link", { name: "Editar ficha" }).click();
   await page.getByRole("button", { name: "Arquivar Bolachinha" }).click();
-  await expect(page.getByText("Arquivar Bolachinha?")).toBeVisible();
-  await page.getByRole("button", { name: "Cancelar" }).click();
-  await expect(page.getByText("Arquivar Bolachinha?")).toHaveCount(0);
+  // Pergunta o motivo; sem escolher, não arquiva
+  const sheet = page.getByRole("dialog", { name: "Arquivar Bolachinha" });
+  await expect(sheet).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "Arquivar" })).toBeDisabled();
+  await sheet.getByRole("button", { name: "Fechar" }).click();
+  await expect(sheet).toHaveCount(0);
   await page.getByRole("button", { name: "Arquivar Bolachinha" }).click();
-  await page.getByRole("button", { name: "Arquivar", exact: true }).click();
+  await sheet.getByText("Já não está comigo").click();
+  await sheet.getByRole("button", { name: "Arquivar" }).click();
   await expect(page).toHaveURL(/\/animais$/);
   await expect(
     page.getByRole("heading", { name: "Adiciona o teu primeiro patudo" }),

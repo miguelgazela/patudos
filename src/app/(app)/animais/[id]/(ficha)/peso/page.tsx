@@ -1,3 +1,4 @@
+import { getPetHeader } from "@/lib/ficha/data";
 import { PageSkeleton } from "@/components/nav/skeleton";
 import { Scale } from "lucide-react";
 import Link from "next/link";
@@ -46,7 +47,8 @@ async function Peso({
     todayISO(),
   );
 
-  const register = (
+  const archived = (await getPetHeader(id)).archived;
+  const register = archived ? null : (
     <Link
       href={`/registar/peso?animal=${id}`}
       className={buttonVariants({

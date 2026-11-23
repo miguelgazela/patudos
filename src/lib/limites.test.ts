@@ -15,6 +15,14 @@ describe("limitMessage", () => {
     expect(limitMessage({ message: "pet_limit" })).toMatch(/30 animais/);
     expect(limitMessage({ message: "storage_pet_limit" })).toMatch(/200 MB/);
   });
+  it("traduz os limites das memórias", () => {
+    expect(limitMessage({ message: "memory_pet_limit" })).toMatch(
+      /100 memórias/,
+    );
+    expect(limitMessage({ message: "rate_limited", hint: "memory" })).toMatch(
+      /numa hora/,
+    );
+  });
   it("ação desconhecida tem mensagem genérica; outros erros ficam por traduzir", () => {
     expect(limitMessage({ message: "rate_limited" })).toMatch(/demasiados/i);
     expect(limitMessage({ message: "outro erro" })).toBeUndefined();

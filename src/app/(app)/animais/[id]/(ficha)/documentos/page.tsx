@@ -1,3 +1,4 @@
+import { getPetHeader } from "@/lib/ficha/data";
 import { PageSkeleton } from "@/components/nav/skeleton";
 import { FileText } from "lucide-react";
 import Link from "next/link";
@@ -27,6 +28,7 @@ async function Documentos({
   const { id } = await params;
   const docs = await listDocuments(id);
   const add = `/registar/documento?animal=${id}`;
+  const archived = (await getPetHeader(id)).archived;
 
   if (!docs.length) {
     return (
@@ -34,9 +36,11 @@ async function Documentos({
         icon={FileText}
         title="Ainda não há documentos"
         action={
-          <Link href={add} className={buttonVariants({ size: "auto" })}>
-            Adicionar documento
-          </Link>
+          archived ? undefined : (
+            <Link href={add} className={buttonVariants({ size: "auto" })}>
+              Adicionar documento
+            </Link>
+          )
         }
       >
         Guarda aqui o boletim sanitário, o seguro, o chip e as faturas.
@@ -49,16 +53,18 @@ async function Documentos({
       <div className="pb-20">
         <DocumentBrowser docs={docs} showPet={false} />
       </div>
-      <div className="fixed inset-x-0 bottom-[calc(max(env(safe-area-inset-bottom),12px)+96px)] z-30">
-        <div className="mx-auto w-full max-w-md px-5">
-          <Link
-            href={add}
-            className={`${buttonVariants()} shadow-[0_0_0_8px_var(--color-nevoa)]`}
-          >
-            Adicionar documento
-          </Link>
+      {archived ? null : (
+        <div className="fixed inset-x-0 bottom-[calc(max(env(safe-area-inset-bottom),12px)+96px)] z-30">
+          <div className="mx-auto w-full max-w-md px-5">
+            <Link
+              href={add}
+              className={`${buttonVariants()} shadow-[0_0_0_8px_var(--color-nevoa)]`}
+            >
+              Adicionar documento
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

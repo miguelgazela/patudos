@@ -30,6 +30,9 @@ function raw(over: Partial<ExportRaw> = {}): ExportRaw {
     color: "laranja",
     notes: null,
     archived_at: null,
+    deceased_on: null,
+    deceased_precision: "day",
+    tribute_text: null,
     clinic_id: "cccccccc-0000-0000-0000-000000000001",
     created_by: ME,
     created_at: T,
@@ -150,6 +153,7 @@ function raw(over: Partial<ExportRaw> = {}): ExportRaw {
         updated_at: T,
       },
     ],
+    memories: [],
     ...over,
   } as ExportRaw;
 }
@@ -255,6 +259,65 @@ describe("buildExport", () => {
       storagePath: `${PET}/abc.PDF`,
     });
     expect(json.documentos[0]!.ficheiro).toBe(b.files[1]!.zipPath);
+  });
+
+  it("tributo: falecimento, texto e memórias (com foto) no JSON e no ZIP", () => {
+    const m = buildExport(
+      raw({
+        pets: [
+          {
+            ...raw().pets[0]!,
+            archived_at: T,
+            deceased_on: "2026-09-01",
+            deceased_precision: "month",
+            tribute_text: "Dormia ao sol.",
+          },
+        ],
+        memories: [
+          {
+            id: "m1",
+            pet_id: PET,
+            body: "Esperava-me à porta.",
+            photo_path: `${PET}/memorias/a.jpg`,
+            created_by: MAE,
+            created_at: T,
+            updated_at: T,
+          },
+          {
+            id: "m2",
+            pet_id: PET,
+            body: "Sem foto.",
+            photo_path: null,
+            created_by: null,
+            created_at: T,
+            updated_at: T,
+          },
+        ],
+        documents: [],
+      }),
+    );
+    const j = m.json as {
+      animais: Record<string, unknown>[];
+      memorias: Record<string, unknown>[];
+    };
+    expect(j.animais[0]).toMatchObject({
+      faleceu_em: "2026-09-01",
+      faleceu_precisao: "month",
+      texto_do_tributo: "Dormia ao sol.",
+    });
+    expect(j.memorias[0]).toMatchObject({
+      animal: "Nina",
+      created_by_name: "Mãe",
+      ficheiro: "animais/Nina/memorias/2026-11-20 memória.jpg",
+    });
+    expect(j.memorias[1]).toMatchObject({
+      created_by_name: "Conta apagada",
+      ficheiro: null,
+    });
+    expect(JSON.stringify(j)).not.toContain(MAE);
+    expect(m.files.map((f) => f.zipPath)).toContain(
+      "animais/Nina/memorias/2026-11-20 memória.jpg",
+    );
   });
 
   it("CSV de despesas: euros com vírgula, fórmula neutralizada, quem pagou", () => {
