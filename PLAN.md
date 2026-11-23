@@ -150,7 +150,7 @@ Regras gerais:
 ### Fase 6 — Abrir ao público
 - Onboarding, página de apresentação, termos e privacidade.
 - RGPD: exportar dados, apagar conta (incluindo o que acontece aos animais partilhados).
-- Monitorização de erros, limites de utilização, backups.
+- Monitorização de erros, limites de utilização, backups. **Feito** (passo 3): Sentry (UE, sem dados pessoais), limites na BD, `/api/saude`. **Backups por decidir**: por agora não há (a política de privacidade di-lo); opções em `docs/deploy.md`.
 
 ## Fora de âmbito (por agora)
 
