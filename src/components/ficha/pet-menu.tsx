@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, Bell, Ellipsis, Pencil, Users } from "lucide-react";
+import { Archive, Bell, Ellipsis, FileText, Pencil, Users } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 
@@ -82,6 +82,20 @@ export function PetMenu({
                 aria-hidden
               />
               Lembretes
+            </Link>
+          </li>
+          <li>
+            <Link
+              href={`/animais/${petId}/pdf`}
+              onClick={() => setOpen(false)}
+              className={`${rowClass} focus-visible:shadow-foco outline-none active:bg-linha-suave`}
+            >
+              <FileText
+                className="size-6 text-pinheiro"
+                strokeWidth={2.2}
+                aria-hidden
+              />
+              Ficha em PDF
             </Link>
           </li>
           {isOwner ? (

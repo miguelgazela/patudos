@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
   },
   // Fotos já reduzidas no cliente (≤ 1,5 MB) vão no corpo da Server Action.
   experimental: { serverActions: { bodySizeLimit: "2mb" } },
+  // O PDF lê fontes e imagens com `fs` (a Vercel só leva para a função o que o rastreio vê).
+  outputFileTracingIncludes: {
+    "/animais/[id]/pdf/ficha": [
+      "./src/lib/pdf/fonts/**/*",
+      "./src/lib/pdf/assets/**/*",
+    ],
+  },
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
