@@ -5,6 +5,8 @@ export type Recipient = {
   user_id: string;
   email: string | null;
   name: string | null;
+  /** Falso = desligou os emails de lembrete (ausente = ligado). */
+  reminder_emails?: boolean;
 };
 
 /** Uma ocorrência reclamada por `claim_due_reminders`. */
@@ -202,11 +204,13 @@ ${last ? `<p style="margin:0 0 18px;font-size:16px;color:#2D403C">${escapeHtml(l
   return { subject: headline(item), html, text };
 }
 
-/** Destinatários com email, sem repetidos. */
+/** Destinatários com email (e com os emails de lembrete ligados), sem repetidos. */
 export function emailRecipients(item: ClaimedReminder): Recipient[] {
   const seen = new Set<string>();
   return item.recipients.filter((r) => {
-    if (!r.email || seen.has(r.email)) return false;
+    // `reminder_emails === false`: a pessoa desligou os emails de lembrete no Perfil.
+    if (!r.email || r.reminder_emails === false || seen.has(r.email))
+      return false;
     seen.add(r.email);
     return true;
   });

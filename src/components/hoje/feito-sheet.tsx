@@ -1,5 +1,6 @@
 "use client";
 
+import { safely } from "@/lib/client-action";
 import { useState, useTransition } from "react";
 
 import { ErrorBanner } from "@/components/auth/banner";
@@ -66,13 +67,15 @@ export function FeitoSheet({
     if (pending) return;
     setError(null);
     startTransition(async () => {
-      const res = await completeTreatment({
-        occurrenceId,
-        on: date,
-        product: product.trim() || undefined,
-        nextDueOn: next || undefined,
-        remind,
-      });
+      const res = await safely(() =>
+        completeTreatment({
+          occurrenceId,
+          on: date,
+          product: product.trim() || undefined,
+          nextDueOn: next || undefined,
+          remind,
+        }),
+      );
       if (!res.ok) {
         setErrors(res.errors ?? {});
         setError(res.message);

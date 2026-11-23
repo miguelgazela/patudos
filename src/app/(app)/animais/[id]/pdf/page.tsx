@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { connection } from "next/server";
@@ -22,7 +23,7 @@ export default function PdfPage({
   searchParams,
 }: PageProps<"/animais/[id]/pdf">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Pdf params={params} searchParams={searchParams} />
     </Suspense>
   );

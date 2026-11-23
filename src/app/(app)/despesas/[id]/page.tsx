@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { z } from "zod";
@@ -13,7 +14,7 @@ import { getVisitFormData } from "@/lib/vet-visits/data";
 // Ecrã 26 em edição.
 export default function Page({ params }: PageProps<"/despesas/[id]">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Detail params={params} />
     </Suspense>
   );

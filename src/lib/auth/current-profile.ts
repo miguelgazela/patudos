@@ -11,7 +11,7 @@ export async function getCurrentProfile() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, name, email")
+    .select("id, name, email, reminder_emails")
     .eq("id", data.claims.sub)
     .single();
   if (!profile) redirect("/entrar");

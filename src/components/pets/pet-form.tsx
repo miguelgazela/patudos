@@ -1,5 +1,6 @@
 "use client";
 
+import { failMessage } from "@/lib/client-action";
 import { Cat, ChevronDown, Dog, Check } from "lucide-react";
 import { useActionState, useState } from "react";
 
@@ -93,7 +94,16 @@ export function PetForm({
   photoUrl: string | null;
 }) {
   const [state, formAction, pending] = useActionState<PetFormState, FormData>(
-    petId ? updatePet.bind(null, petId) : createPet,
+    async (prev, formData) => {
+      try {
+        return await (petId
+          ? updatePet(petId, prev, formData)
+          : createPet(prev, formData));
+      } catch {
+        // Sem ligação: o formulário fica como está (e o texto, na caixa).
+        return { ...prev, message: failMessage() };
+      }
+    },
     initialState,
   );
   const [v, setV] = useState<PetFormValues>(initial);
@@ -218,7 +228,7 @@ export function PetForm({
               aria-checked={v.birthMode === o.value}
               onClick={() => set("birthMode", o.value)}
               className={cn(
-                "focus-visible:shadow-foco h-[42px] rounded-capsula text-etiqueta font-bold outline-none",
+                "focus-visible:shadow-foco h-11 rounded-capsula text-etiqueta font-bold outline-none",
                 v.birthMode === o.value
                   ? "shadow-segmento bg-branco text-tinta"
                   : "text-tinta-suave",

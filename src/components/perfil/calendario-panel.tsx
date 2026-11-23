@@ -62,7 +62,7 @@ export function CalendarioPanel({
         As datas dos teus animais aparecem no teu calendário: vacinas,
         desparasitações e lembretes.
       </p>
-      <p className="flex items-start gap-3 rounded-[20px] bg-aviso-fundo p-4 text-etiqueta text-aviso-banner">
+      <p className="flex items-start gap-3 rounded-banner bg-aviso-fundo p-4 text-etiqueta text-aviso-banner">
         <Clock
           className="mt-0.5 size-5 shrink-0"
           strokeWidth={2.2}
@@ -92,7 +92,7 @@ export function CalendarioPanel({
           readOnly
           value={httpsUrl}
           onFocus={(e) => e.currentTarget.select()}
-          className="focus-visible:shadow-foco h-14 w-full truncate rounded-[16px] border-[1.5px] border-linha bg-branco px-4 text-[14px] font-semibold text-tinta-suave outline-none"
+          className="focus-visible:shadow-foco h-14 w-full truncate rounded-campo border-[1.5px] border-linha bg-branco px-4 text-[14px] font-semibold text-tinta-suave outline-none"
         />
         <Button type="button" variant="secondary" onClick={copy}>
           {copied ? (

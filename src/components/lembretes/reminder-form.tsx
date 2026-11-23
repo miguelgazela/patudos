@@ -1,5 +1,7 @@
 "use client";
 
+import { showToast } from "@/components/ui/toast";
+import { safely } from "@/lib/client-action";
 import { Check, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -59,20 +61,23 @@ export function ReminderForm({
     if (pending) return;
     setError(null);
     startTransition(async () => {
-      const res = await saveReminder({
-        id: initial.id,
-        pet_id: petId,
-        title,
-        on,
-        at,
-        repeat,
-        channels,
-      });
+      const res = await safely(() =>
+        saveReminder({
+          id: initial.id,
+          pet_id: petId,
+          title,
+          on,
+          at,
+          repeat,
+          channels,
+        }),
+      );
       if (!res.ok) {
         setErrors(res.errors ?? {});
         setError(res.message);
         return;
       }
+      showToast(initial.id ? "Lembrete guardado" : "Lembrete criado");
       router.push(back);
     });
   }

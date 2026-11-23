@@ -128,17 +128,22 @@ export function Switch({
       aria-checked={checked}
       aria-label={label}
       onClick={() => onChange(!checked)}
-      className={cn(
-        "focus-visible:shadow-foco relative h-8 w-[52px] shrink-0 rounded-full transition-colors outline-none",
-        checked ? "bg-pinheiro" : "bg-interruptor-off",
-      )}
+      // Alvo de toque de 60×44; a pista visível mantém 52×32.
+      className="group/switch flex h-11 w-[60px] shrink-0 items-center justify-center rounded-full outline-none"
     >
       <span
         className={cn(
-          "absolute top-1 left-1 size-6 rounded-full bg-branco transition-transform",
-          checked && "translate-x-5",
+          "group-focus-visible/switch:shadow-foco relative h-8 w-[52px] rounded-full transition-colors",
+          checked ? "bg-pinheiro" : "bg-interruptor-off",
         )}
-      />
+      >
+        <span
+          className={cn(
+            "absolute top-1 left-1 size-6 rounded-full bg-branco transition-transform",
+            checked && "translate-x-5",
+          )}
+        />
+      </span>
     </button>
   );
 }

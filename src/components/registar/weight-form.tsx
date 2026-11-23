@@ -1,5 +1,6 @@
 "use client";
 
+import { safely } from "@/lib/client-action";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -54,7 +55,7 @@ export function WeightForm({
     }
     setServerError(null);
     startTransition(async () => {
-      const res = await saveWeight(payload);
+      const res = await safely(() => saveWeight(payload));
       if (!res.ok) {
         setErrors(res.errors ?? {});
         setServerError(res.message);

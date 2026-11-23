@@ -1,5 +1,6 @@
 "use client";
 
+import { failMessage } from "@/lib/client-action";
 import { Camera, FileText, Image as ImageIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -140,7 +141,9 @@ export function DocumentForm({
         });
       if (up.error) {
         setServerError(
-          "Não conseguimos enviar o ficheiro. Verifica a ligação e tenta de novo.",
+          failMessage(
+            "Não conseguimos enviar o ficheiro. Verifica a ligação e tenta de novo.",
+          ),
         );
         return;
       }
@@ -164,9 +167,7 @@ export function DocumentForm({
         window.scrollTo({ top: 0 });
       } catch {
         await supabase.storage.from("documentos").remove([path]);
-        setServerError(
-          "Não conseguimos guardar. Os dados continuam aqui; tenta de novo.",
-        );
+        setServerError(failMessage());
       }
     });
   }
@@ -264,15 +265,16 @@ export function DocumentForm({
           </div>
           {(
             [
-              [camera, "camera", "image/*", "environment"],
-              [gallery, "gallery", "image/*", undefined],
-              [pdf, "pdf", "application/pdf", undefined],
+              [camera, "camera", "image/*", "environment", "Tirar foto"],
+              [gallery, "gallery", "image/*", undefined, "Escolher foto"],
+              [pdf, "pdf", "application/pdf", undefined, "Escolher PDF"],
             ] as const
-          ).map(([ref, id, accept, capture]) => (
+          ).map(([ref, id, accept, capture, label]) => (
             <input
               key={id}
               ref={ref}
               type="file"
+              aria-label={label}
               accept={accept}
               capture={capture}
               data-testid={`file-${id}`}

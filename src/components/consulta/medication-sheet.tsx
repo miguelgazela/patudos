@@ -258,7 +258,7 @@ function Body({
               aria-checked={d.duration === o.value}
               onClick={() => set("duration", o.value)}
               className={cn(
-                "focus-visible:shadow-foco h-[42px] rounded-capsula text-etiqueta font-bold outline-none",
+                "focus-visible:shadow-foco h-11 rounded-capsula text-etiqueta font-bold outline-none",
                 d.duration === o.value
                   ? "shadow-segmento bg-branco text-tinta"
                   : "text-tinta-suave",

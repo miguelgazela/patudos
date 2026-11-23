@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
@@ -10,7 +11,7 @@ export default function EditarLembretePage({
   params,
 }: PageProps<"/animais/[id]/lembretes/[reminderId]">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Editar params={params} />
     </Suspense>
   );

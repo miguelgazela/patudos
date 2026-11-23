@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { Suspense } from "react";
 
 import { BackButton } from "@/components/nav/back-button";
@@ -14,7 +15,7 @@ export default function ArquivadosPage() {
     <>
       <BackButton />
       <h1 className="text-ecra tracking-tight">Animais arquivados</h1>
-      <Suspense fallback={<div className="flex-1" aria-hidden />}>
+      <Suspense fallback={<PageSkeleton />}>
         <Arquivados />
       </Suspense>
     </>

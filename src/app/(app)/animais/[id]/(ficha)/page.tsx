@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import {
   Bug,
   ChevronRight,
@@ -26,7 +27,7 @@ import { cn } from "@/lib/utils";
 
 export default function ResumoPage({ params }: PageProps<"/animais/[id]">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Resumo params={params} />
     </Suspense>
   );

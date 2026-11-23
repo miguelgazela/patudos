@@ -1,5 +1,7 @@
 "use client";
 
+import { showToast } from "@/components/ui/toast";
+import { safely } from "@/lib/client-action";
 import {
   ChevronRight,
   ExternalLink,
@@ -102,12 +104,13 @@ export function DocumentViewer({ doc }: { doc: DocumentDetail }) {
 
   function remove() {
     startTransition(async () => {
-      const res = await deleteDocument(doc.id);
+      const res = await safely(() => deleteDocument(doc.id));
       if (!res.ok) {
         setConfirmOpen(false);
         setMessage(res.message);
         return;
       }
+      showToast("Documento apagado");
       router.replace(`/animais/${doc.petId}/documentos`);
     });
   }
@@ -328,13 +331,16 @@ function EditSheet({
   function save() {
     setMessage(null);
     startTransition(async () => {
-      const res = await updateDocument({ id: doc.id, kind, title, date });
+      const res = await safely(() =>
+        updateDocument({ id: doc.id, kind, title, date }),
+      );
       if (!res.ok) {
         setErrors(res.errors ?? {});
         setMessage(res.message);
         return;
       }
       setErrors({});
+      showToast("Documento guardado");
       onSaved();
     });
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import { safely } from "@/lib/client-action";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -314,7 +315,7 @@ export function HojeList({
     setBusyId(e.id);
     setError(null);
     startTransition(async () => {
-      const res = await completeOccurrence(e.id);
+      const res = await safely(() => completeOccurrence(e.id));
       if (!res.ok) setError(res.message);
       setBusyId(null);
     });
@@ -323,7 +324,7 @@ export function HojeList({
   function undo(e: HojeEntry) {
     setBusyId(e.id);
     startTransition(async () => {
-      const res = await undoOccurrence(e.id);
+      const res = await safely(() => undoOccurrence(e.id));
       if (!res.ok) setError(res.message);
       setBusyId(null);
     });
@@ -340,7 +341,7 @@ export function HojeList({
     setBusyId(e.id);
     setError(null);
     startTransition(async () => {
-      const res = await completeOccurrence(e.id);
+      const res = await safely(() => completeOccurrence(e.id));
       setBusyId(null);
       if (!res.ok) setError(res.message);
       else closeFocus();

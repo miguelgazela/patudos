@@ -1,5 +1,6 @@
 "use client";
 
+import { safely } from "@/lib/client-action";
 import { Bell, Pause, Pencil, Play, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
@@ -25,7 +26,7 @@ export function ReminderList({ data }: { data: PetRemindersData }) {
   function toggleNotify(v: boolean) {
     setNotifyState(v);
     startTransition(async () => {
-      const res = await setNotify(data.petId, v);
+      const res = await safely(() => setNotify(data.petId, v));
       if (!res.ok) setNotifyState(!v);
     });
   }
@@ -33,7 +34,7 @@ export function ReminderList({ data }: { data: PetRemindersData }) {
   function run(fn: () => Promise<{ ok: boolean; message?: string }>) {
     setError(null);
     startTransition(async () => {
-      const res = await fn();
+      const res = await safely(fn);
       if (!res.ok) setError(res.message ?? "Não conseguimos guardar.");
     });
   }

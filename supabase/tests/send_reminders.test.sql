@@ -10,6 +10,8 @@ values
   ('f3000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'sr-estranho@example.test', now(), now());
 update public.profiles set name = 'Pedro' where id = 'f3000000-0000-0000-0000-000000000001';
 
+update public.profiles set reminder_emails = false where id = 'f3000000-0000-0000-0000-000000000003';
+
 -- (corre como superutilizador: sem RLS)
 insert into public.pets (id, name, species, created_by)
 values ('f3100000-0000-0000-0000-000000000001', 'Nina', 'dog', 'f3000000-0000-0000-0000-000000000001');
@@ -80,6 +82,13 @@ select is(
   'destinatários: membros com notify (o que desligou não recebe; estranho não recebe)');
 
 select is(
+  (select array_agg((r ->> 'email') || '=' || (r ->> 'reminder_emails') order by r ->> 'email')
+   from claimed, jsonb_array_elements(j) e, jsonb_array_elements(e -> 'recipients') r
+   where e ->> 'title' = 'Manual push+email'),
+  array['sr-cuid@example.test=false', 'sr-dono@example.test=true'],
+  'reminder_emails por destinatário (desligado no Perfil = false; por defeito = true)');
+
+select is(
   (select e -> 'last' ->> 'product' from claimed, jsonb_array_elements(j) e where e ->> 'title' = 'Desparasitação externa'),
   'Pipeta Advantix', 'da última vez: produto');
 select is(
@@ -132,6 +141,15 @@ values ('f3000000-0000-0000-0000-000000000001', 'https://push.example.test/1', '
 select is(
   (select count(*)::int from public.push_subscriptions_for(array['f3000000-0000-0000-0000-000000000001']::uuid[])),
   1, 'push_subscriptions_for devolve só as dos utilizadores pedidos');
+
+-- Cada pessoa altera a sua preferência (e só a sua)
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"f3000000-0000-0000-0000-000000000004","role":"authenticated"}', true);
+update public.profiles set reminder_emails = false where id = 'f3000000-0000-0000-0000-000000000004';
+update public.profiles set reminder_emails = false where id = 'f3000000-0000-0000-0000-000000000001';
+reset role;
+select is((select reminder_emails from public.profiles where id = 'f3000000-0000-0000-0000-000000000004'), false, 'edita a própria preferência de emails');
+select is((select reminder_emails from public.profiles where id = 'f3000000-0000-0000-0000-000000000001'), true, 'não edita a de outra pessoa');
 
 -- Permissões: só o service_role
 set local role authenticated;

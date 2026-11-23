@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { PawPrint, Plus } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -13,7 +14,7 @@ import { createClient } from "@/lib/supabase/server";
 // Ecrã 7: os animais a que tenho acesso (os arquivados ficam à parte).
 export default function AnimaisPage() {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Animais />
     </Suspense>
   );

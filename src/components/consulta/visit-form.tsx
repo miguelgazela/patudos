@@ -1,5 +1,6 @@
 "use client";
 
+import { failMessage } from "@/lib/client-action";
 import {
   Bell,
   Check,
@@ -286,8 +287,10 @@ export function VisitForm(props: {
       } catch {
         setServerError(
           attachment
-            ? "Não conseguimos enviar o anexo. Os dados continuam aqui; tenta de novo."
-            : "Não conseguimos guardar. Os dados continuam aqui; tenta de novo.",
+            ? failMessage(
+                "Não conseguimos enviar o anexo. Os dados continuam aqui; tenta de novo.",
+              )
+            : failMessage(),
         );
       }
     });
@@ -589,6 +592,7 @@ export function VisitForm(props: {
                 type="file"
                 accept="image/*,application/pdf"
                 data-testid="attachment-input"
+                aria-label="Anexar ficheiro"
                 className="sr-only"
                 tabIndex={-1}
                 onChange={(e) => {
@@ -599,7 +603,7 @@ export function VisitForm(props: {
               <button
                 type="button"
                 onClick={() => fileInput.current?.click()}
-                className="focus-visible:shadow-foco flex h-12 items-center justify-center gap-2 rounded-capsula border-2 border-dashed border-[#9fb3ae] bg-branco text-etiqueta font-extrabold text-pinheiro outline-none"
+                className="focus-visible:shadow-foco flex h-12 items-center justify-center gap-2 rounded-capsula border-2 border-dashed border-tracejado bg-branco text-etiqueta font-extrabold text-pinheiro outline-none"
               >
                 <Paperclip className="size-5" strokeWidth={2.2} aria-hidden />
                 {attachment ? "Trocar anexo" : "Juntar foto ou PDF"}
@@ -873,7 +877,7 @@ function Summary({
       closeLabel="Voltar a editar"
     >
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-3 rounded-[20px] bg-menta p-3">
+        <div className="flex items-center gap-3 rounded-banner bg-menta p-3">
           <PetAvatar
             name={pet.name}
             color={pet.color}

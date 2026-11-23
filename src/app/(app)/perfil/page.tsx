@@ -1,120 +1,114 @@
-import {
-  Bell,
-  CalendarDays,
-  ChevronRight,
-  FolderOpen,
-  ShieldCheck,
-} from "lucide-react";
-import Link from "next/link";
+import { Archive, Bell, CalendarDays, FolderOpen, Mail } from "lucide-react";
 import { Suspense } from "react";
 
 import { EditNameForm } from "@/components/perfil/edit-name-form";
+import { PushStatus } from "@/components/perfil/push-status";
+import {
+  PetNotifyList,
+  ReminderEmailsSwitch,
+} from "@/components/perfil/settings";
+import { ControlRow, LinkRow, RowList } from "@/components/nav/list-row";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/lib/auth/actions";
 import { getCurrentProfile } from "@/lib/auth/current-profile";
+import { getPerfilPets } from "@/lib/perfil/data";
+import pkg from "../../../../package.json";
 
-// Perfil (ecrã 29, versão base): nome, email, termos e terminar sessão.
+function SectionTitle({ children }: { children: string }) {
+  return (
+    <h2 className="-mb-2 text-etiqueta font-extrabold text-tinta-suave">
+      {children}
+    </h2>
+  );
+}
+
+// Perfil (ecrã 29): conta, notificações, lembretes por animal, atalhos e terminar sessão.
 export default function PerfilPage() {
   return (
     <>
       <h1 className="text-ecra tracking-tight">Perfil</h1>
-      <Suspense fallback={<div className="flex-1" aria-hidden />}>
+      <Suspense fallback={<PerfilSkeleton />}>
         <Perfil />
       </Suspense>
     </>
   );
 }
 
+function PerfilSkeleton() {
+  return (
+    <div
+      className="flex flex-col gap-4"
+      aria-busy="true"
+      aria-label="A carregar"
+    >
+      <div className="h-24 animate-pulse rounded-cartao bg-esqueleto" />
+      <div className="h-36 animate-pulse rounded-cartao bg-esqueleto" />
+      <div className="h-40 animate-pulse rounded-cartao bg-esqueleto" />
+    </div>
+  );
+}
+
 async function Perfil() {
   const profile = await getCurrentProfile();
+  const { pets, archivedCount } = await getPerfilPets(profile.id);
 
   return (
     <>
-      <EditNameForm name={profile.name ?? ""} />
+      <EditNameForm name={profile.name ?? ""} email={profile.email} />
 
-      <dl className="flex flex-col gap-1 rounded-cartao border-[1.5px] border-linha bg-branco p-4">
-        <dt className="text-etiqueta">O teu email</dt>
-        <dd className="text-corpo font-semibold break-all text-tinta-suave">
-          {profile.email}
-        </dd>
-      </dl>
+      <SectionTitle>Notificações</SectionTitle>
+      <RowList>
+        <LinkRow
+          href="/perfil/notificacoes"
+          icon={Bell}
+          label="Notificações no iPhone"
+          sub={<PushStatus />}
+        />
+        <ControlRow icon={Mail} label="Emails de lembrete">
+          <ReminderEmailsSwitch initial={profile.reminder_emails} />
+        </ControlRow>
+      </RowList>
 
-      <ul className="overflow-hidden rounded-cartao border-[1.5px] border-linha bg-branco">
-        <li className="border-b-[1.5px] border-linha-suave">
-          <Link
-            href="/perfil/notificacoes"
-            className="focus-visible:shadow-foco flex min-h-16 w-full items-center gap-3 px-4 py-3 outline-none"
-          >
-            <Bell
-              className="size-6 text-pinheiro"
-              strokeWidth={2.2}
-              aria-hidden
-            />
-            <span className="flex-1 text-corpo font-bold">Notificações</span>
-            <ChevronRight
-              className="size-5 text-tinta-suave"
-              strokeWidth={2.2}
-              aria-hidden
-            />
-          </Link>
-        </li>
-        <li className="border-b-[1.5px] border-linha-suave">
-          <Link
-            href="/perfil/calendario"
-            className="focus-visible:shadow-foco flex min-h-16 w-full items-center gap-3 px-4 py-3 outline-none"
-          >
-            <CalendarDays
-              className="size-6 text-pinheiro"
-              strokeWidth={2.2}
-              aria-hidden
-            />
-            <span className="flex-1 text-corpo font-bold">Calendário</span>
-            <ChevronRight
-              className="size-5 text-tinta-suave"
-              strokeWidth={2.2}
-              aria-hidden
-            />
-          </Link>
-        </li>
-        <li className="border-b-[1.5px] border-linha-suave">
-          <Link
-            href="/documentos"
-            className="focus-visible:shadow-foco flex min-h-16 w-full items-center gap-3 px-4 py-3 outline-none"
-          >
-            <FolderOpen
-              className="size-6 text-pinheiro"
-              strokeWidth={2.2}
-              aria-hidden
-            />
-            <span className="flex-1 text-corpo font-bold">Documentos</span>
-            <ChevronRight
-              className="size-5 text-tinta-suave"
-              strokeWidth={2.2}
-              aria-hidden
-            />
-          </Link>
-        </li>
-        <li>
-          <button
-            type="button"
-            disabled
-            className="flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left text-desativado-texto"
-          >
-            <ShieldCheck className="size-6" strokeWidth={2.2} aria-hidden />
-            <span className="flex-1 text-corpo font-bold">
-              Termos e privacidade
-            </span>
-            <span className="text-legenda">Em breve</span>
-            <ChevronRight className="size-5" strokeWidth={2.2} aria-hidden />
-          </button>
-        </li>
-      </ul>
+      {pets.length > 0 ? (
+        <>
+          <SectionTitle>Lembretes por animal</SectionTitle>
+          <PetNotifyList pets={pets} />
+        </>
+      ) : null}
 
-      <form action={signOut} className="mt-auto">
+      <SectionTitle>Mais</SectionTitle>
+      <RowList>
+        <LinkRow
+          href="/perfil/calendario"
+          icon={CalendarDays}
+          label="Calendário"
+        />
+        <LinkRow href="/documentos" icon={FolderOpen} label="Documentos" />
+        <LinkRow
+          href="/animais/arquivados"
+          icon={Archive}
+          label="Animais arquivados"
+          detail={
+            archivedCount > 0 ? (
+              <span className="text-legenda text-tinta-suave">
+                {archivedCount}
+              </span>
+            ) : undefined
+          }
+        />
+      </RowList>
+
+      <form action={signOut} className="mt-2">
         <Button type="submit" variant="secondary">
           Terminar sessão
         </Button>
       </form>
+
+      <p className="text-center text-legenda text-tinta-suave">
+        Patudos · versão {pkg.version}
+        <br />
+        Saúde, lembretes, despesas e documentos dos teus animais.
+      </p>
     </>
   );
 }

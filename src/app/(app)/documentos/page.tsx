@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { FileText } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -14,7 +15,7 @@ export default function Page() {
     <>
       <BackButton />
       <h1 className="text-ecra tracking-tight">Documentos</h1>
-      <Suspense fallback={<div className="flex-1" aria-hidden />}>
+      <Suspense fallback={<PageSkeleton />}>
         <Lista />
       </Suspense>
     </>

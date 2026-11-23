@@ -547,6 +547,7 @@ export type Database = {
           email: string;
           id: string;
           name: string;
+          reminder_emails: boolean;
         };
         ComputedFields: never;
         Insert: {
@@ -554,12 +555,14 @@ export type Database = {
           email: string;
           id: string;
           name?: string;
+          reminder_emails?: boolean;
         };
         Update: {
           created_at?: string;
           email?: string;
           id?: string;
           name?: string;
+          reminder_emails?: boolean;
         };
         Relationships: [];
       };

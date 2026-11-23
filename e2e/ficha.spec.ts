@@ -231,8 +231,11 @@ test("filtros da cronologia", async ({ page }) => {
   await expect(home).toBeHidden();
 
   await chips.getByRole("link", { name: "Desparasitações" }).click();
-  await expect(page.getByText("Nada por aqui")).toBeVisible();
+  await expect(page.getByText("Nada com estes filtros")).toBeVisible();
   await expect(page.getByText("Não há registos deste tipo.")).toBeVisible();
+  await page.getByRole("link", { name: "Limpar filtros" }).click();
+  await expect(visit).toBeVisible();
+  await chips.getByRole("link", { name: "Desparasitações" }).click();
   await shot(page, "f9-filtro-vazio");
 
   await chips.getByRole("link", { name: "Tudo", exact: true }).click();

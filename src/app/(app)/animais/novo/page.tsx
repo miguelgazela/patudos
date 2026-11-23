@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { Suspense } from "react";
 
 import { FormHeader } from "@/components/pets/form-header";
@@ -9,7 +10,7 @@ export default function NovoAnimalPage() {
   return (
     <>
       <FormHeader title="Novo animal" />
-      <Suspense fallback={<div className="flex-1" aria-hidden />}>
+      <Suspense fallback={<PageSkeleton />}>
         <Formulario />
       </Suspense>
     </>

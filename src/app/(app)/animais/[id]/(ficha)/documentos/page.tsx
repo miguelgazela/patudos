@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { FileText } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -12,7 +13,7 @@ export default function DocumentosPage({
   params,
 }: PageProps<"/animais/[id]/documentos">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Documentos params={params} />
     </Suspense>
   );

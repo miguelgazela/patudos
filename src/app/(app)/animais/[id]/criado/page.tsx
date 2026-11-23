@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { Check, ChevronRight, Syringe, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,7 +14,7 @@ export default function CriadoPage({
   params,
 }: PageProps<"/animais/[id]/criado">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Criado params={params} />
     </Suspense>
   );

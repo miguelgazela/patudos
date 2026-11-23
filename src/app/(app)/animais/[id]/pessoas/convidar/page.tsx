@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -10,7 +11,7 @@ export default function ConvidarPage({
   params,
 }: PageProps<"/animais/[id]/pessoas/convidar">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Convidar params={params} />
     </Suspense>
   );

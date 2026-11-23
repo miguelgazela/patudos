@@ -173,7 +173,7 @@ export function TreatmentBody({
             aria-checked={tab === o.value}
             onClick={() => pickTab(o.value)}
             className={cn(
-              "focus-visible:shadow-foco h-[42px] rounded-capsula text-etiqueta font-bold outline-none",
+              "focus-visible:shadow-foco h-11 rounded-capsula text-etiqueta font-bold outline-none",
               tab === o.value
                 ? "shadow-segmento bg-branco text-tinta"
                 : "text-tinta-suave",
@@ -205,7 +205,7 @@ export function TreatmentBody({
             onClick={() => pick(o.id)}
             className={cn(
               "focus-visible:shadow-foco flex min-h-14 w-full items-center gap-3 border-b-[1.5px] border-linha-suave px-4 text-left text-[16px] font-bold outline-none last:border-b-0",
-              selected === o.id && "bg-[#eef8f5]",
+              selected === o.id && "bg-menta-suave",
             )}
           >
             <span
@@ -213,7 +213,7 @@ export function TreatmentBody({
                 "size-6 shrink-0 rounded-full border-2",
                 selected === o.id
                   ? "border-[7px] border-pinheiro"
-                  : "border-[#9fb3ae]",
+                  : "border-tracejado",
               )}
               aria-hidden
             />

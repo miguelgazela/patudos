@@ -12,7 +12,7 @@ export function ErrorBanner({
   return (
     <div
       role="alert"
-      className="flex flex-col gap-3 rounded-[20px] bg-atraso-fundo p-4 text-etiqueta text-atraso-banner"
+      className="flex flex-col gap-3 rounded-banner bg-atraso-fundo p-4 text-etiqueta text-atraso-banner"
     >
       <p className="flex items-start gap-3">
         <CircleAlert

@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -8,7 +9,7 @@ import { readPendingLogin } from "@/lib/auth/pending-login";
 export default function CodigoPage() {
   return (
     <AuthShell>
-      <Suspense fallback={<div className="flex-1" aria-hidden />}>
+      <Suspense fallback={<PageSkeleton />}>
         <Code />
       </Suspense>
     </AuthShell>

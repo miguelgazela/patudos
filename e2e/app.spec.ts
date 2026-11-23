@@ -139,15 +139,14 @@ test("separadores, menu + e terminar sessão a partir do Perfil", async ({
   await page.getByRole("button", { name: "Voltar" }).click();
   await expect(page).toHaveURL(/\/$/);
 
-  // Perfil: nome editável, email, termos desativados, terminar sessão.
+  // Perfil: nome editável, email, terminar sessão.
   await nav.getByRole("link", { name: "Perfil" }).click();
   await expect(page.locator("dd", { hasText: /@exemplo\.pt$/ })).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /Termos e privacidade/ }),
-  ).toBeDisabled();
+  await page.getByRole("button", { name: "Editar nome" }).click();
   await page.getByLabel("O teu nome").fill("Rita Maria");
   await page.getByRole("button", { name: "Guardar nome" }).click();
-  await expect(page.getByText("Nome guardado")).toBeVisible();
+  await expect(page.getByText("Nome guardado").first()).toBeVisible();
+  await expect(page.getByText("Rita Maria", { exact: true })).toBeVisible();
   await nav.getByRole("link", { name: "Hoje" }).click();
   await expect(
     page.getByRole("heading", { name: /, Rita Maria$/ }),

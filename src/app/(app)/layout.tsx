@@ -12,9 +12,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <NameGuard />
       </Suspense>
       {/* A barra tem ~86 px + safe area; o conteúdo nunca fica por baixo dela. */}
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-5 pt-[max(env(safe-area-inset-top),32px)] pb-[calc(max(env(safe-area-inset-bottom),12px)+110px)]">
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-5 pt-[max(env(safe-area-inset-top),32px)] pb-[calc(max(env(safe-area-inset-bottom),12px)+110px)]">
         {children}
-      </div>
+      </main>
       {/* O caminho atual só se conhece no pedido (rotas com :id). */}
       <Suspense fallback={null}>
         <TabBar />

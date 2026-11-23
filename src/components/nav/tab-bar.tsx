@@ -88,7 +88,7 @@ export function TabBar() {
               aria-haspopup="dialog"
               aria-expanded={open}
               onClick={() => setOpen(true)}
-              className="focus-visible:shadow-foco flex h-14 w-16 items-center justify-center rounded-[20px] bg-sol text-tinta outline-none active:translate-y-px"
+              className="focus-visible:shadow-foco flex h-14 w-16 items-center justify-center rounded-banner bg-sol text-tinta outline-none active:translate-y-px"
             >
               <Plus className="size-7" strokeWidth={2.8} aria-hidden />
             </button>

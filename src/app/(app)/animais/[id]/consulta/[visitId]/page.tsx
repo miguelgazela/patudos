@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import {
   ChevronRight,
   Pencil,
@@ -22,7 +23,7 @@ export default function ConsultaPage({
   params,
 }: PageProps<"/animais/[id]/consulta/[visitId]">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Consulta params={params} />
     </Suspense>
   );

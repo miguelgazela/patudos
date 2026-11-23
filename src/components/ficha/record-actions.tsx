@@ -1,5 +1,7 @@
 "use client";
 
+import { showToast } from "@/components/ui/toast";
+import { safely } from "@/lib/client-action";
 import { CalendarCheck, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -28,12 +30,13 @@ export function DeleteRecordButton({
 
   function remove() {
     startTransition(async () => {
-      const res = await deleteRecord(kind, id);
+      const res = await safely(() => deleteRecord(kind, id));
       if (!res.ok) {
         setOpen(false);
         setMessage(res.message);
         return;
       }
+      showToast("Registo apagado");
       router.push(`/animais/${petId}/cronologia`);
     });
   }
@@ -73,12 +76,13 @@ export function EndMedicationButton({ id }: { id: string }) {
 
   function end() {
     startTransition(async () => {
-      const res = await endMedication(id);
+      const res = await safely(() => endMedication(id));
       setOpen(false);
       if (!res.ok) {
         setMessage(res.message);
         return;
       }
+      showToast("Medicação terminada");
       router.refresh();
     });
   }

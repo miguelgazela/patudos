@@ -118,10 +118,16 @@ Deno.test(
     const emailA = `fn-a-${run}@example.test`;
     const emailB = `fn-b-${run}@example.test`;
     const emailC = `fn-c-${run}@example.test`;
+    const emailD = `fn-d-${run}@example.test`;
     try {
       const a = await createUser(emailA, "Pedro");
       const b = await createUser(emailB, "Mãe");
       const c = await createUser(emailC, "Pai");
+      // D tem as notificações ligadas, mas desligou os «Emails de lembrete» no Perfil.
+      const d = await createUser(emailD, "Tia");
+      await rest("PATCH", `/rest/v1/profiles?id=eq.${d}`, {
+        reminder_emails: false,
+      });
       const [pet] = await rest("POST", "/rest/v1/pets", {
         name: petName,
         species: "dog",
@@ -135,6 +141,7 @@ Deno.test(
           { pet_id: pet.id, user_id: a, role: "owner", notify: true },
           { pet_id: pet.id, user_id: b, role: "caregiver", notify: true },
           { pet_id: pet.id, user_id: c, role: "caregiver", notify: false },
+          { pet_id: pet.id, user_id: d, role: "caregiver", notify: true },
         ],
         { Prefer: "resolution=merge-duplicates,return=representation" },
       );
@@ -208,6 +215,11 @@ Deno.test(
         (await mailTo(emailC)).length,
         0,
         "notify desligado não recebe",
+      );
+      assertEquals(
+        (await mailTo(emailD)).length,
+        0,
+        "emails de lembrete desligados no Perfil não recebe",
       );
 
       // Push: A (201) recebeu 2 (manual + medicação), B (410) foi apagada, C não recebeu

@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -10,7 +11,7 @@ export default function PessoasPage({
   searchParams,
 }: PageProps<"/animais/[id]/pessoas">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Pessoas params={params} searchParams={searchParams} />
     </Suspense>
   );

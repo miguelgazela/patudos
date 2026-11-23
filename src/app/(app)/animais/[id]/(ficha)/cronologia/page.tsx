@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import {
   Bug,
   CalendarClock,
@@ -14,6 +15,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { EmptyState } from "@/components/nav/empty-state";
+import { NoResults } from "@/components/nav/no-results";
 import { formatISODate } from "@/lib/dates";
 import { getTimeline } from "@/lib/ficha/data";
 import {
@@ -31,7 +33,7 @@ export default function CronologiaPage({
   searchParams,
 }: PageProps<"/animais/[id]/cronologia">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Cronologia params={params} searchParams={searchParams} />
     </Suspense>
   );
@@ -154,12 +156,14 @@ async function Cronologia({
             </ul>
           </section>
         ))
-      ) : (
+      ) : filter === "tudo" ? (
         <EmptyState icon={CalendarClock} title="Nada por aqui">
-          {filter === "tudo"
-            ? "Ainda não há registos. Começa por registar uma consulta."
-            : "Não há registos deste tipo."}
+          Ainda não há registos. Começa por registar uma consulta.
         </EmptyState>
+      ) : (
+        <NoResults clearHref={`/animais/${id}/cronologia`}>
+          Não há registos deste tipo.
+        </NoResults>
       )}
     </>
   );

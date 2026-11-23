@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { Chip } from "@/components/consulta/ui";
+import { NoResults } from "@/components/nav/no-results";
 import { formatISODate } from "@/lib/dates";
 import type { DocumentListItem } from "@/lib/documentos/data";
 import { DOCUMENT_CHIPS, filterDocuments } from "@/lib/documentos/logic";
@@ -82,12 +83,16 @@ export function DocumentBrowser({
       </div>
 
       {shown.length === 0 ? (
-        <p
-          className="py-8 text-center text-corpo text-tinta-suave"
-          data-testid="sem-resultados"
-        >
-          Não encontrámos nenhum documento.
-        </p>
+        query || kind ? (
+          <NoResults
+            onClear={() => {
+              setQuery("");
+              setKind(null);
+            }}
+          >
+            Não encontrámos nenhum documento.
+          </NoResults>
+        ) : null
       ) : (
         <ul className="grid grid-cols-2 gap-3" data-testid="documentos">
           {shown.map((d) => {

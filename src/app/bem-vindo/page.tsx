@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -14,7 +15,7 @@ export default function BemVindoPage() {
           O teu nome aparece aos outros como «registado por…».
         </p>
       </div>
-      <Suspense fallback={<div className="flex-1" aria-hidden />}>
+      <Suspense fallback={<PageSkeleton />}>
         <Form />
       </Suspense>
     </AuthShell>

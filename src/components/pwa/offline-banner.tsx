@@ -26,7 +26,7 @@ export function OfflineBanner() {
       role="alert"
       className="fixed inset-x-0 top-0 z-[60] px-5 pt-[max(env(safe-area-inset-top),12px)]"
     >
-      <p className="shadow-segmento mx-auto flex max-w-md items-start gap-3 rounded-[20px] bg-aviso-fundo p-4 text-etiqueta text-aviso-banner">
+      <p className="shadow-segmento mx-auto flex max-w-md items-start gap-3 rounded-banner bg-aviso-fundo p-4 text-etiqueta text-aviso-banner">
         <WifiOff
           className="mt-0.5 size-5 shrink-0"
           strokeWidth={2.2}

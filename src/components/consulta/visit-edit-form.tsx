@@ -1,5 +1,7 @@
 "use client";
 
+import { showToast } from "@/components/ui/toast";
+import { safely } from "@/lib/client-action";
 import { Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -44,24 +46,26 @@ export function VisitEditForm({
 
   function save() {
     startTransition(async () => {
-      const res = await updateVetVisit(visitId, v);
+      const res = await safely(() => updateVetVisit(visitId, v));
       if (!res.ok) {
         setErrors(res.errors ?? {});
         setMessage(res.message);
         return;
       }
+      showToast("Consulta guardada");
       router.push(back);
     });
   }
 
   function remove() {
     startTransition(async () => {
-      const res = await deleteVetVisit(visitId);
+      const res = await safely(() => deleteVetVisit(visitId));
       if (!res.ok) {
         setConfirmOpen(false);
         setMessage(res.message);
         return;
       }
+      showToast("Consulta apagada");
       router.push(back);
     });
   }

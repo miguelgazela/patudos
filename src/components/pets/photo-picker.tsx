@@ -48,7 +48,7 @@ export function PhotoPicker({
         type="button"
         onClick={() => inputRef.current?.click()}
         aria-label={shown ? "Mudar foto" : "Pôr foto"}
-        className="focus-visible:shadow-foco flex size-30 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-full border-2 border-dashed border-[#9fb3ae] bg-branco text-etiqueta font-extrabold text-pinheiro outline-none data-[has-photo=true]:border-solid data-[has-photo=true]:border-linha"
+        className="focus-visible:shadow-foco flex size-30 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-full border-2 border-dashed border-tracejado bg-branco text-etiqueta font-extrabold text-pinheiro outline-none data-[has-photo=true]:border-solid data-[has-photo=true]:border-linha"
         data-has-photo={shown ? "true" : "false"}
       >
         {shown ? (
@@ -69,6 +69,7 @@ export function PhotoPicker({
         tabIndex={-1}
         aria-hidden
         data-testid="photo-input"
+        aria-label="Escolher foto do animal"
         onChange={(e) => {
           void onPick(e.target.files?.[0]);
           e.target.value = "";

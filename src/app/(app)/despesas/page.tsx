@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import {
   Bone,
   ChevronLeft,
@@ -17,6 +18,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
 
+import { NoResults } from "@/components/nav/no-results";
 import { EmptyState } from "@/components/nav/empty-state";
 import { buttonVariants } from "@/components/ui/button";
 import { todayISO } from "@/lib/dates";
@@ -53,7 +55,7 @@ const one = (v: string | string[] | undefined) =>
 // Ecrã 25: despesas por período.
 export default function DespesasPage({ searchParams }: PageProps<"/despesas">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Despesas searchParams={searchParams} />
     </Suspense>
   );
@@ -146,7 +148,7 @@ async function Despesas({
               href={href({ p: p.key })}
               aria-current={i === 0 ? "true" : undefined}
               className={cn(
-                "flex h-10 flex-1 items-center justify-center rounded-capsula",
+                "flex h-11 flex-1 items-center justify-center rounded-capsula",
                 i === 0 ? "bg-branco text-tinta" : "text-tinta-suave",
               )}
             >
@@ -229,24 +231,28 @@ async function Despesas({
       </details>
 
       {overview.items.length === 0 ? (
-        <EmptyState
-          icon={Wallet}
-          title={
-            hasFilters
-              ? "Nada com estes filtros"
-              : period.kind === "month"
+        hasFilters ? (
+          <NoResults clearHref={href({ a: null, c: null, q: null })}>
+            Não há despesas deste período com estes filtros.
+          </NoResults>
+        ) : (
+          <EmptyState
+            icon={Wallet}
+            title={
+              period.kind === "month"
                 ? `Sem despesas em ${monthName(period)}`
                 : `Sem despesas em ${period.key}`
-          }
-          action={
-            <Link href="/registar/despesa" className={buttonVariants()}>
-              Nova despesa
-            </Link>
-          }
-        >
-          As consultas com custo aparecem aqui sozinhas. Ração, areia ou seguro?
-          Junta-os aqui.
-        </EmptyState>
+            }
+            action={
+              <Link href="/registar/despesa" className={buttonVariants()}>
+                Nova despesa
+              </Link>
+            }
+          >
+            As consultas com custo aparecem aqui sozinhas. Ração, areia ou
+            seguro? Junta-os aqui.
+          </EmptyState>
+        )
       ) : (
         <>
           <section

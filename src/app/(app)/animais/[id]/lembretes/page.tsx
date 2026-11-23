@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { connection } from "next/server";
@@ -10,7 +11,7 @@ export default function LembretesPage({
   params,
 }: PageProps<"/animais/[id]/lembretes">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Lembretes params={params} />
     </Suspense>
   );

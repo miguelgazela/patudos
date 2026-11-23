@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { connection } from "next/server";
 import { Suspense } from "react";
 
@@ -10,7 +11,7 @@ export default function NovoLembretePage({
   params,
 }: PageProps<"/animais/[id]/lembretes/novo">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Novo params={params} />
     </Suspense>
   );

@@ -183,4 +183,17 @@ describe("emailRecipients", () => {
     );
     expect(r.map((x) => x.user_id)).toEqual(["1"]);
   });
+
+  it("ignora quem desligou os emails de lembrete", () => {
+    const r = emailRecipients(
+      item({
+        recipients: [
+          { user_id: "1", email: "a@x.pt", name: null, reminder_emails: true },
+          { user_id: "2", email: "b@x.pt", name: null, reminder_emails: false },
+          { user_id: "3", email: "c@x.pt", name: null },
+        ],
+      }),
+    );
+    expect(r.map((x) => x.user_id)).toEqual(["1", "3"]);
+  });
 });

@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { PawPrint } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -15,7 +16,7 @@ export default function Page({
   searchParams,
 }: PageProps<"/registar/documento">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Registar searchParams={searchParams} />
     </Suspense>
   );

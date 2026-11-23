@@ -28,10 +28,10 @@ import {
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
 
-type Detected = { state: PushState; endpoint: string | null };
+export type Detected = { state: PushState; endpoint: string | null };
 
 /** Lê o estado real do browser (corre só no cliente). */
-async function detect(): Promise<Detected> {
+export async function detect(): Promise<Detected> {
   const hasPushApi =
     "serviceWorker" in navigator &&
     "PushManager" in window &&
@@ -87,8 +87,8 @@ function Notice({
     <p
       className={
         tone === "mint"
-          ? "flex items-start gap-3 rounded-[20px] bg-menta p-4 text-etiqueta text-pinheiro-escuro"
-          : "flex items-start gap-3 rounded-[20px] bg-aviso-fundo p-4 text-etiqueta text-aviso-banner"
+          ? "flex items-start gap-3 rounded-banner bg-menta p-4 text-etiqueta text-pinheiro-escuro"
+          : "flex items-start gap-3 rounded-banner bg-aviso-fundo p-4 text-etiqueta text-aviso-banner"
       }
     >
       <Icon className="mt-0.5 size-5 shrink-0" strokeWidth={2.2} aria-hidden />
@@ -359,7 +359,7 @@ export function NotificacoesPanel() {
   return (
     <div className="flex flex-1 flex-col gap-6" data-testid="notificacoes-off">
       <div
-        className="flex flex-col gap-2.5 rounded-[28px] bg-menta px-[18px] py-6"
+        className="flex flex-col gap-2.5 rounded-dialogo bg-menta px-[18px] py-6"
         aria-hidden
       >
         <FakeNotification

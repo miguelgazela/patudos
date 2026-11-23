@@ -1,5 +1,6 @@
 "use client";
 
+import { safely } from "@/lib/client-action";
 import { ChevronDown, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -62,7 +63,7 @@ export function TreatmentForm({
     }
     setServerError(null);
     startTransition(async () => {
-      const res = await saveHomeTreatment(payload);
+      const res = await safely(() => saveHomeTreatment(payload));
       if (!res.ok) {
         setErrors(res.errors ?? {});
         setServerError(res.message);

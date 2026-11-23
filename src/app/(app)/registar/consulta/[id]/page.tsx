@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -11,7 +12,7 @@ export default function EditarConsultaPage({
   params,
 }: PageProps<"/registar/consulta/[id]">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Editar params={params} />
     </Suspense>
   );

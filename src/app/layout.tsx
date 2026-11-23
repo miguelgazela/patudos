@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
+import { Toaster } from "@/components/ui/toast";
 import { RegisterServiceWorker } from "@/components/pwa/register-sw";
 
 import "./globals.css";
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <OfflineBanner />
         {children}
+        <Toaster />
         <RegisterServiceWorker />
       </body>
     </html>

@@ -1,5 +1,7 @@
 "use client";
 
+import { showToast } from "@/components/ui/toast";
+import { failMessage, safely } from "@/lib/client-action";
 import { Check, ChevronDown, Paperclip, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -226,6 +228,7 @@ export function ExpenseForm(props: {
           return;
         }
         if (initial) {
+          showToast("Despesa guardada");
           router.replace(`/despesas?p=${payload.spent_on.slice(0, 7)}`);
           return;
         }
@@ -237,8 +240,10 @@ export function ExpenseForm(props: {
       } catch {
         setServerError(
           attachment
-            ? "Não conseguimos enviar a fatura. Os dados continuam aqui; tenta de novo."
-            : "Não conseguimos guardar. Os dados continuam aqui; tenta de novo.",
+            ? failMessage(
+                "Não conseguimos enviar a fatura. Os dados continuam aqui; tenta de novo.",
+              )
+            : failMessage(),
         );
       }
     });
@@ -247,12 +252,13 @@ export function ExpenseForm(props: {
   function onDelete() {
     if (!initial) return;
     startTransition(async () => {
-      const res = await deleteExpense(initial.id);
+      const res = await safely(() => deleteExpense(initial.id));
       setDeleteOpen(false);
       if (!res.ok) {
         setServerError(res.message);
         return;
       }
+      showToast("Despesa apagada");
       router.replace("/despesas");
     });
   }
@@ -613,6 +619,7 @@ export function ExpenseForm(props: {
                 type="file"
                 accept="image/*,application/pdf"
                 data-testid="attachment-input"
+                aria-label="Anexar ficheiro"
                 className="sr-only"
                 tabIndex={-1}
                 onChange={(e) => {
@@ -623,7 +630,7 @@ export function ExpenseForm(props: {
               <button
                 type="button"
                 onClick={() => fileInput.current?.click()}
-                className="focus-visible:shadow-foco flex h-12 items-center justify-center gap-2 rounded-capsula border-2 border-dashed border-[#9fb3ae] bg-branco text-etiqueta font-extrabold text-pinheiro outline-none"
+                className="focus-visible:shadow-foco flex h-12 items-center justify-center gap-2 rounded-capsula border-2 border-dashed border-tracejado bg-branco text-etiqueta font-extrabold text-pinheiro outline-none"
               >
                 <Paperclip className="size-5" strokeWidth={2.2} aria-hidden />
                 {hasInvoice ? "Trocar fatura" : "Juntar foto ou PDF"}

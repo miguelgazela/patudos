@@ -1,5 +1,6 @@
 "use client";
 
+import { safely } from "@/lib/client-action";
 import { Ellipsis, Mail, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
@@ -46,7 +47,7 @@ export function PeopleList({
   function run(fn: () => Promise<{ ok: boolean; message?: string }>) {
     setMessage(null);
     startTransition(async () => {
-      const res = await fn();
+      const res = await safely(fn);
       if (!res.ok)
         setMessage(res.message ?? "Não conseguimos concluir. Tenta de novo.");
     });
@@ -57,7 +58,7 @@ export function PeopleList({
       {flash === "enviado" && !notice ? (
         <p
           role="status"
-          className="rounded-[20px] bg-menta p-4 text-etiqueta text-pinheiro-escuro"
+          className="rounded-banner bg-menta p-4 text-etiqueta text-pinheiro-escuro"
         >
           Convite enviado. A pessoa recebe um email para entrar.
         </p>
@@ -71,7 +72,7 @@ export function PeopleList({
       {notice ? (
         <p
           role="status"
-          className="rounded-[20px] bg-menta p-4 text-etiqueta text-pinheiro-escuro"
+          className="rounded-banner bg-menta p-4 text-etiqueta text-pinheiro-escuro"
         >
           {notice}
         </p>

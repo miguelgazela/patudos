@@ -1,3 +1,4 @@
+import { PageSkeleton } from "@/components/nav/skeleton";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -14,7 +15,7 @@ export default function EditarAnimalPage({
   params,
 }: PageProps<"/animais/[id]/editar">) {
   return (
-    <Suspense fallback={<div className="flex-1" aria-hidden />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Editar params={params} />
     </Suspense>
   );
