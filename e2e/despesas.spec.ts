@@ -90,7 +90,7 @@ async function save(page: Page) {
 
 test("despesa simples aparece no total do mês", async ({ page }) => {
   await signIn(page);
-  await createPet(page, "Mimi", "Gato");
+  const petId = await createPet(page, "Mimi", "Gato");
   await newExpense(page, { amount: "45,50", category: "Veterinário" });
   await shot(page, "despesa-nova");
   await save(page);
@@ -102,11 +102,16 @@ test("despesa simples aparece no total do mês", async ({ page }) => {
   await expect(page.getByTestId("by-pet")).toContainText("Mimi");
   await shot(page, "despesas-mes");
 
-  const [exp] = await rows<{ amount_cents: number; paid_by: string }>(
-    "expenses",
-    "select=amount_cents,paid_by&category=eq.veterinary",
+  // Só a despesa deste animal (a BD local guarda dados de outros testes).
+  const [split] = await rows<{
+    amount_cents: number;
+    expenses: { amount_cents: number; category: string };
+  }>(
+    "expense_splits",
+    `select=amount_cents,expenses(amount_cents,category)&pet_id=eq.${petId}`,
   );
-  expect(exp?.amount_cents).toBe(4550);
+  expect(split?.expenses.category).toBe("veterinary");
+  expect(split?.expenses.amount_cents).toBe(4550);
 });
 
 test("ração dividida por 2 gatos: 25,01 € fica 12,51 + 12,50", async ({
