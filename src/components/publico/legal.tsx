@@ -2,15 +2,6 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-/** Marcador visível para o que ainda tem de ser preenchido por quem responde pelo serviço. */
-export function Confirmar({ children }: { children: string }) {
-  return (
-    <mark className="rounded-md bg-aviso-fundo px-1.5 py-0.5 font-bold text-aviso">
-      [A CONFIRMAR: {children}]
-    </mark>
-  );
-}
-
 /** Moldura das páginas de texto (termos, privacidade): legível no telemóvel, centrada em ecrãs largos. */
 export function LegalPage({
   title,
@@ -33,9 +24,7 @@ export function LegalPage({
       <h1 className="text-ecra tracking-tight">{title}</h1>
       <aside className="rounded-banner bg-aviso-fundo p-4 text-etiqueta font-bold text-aviso-banner">
         Rascunho para revisão. Este texto descreve o que a app faz de facto, mas
-        ainda não foi revisto por quem responde pelo serviço. Os campos marcados{" "}
-        <Confirmar>…</Confirmar> têm de ser preenchidos antes de a app abrir ao
-        público.
+        ainda não teve revisão jurídica.
       </aside>
       <div className="flex flex-col gap-5 text-corpo [&_a]:font-bold [&_a]:text-pinheiro [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-3 [&_h2]:text-seccao [&_li]:pl-1 [&_ul]:ml-5 [&_ul]:flex [&_ul]:list-disc [&_ul]:flex-col [&_ul]:gap-2">
         {children}

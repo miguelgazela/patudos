@@ -111,17 +111,16 @@ test("a apresentação também fica bem em desktop", async ({ browser }) => {
   await ctx.close();
 });
 
-test("termos e privacidade abrem sem sessão, com os marcadores por confirmar", async ({
-  page,
-}) => {
+test("termos e privacidade abrem sem sessão, preenchidos", async ({ page }) => {
   await gotoApp(page, "/termos");
   await expect(page).toHaveURL(/\/termos$/);
   await expect(
     page.getByRole("heading", { level: 1, name: "Termos de utilização" }),
   ).toBeVisible();
   await expect(
-    page.getByText("[A CONFIRMAR: email de contacto]"),
+    page.getByRole("link", { name: "patudos@miguelgazela.com" }),
   ).toBeVisible();
+  await expect(page.getByText("[A CONFIRMAR")).toHaveCount(0);
   await shot(page, "termos-390");
 
   await page

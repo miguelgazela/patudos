@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Confirmar, LegalPage, Section } from "@/components/publico/legal";
+import { LegalPage, Section } from "@/components/publico/legal";
 
 export const metadata: Metadata = {
   title: "Política de privacidade · Patudos",
@@ -10,16 +10,14 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// Ecrã 34 (privacidade). Página pública e estática. Rascunho: ver os marcadores [A CONFIRMAR].
+// Ecrã 34 (privacidade). Página pública e estática. Texto preenchido; falta revisão jurídica.
 export default function PrivacidadePage() {
   return (
     <LegalPage
       title="Política de privacidade"
       other={{ href: "/termos", label: "Ler os Termos de utilização" }}
     >
-      <p className="text-tinta-suave">
-        Última atualização: <Confirmar>data</Confirmar>
-      </p>
+      <p className="text-tinta-suave">Última atualização: 23/11/2026</p>
 
       <Section title="Em resumo">
         <ul>
@@ -35,9 +33,9 @@ export default function PrivacidadePage() {
 
       <Section title="Quem é o responsável">
         <p>
-          O responsável pelo tratamento dos dados é{" "}
-          <Confirmar>nome ou entidade responsável</Confirmar>. Contacto:{" "}
-          <Confirmar>email de contacto</Confirmar>.
+          O responsável pelo tratamento dos dados é Miguel Oliveira. Contacto:{" "}
+          <a href="mailto:patudos@miguelgazela.com">patudos@miguelgazela.com</a>
+          .
         </p>
       </Section>
 
@@ -142,9 +140,9 @@ export default function PrivacidadePage() {
         <p>
           Guardamos os dados enquanto a tua conta existir. Se apagares a conta,
           apagamos os teus dados pessoais; as cópias de segurança são eliminadas
-          no prazo de <Confirmar>prazo das cópias de segurança</Confirmar>. Os
-          animais de que és o único dono são apagados com a conta (ou transferes
-          a posse antes). Os convites por aceitar caducam.
+          num prazo máximo de 30 dias. Os animais de que és o único dono são
+          apagados com a conta (ou transferes a posse antes). Os convites por
+          aceitar caducam.
         </p>
       </Section>
 
@@ -164,7 +162,10 @@ export default function PrivacidadePage() {
           </li>
           <li>
             <b>Oposição e limitação:</b> escreve-nos para{" "}
-            <Confirmar>email de contacto</Confirmar>.
+            <a href="mailto:patudos@miguelgazela.com">
+              patudos@miguelgazela.com
+            </a>
+            .
           </li>
           <li>
             <b>Reclamação:</b> podes queixar-te à Comissão Nacional de Proteção

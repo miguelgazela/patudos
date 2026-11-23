@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Confirmar, LegalPage, Section } from "@/components/publico/legal";
+import { LegalPage, Section } from "@/components/publico/legal";
 
 export const metadata: Metadata = {
   title: "Termos de utilização · Patudos",
@@ -10,23 +10,20 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// Ecrã 34 (termos). Página pública e estática. Rascunho: ver os marcadores [A CONFIRMAR].
+// Ecrã 34 (termos). Página pública e estática. Texto preenchido; falta revisão jurídica.
 export default function TermosPage() {
   return (
     <LegalPage
       title="Termos de utilização"
       other={{ href: "/privacidade", label: "Ler a Política de privacidade" }}
     >
-      <p className="text-tinta-suave">
-        Última atualização: <Confirmar>data</Confirmar>
-      </p>
+      <p className="text-tinta-suave">Última atualização: 23/11/2026</p>
 
       <Section title="O que é o Patudos">
         <p>
           O Patudos é uma app para registares a saúde, os lembretes, as despesas
           e os documentos dos teus cães e gatos, e para os partilhares com quem
-          cuida deles. O serviço é prestado por{" "}
-          <Confirmar>nome ou entidade responsável</Confirmar>.
+          cuida deles. O serviço é prestado por Miguel Oliveira.
         </p>
       </Section>
 
@@ -110,7 +107,8 @@ export default function TermosPage() {
       <Section title="Lei aplicável e contacto">
         <p>
           Aplica-se a lei portuguesa. Para qualquer questão, escreve para{" "}
-          <Confirmar>email de contacto</Confirmar>.
+          <a href="mailto:patudos@miguelgazela.com">patudos@miguelgazela.com</a>
+          .
         </p>
       </Section>
     </LegalPage>
