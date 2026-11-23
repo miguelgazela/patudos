@@ -23,6 +23,7 @@ import {
 import { centsToInput, splitEqually } from "@/lib/despesas/split";
 import { EXPENSE_CATEGORY_LABEL } from "@/lib/ficha/labels";
 import { resizeToJpeg } from "@/lib/pets/resize-image";
+import { useResetOnLeave } from "@/components/registar/use-reset-on-leave";
 import { createClient } from "@/lib/supabase/client";
 import { formatCents } from "@/lib/units";
 import type { FormPet } from "@/lib/vet-visits/data";
@@ -264,6 +265,17 @@ export function ExpenseForm(props: {
     });
   }
 
+  const startAnother = () => {
+    setDone(null);
+    setD(initialDraft(props));
+    setAttachment(null);
+    uploaded.current = null;
+  };
+  // Só depois de gravar: ao editar, sair do ecrã não pode apagar o rascunho.
+  useResetOnLeave(() => {
+    if (done) startAnother();
+  });
+
   if (done) {
     return (
       <div
@@ -280,15 +292,7 @@ export function ExpenseForm(props: {
           </p>
         </div>
         <div className="mt-2 flex flex-col gap-1">
-          <Button
-            type="button"
-            onClick={() => {
-              setDone(null);
-              setD(initialDraft(props));
-              setAttachment(null);
-              uploaded.current = null;
-            }}
-          >
+          <Button type="button" onClick={startAnother}>
             Registar outra
           </Button>
           <Link

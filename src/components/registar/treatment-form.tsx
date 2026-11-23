@@ -18,6 +18,7 @@ import { effectiveNextDue } from "@/lib/vet-visits/payload";
 import { buildTreatmentPayload } from "@/lib/vet-visits/quick";
 
 import { QuickSaved } from "./saved";
+import { useResetOnLeave } from "./use-reset-on-leave";
 
 type Done = { petId: string; petName: string; title: string; next: string };
 
@@ -79,6 +80,15 @@ export function TreatmentForm({
     });
   }
 
+  const startAnother = () => {
+    setDone(null);
+    setCost("");
+    setErrors({});
+    setDate(today);
+    setRound((r) => r + 1);
+  };
+  useResetOnLeave(startAnother);
+
   if (done) {
     return (
       <QuickSaved
@@ -86,13 +96,7 @@ export function TreatmentForm({
         title="Tratamento guardado"
         detail={`${done.title} de ${done.petName} ficou registado.${done.next ? ` Próxima: ${formatISODate(done.next)}.` : ""}`}
         petId={done.petId}
-        onAnother={() => {
-          setDone(null);
-          setCost("");
-          setErrors({});
-          setDate(today);
-          setRound((r) => r + 1);
-        }}
+        onAnother={startAnother}
       />
     );
   }

@@ -16,6 +16,7 @@ import type { FormPet } from "@/lib/vet-visits/data";
 import { buildWeightPayload } from "@/lib/vet-visits/quick";
 
 import { QuickSaved } from "./saved";
+import { useResetOnLeave } from "./use-reset-on-leave";
 
 type Done = { petId: string; petName: string; kg: number };
 
@@ -73,6 +74,14 @@ export function WeightForm({
     });
   }
 
+  const startAnother = () => {
+    setDone(null);
+    setKg("");
+    setDate(today);
+    setErrors({});
+  };
+  useResetOnLeave(startAnother);
+
   if (done) {
     return (
       <QuickSaved
@@ -80,12 +89,7 @@ export function WeightForm({
         title="Peso guardado"
         detail={`${done.petName} pesa ${formatKg(done.kg)}.`}
         petId={done.petId}
-        onAnother={() => {
-          setDone(null);
-          setKg("");
-          setDate(today);
-          setErrors({});
-        }}
+        onAnother={startAnother}
       />
     );
   }

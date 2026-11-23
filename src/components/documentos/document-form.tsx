@@ -9,6 +9,7 @@ import { ErrorBanner } from "@/components/auth/banner";
 import { TextField } from "@/components/auth/text-field";
 import { PetPicker } from "@/components/consulta/ui";
 import { QuickSaved } from "@/components/registar/saved";
+import { useResetOnLeave } from "@/components/registar/use-reset-on-leave";
 import { Button } from "@/components/ui/button";
 import { createDocument } from "@/lib/documentos/actions";
 import {
@@ -172,6 +173,16 @@ export function DocumentForm({
     });
   }
 
+  const startAnother = () => {
+    setDone(null);
+    setPick(null);
+    setTitleInput(null);
+    setKind("other");
+    setDate(today);
+    setErrors({});
+  };
+  useResetOnLeave(startAnother);
+
   if (done) {
     return (
       <QuickSaved
@@ -180,14 +191,7 @@ export function DocumentForm({
         detail={`«${done.title}» já está nos documentos.`}
         petId={done.petId}
         doneHref={`/animais/${done.petId}/documentos`}
-        onAnother={() => {
-          setDone(null);
-          setPick(null);
-          setTitleInput(null);
-          setKind("other");
-          setDate(today);
-          setErrors({});
-        }}
+        onAnother={startAnother}
       />
     );
   }

@@ -325,3 +325,26 @@ test("PDF acima de 10 MB e ficheiros inválidos são recusados com mensagem", as
   await expect(page.getByTestId("preview")).toHaveCount(0);
   await shot(page, "d27-pdf-grande");
 });
+
+test("depois de «Concluir», voltar a adicionar abre o formulário vazio", async ({
+  page,
+}) => {
+  await signIn(page);
+  await createPet(page, "Nina");
+  await gotoApp(page, "/");
+  await openAddFromMenu(page);
+  await page.getByTestId("file-gallery").setInputFiles({
+    name: "boletim.png",
+    mimeType: "image/png",
+    buffer: PNG,
+  });
+  await page.getByRole("button", { name: "Guardar" }).click();
+  await expect(page.getByTestId("document-saved")).toBeVisible();
+  await page.getByRole("link", { name: "Concluir" }).click();
+  await expect(page).toHaveURL(/\/animais\/[0-9a-f-]+\/documentos$/);
+
+  // Navegação dentro da app (sem recarregar): o ecrã não pode voltar «guardado».
+  await openAddFromMenu(page);
+  await expect(page.getByTestId("document-saved")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Guardar" })).toBeVisible();
+});

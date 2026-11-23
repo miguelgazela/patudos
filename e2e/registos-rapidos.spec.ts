@@ -174,3 +174,37 @@ test("menu «+» com dois animais: último usado pré-selecionado", async ({
       .getByRole("radio", { name: "Mimi" }),
   ).toBeChecked();
 });
+
+test("depois de «Concluir», voltar a abrir tratamento e peso mostra o formulário", async ({
+  page,
+}) => {
+  await signIn(page);
+  await createPet(page, "Bolacha", "Cão");
+
+  const openClientSide = async (action: "Tratamento" | "Peso") => {
+    // Sem recarregar a página: é aí que o ecrã escondido voltava «guardado».
+    await page.getByRole("button", { name: "Registar" }).click();
+    await page.getByRole("link", { name: new RegExp(`^${action}\\.`) }).click();
+  };
+
+  await openFromMenu(page, "Tratamento");
+  await page.getByLabel(/^Produto/).fill("Nobivac");
+  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await expect(page.getByTestId("treatment-saved")).toBeVisible();
+  await page.getByRole("link", { name: "Concluir" }).click();
+  await expect(page).toHaveURL(/\/animais\/[0-9a-f-]+$/);
+  await openClientSide("Tratamento");
+  await expect(page).toHaveURL(/\/registar\/tratamento$/);
+  await expect(page.getByTestId("treatment-saved")).toHaveCount(0);
+  await expect(page.getByLabel(/^Produto/)).toHaveValue("");
+
+  await page.getByRole("button", { name: "Fechar" }).click();
+  await openClientSide("Peso");
+  await page.getByLabel("Peso", { exact: true }).fill("12,5");
+  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await expect(page.getByTestId("weight-saved")).toBeVisible();
+  await page.getByRole("link", { name: "Concluir" }).click();
+  await openClientSide("Peso");
+  await expect(page.getByTestId("weight-saved")).toHaveCount(0);
+  await expect(page.getByLabel("Peso", { exact: true })).toHaveValue("");
+});
