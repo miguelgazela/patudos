@@ -831,6 +831,7 @@ export type Database = {
         Args: { p_occurrence_id: string; p_treatment?: Json };
         Returns: string;
       };
+      delete_account: { Args: { p_pet_ids?: string[] }; Returns: undefined };
       expand_rrule: {
         Args: {
           p_from: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import { DELETED_ACCOUNT } from "@/lib/conta/labels";
 import { safely } from "@/lib/client-action";
 import { Check } from "lucide-react";
 import Link from "next/link";
@@ -382,7 +383,11 @@ export function HojeList({
                 key={e.id}
                 entry={e}
                 ctx={ctx}
-                who={e.doneBy ? (names[e.doneBy] ?? "outra pessoa") : "alguém"}
+                who={
+                  e.doneBy
+                    ? (names[e.doneBy] ?? "outra pessoa")
+                    : DELETED_ACCOUNT
+                }
                 onUndo={() => undo(e)}
               />
             ))}

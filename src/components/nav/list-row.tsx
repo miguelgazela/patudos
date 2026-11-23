@@ -2,6 +2,8 @@ import { ChevronRight, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { cn } from "@/lib/utils";
+
 const row =
   "flex min-h-16 w-full items-center gap-3 border-b-[1.5px] border-linha-suave px-4 py-3 last:border-b-0";
 
@@ -14,9 +16,22 @@ export function RowList({ children }: { children: ReactNode }) {
   );
 }
 
-function RowIcon({ icon: Icon }: { icon: LucideIcon }) {
+function RowIcon({
+  icon: Icon,
+  danger = false,
+}: {
+  icon: LucideIcon;
+  danger?: boolean;
+}) {
   return (
-    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-menta text-pinheiro-escuro">
+    <span
+      className={cn(
+        "flex size-10 shrink-0 items-center justify-center rounded-full",
+        danger
+          ? "bg-atraso-fundo text-atraso"
+          : "bg-menta text-pinheiro-escuro",
+      )}
+    >
       <Icon className="size-5" strokeWidth={2.2} aria-hidden />
     </span>
   );
@@ -29,6 +44,7 @@ export function LinkRow({
   label,
   detail,
   sub,
+  danger = false,
 }: {
   href: string;
   icon: LucideIcon;
@@ -37,6 +53,8 @@ export function LinkRow({
   detail?: ReactNode;
   /** Linha de estado por baixo do título (ex.: «Ligadas»). */
   sub?: ReactNode;
+  /** Ação destrutiva (Apagar conta): ícone e título em cor de perigo. */
+  danger?: boolean;
 }) {
   return (
     <li className={row}>
@@ -44,9 +62,16 @@ export function LinkRow({
         href={href}
         className="focus-visible:shadow-foco -my-3 -ml-4 flex min-h-16 flex-1 items-center gap-3 rounded-campo py-3 pl-4 outline-none"
       >
-        <RowIcon icon={icon} />
+        <RowIcon icon={icon} danger={danger} />
         <span className="min-w-0 flex-1">
-          <span className="block text-corpo font-bold">{label}</span>
+          <span
+            className={cn(
+              "block text-corpo font-bold",
+              danger && "text-atraso",
+            )}
+          >
+            {label}
+          </span>
           {sub ? <span className="block">{sub}</span> : null}
         </span>
         {detail ? <span className="shrink-0">{detail}</span> : null}

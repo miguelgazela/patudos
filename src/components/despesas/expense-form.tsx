@@ -1,5 +1,6 @@
 "use client";
 
+import { DELETED_ACCOUNT } from "@/lib/conta/labels";
 import { showToast } from "@/components/ui/toast";
 import { failMessage, safely } from "@/lib/client-action";
 import { Check, ChevronDown, Paperclip, X } from "lucide-react";
@@ -304,7 +305,7 @@ export function ExpenseForm(props: {
   const payerLabel =
     d.paidBy === meId
       ? "pago por ti"
-      : `pago por ${payers.get(d.paidBy ?? "") ?? "outra pessoa"}`;
+      : `pago por ${d.paidBy ? (payers.get(d.paidBy) ?? "outra pessoa") : DELETED_ACCOUNT}`;
   const hasInvoice = attachment !== null || d.documentId !== null;
 
   return (

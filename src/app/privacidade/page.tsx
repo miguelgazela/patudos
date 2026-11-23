@@ -141,8 +141,13 @@ export default function PrivacidadePage() {
           Guardamos os dados enquanto a tua conta existir. Se apagares a conta,
           apagamos os teus dados pessoais; as cópias de segurança são eliminadas
           num prazo máximo de 30 dias. Os animais de que és o único dono são
-          apagados com a conta (ou transferes a posse antes). Os convites por
-          aceitar caducam.
+          apagados com a conta, com todo o historial e ficheiros (ou transferes
+          a posse a outra pessoa antes). Nos animais que continuam, porque
+          outras pessoas cuidam deles, o que registaste e os documentos que
+          carregaste ficam como parte do historial do animal, mas sem o teu
+          nome: passam a aparecer como «Conta apagada». Os convites que enviaste
+          e os dirigidos ao teu email são apagados, e os que ficarem por aceitar
+          caducam.
         </p>
       </Section>
 
@@ -176,10 +181,6 @@ export default function PrivacidadePage() {
             ).
           </li>
         </ul>
-        <p>
-          As opções de exportar e apagar a conta estão a ser concluídas e vão
-          ficar disponíveis no Perfil. Até lá, pede-nos por email.
-        </p>
       </Section>
 
       <Section title="Segurança">

@@ -1,5 +1,6 @@
 import { formatCents, formatKg } from "@/lib/units";
 
+import { DELETED_ACCOUNT } from "@/lib/conta/labels";
 import {
   DOCUMENT_KIND_LABEL,
   EXPENSE_CATEGORY_LABEL,
@@ -153,7 +154,8 @@ export function buildTimeline(raw: RawTimeline): TimelineEntry[] {
       childTags.set(visitId, set);
     }
   };
-  const who = (id: string | null) => (id ? (raw.names.get(id) ?? null) : null);
+  const who = (id: string | null) =>
+    id ? (raw.names.get(id) ?? null) : DELETED_ACCOUNT;
 
   for (const e of raw.events) {
     if (e.vet_visit_id) {

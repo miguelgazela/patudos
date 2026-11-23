@@ -1,4 +1,5 @@
 import { PageSkeleton } from "@/components/nav/skeleton";
+import { DELETED_ACCOUNT } from "@/lib/conta/labels";
 import {
   Bone,
   ChevronLeft,
@@ -83,7 +84,7 @@ async function Despesas({
   const petById = new Map(pets.map((p) => [p.id, p]));
   const payerName = (id: string | null) =>
     !id
-      ? "—"
+      ? DELETED_ACCOUNT
       : id === meId
         ? "ti"
         : (payers.find((p) => p.id === id)?.name ?? "outra pessoa");

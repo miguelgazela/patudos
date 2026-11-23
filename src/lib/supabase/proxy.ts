@@ -10,7 +10,7 @@ import { supabasePublishableKey, supabaseUrl } from "./env";
  * sem sessão → /entrar (exceto as páginas públicas); com sessão, /entrar → /.
  * Sem sessão, «/» mostra a apresentação (reescrita interna para /sobre, o URL fica «/»).
  */
-const PUBLIC_PATHS = ["/sobre", "/termos", "/privacidade"];
+const PUBLIC_PATHS = ["/sobre", "/termos", "/privacidade", "/conta-apagada"];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });

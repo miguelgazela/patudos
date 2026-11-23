@@ -2,9 +2,11 @@ import {
   Archive,
   Bell,
   CalendarDays,
+  Download,
   FolderOpen,
   Mail,
   ScrollText,
+  UserX,
 } from "lucide-react";
 import { Suspense } from "react";
 
@@ -108,6 +110,11 @@ async function Perfil() {
           icon={ScrollText}
           label="Termos e privacidade"
         />
+        <LinkRow
+          href="/perfil/exportar"
+          icon={Download}
+          label="Exportar os meus dados"
+        />
       </RowList>
 
       <form action={signOut} className="mt-2">
@@ -115,6 +122,15 @@ async function Perfil() {
           Terminar sessão
         </Button>
       </form>
+
+      <RowList>
+        <LinkRow
+          href="/perfil/apagar"
+          icon={UserX}
+          label="Apagar conta"
+          danger
+        />
+      </RowList>
 
       <p className="text-center text-legenda text-tinta-suave">
         Patudos · versão {pkg.version}

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { DELETED_ACCOUNT } from "@/lib/conta/labels";
 import { notFound } from "next/navigation";
 
 import { getCurrentProfile } from "@/lib/auth/current-profile";
@@ -160,10 +161,12 @@ export async function getExpenseDetail(id: string): Promise<ExpenseDetail> {
     spentOn: e.spent_on,
     description: e.description,
     paidBy: e.paid_by,
-    paidByName: e.paid_by ? (names.get(e.paid_by) ?? "outra pessoa") : null,
+    paidByName: e.paid_by
+      ? (names.get(e.paid_by) ?? "outra pessoa")
+      : DELETED_ACCOUNT,
     createdByName: e.created_by
       ? (names.get(e.created_by) ?? "outra pessoa")
-      : null,
+      : DELETED_ACCOUNT,
     visitHref: visitRes.data
       ? `/animais/${visitRes.data.pet_id}/consulta/${visitRes.data.id}`
       : null,

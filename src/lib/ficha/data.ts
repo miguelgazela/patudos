@@ -1,5 +1,6 @@
 import "server-only";
 
+import { DELETED_ACCOUNT } from "@/lib/conta/labels";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
@@ -283,7 +284,7 @@ export async function getSummary(
           vet_name: v.vet_name,
           createdByName: v.created_by
             ? (names.get(v.created_by) ?? null)
-            : null,
+            : DELETED_ACCOUNT,
         }
       : null,
   };
@@ -370,14 +371,16 @@ export async function getVisitDetail(petId: string, visitId: string) {
     visit,
     createdByName: visit.created_by
       ? (names.get(visit.created_by) ?? "outra pessoa")
-      : "outra pessoa",
+      : DELETED_ACCOUNT,
     events: events.data ?? [],
     medications: meds.data ?? [],
     weight: weights.data?.[0] ? Number(weights.data[0].weight_kg) : null,
     weightId: weights.data?.[0]?.id ?? null,
     expense,
-    paidByName: expense?.paid_by
-      ? (names.get(expense.paid_by) ?? "outra pessoa")
+    paidByName: expense
+      ? expense.paid_by
+        ? (names.get(expense.paid_by) ?? "outra pessoa")
+        : DELETED_ACCOUNT
       : null,
     documents: (docs.data ?? []).map((d) => ({
       id: d.id,
@@ -544,7 +547,7 @@ export async function getRecordDetail(
     notes: base.notes,
     createdByName: base.createdBy
       ? (names.get(base.createdBy) ?? "outra pessoa")
-      : "outra pessoa",
+      : DELETED_ACCOUNT,
     createdAt: base.createdAt,
     canEdit: canEditRecord(head, base.createdBy),
     endable: base.endable,

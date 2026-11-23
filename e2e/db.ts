@@ -41,3 +41,18 @@ export async function insertRow(
   });
   if (!res.ok) throw new Error(`${table}: ${res.status} ${await res.text()}`);
 }
+
+/** Carrega um ficheiro para um bucket (service_role): para montar cenários com documentos. */
+export async function uploadObject(
+  bucket: string,
+  path: string,
+  body: Buffer,
+  contentType: string,
+): Promise<void> {
+  const res = await fetch(`${API}/storage/v1/object/${bucket}/${path}`, {
+    method: "POST",
+    headers: { ...headers, "Content-Type": contentType },
+    body: new Uint8Array(body),
+  });
+  if (!res.ok) throw new Error(`${bucket}: ${res.status} ${await res.text()}`);
+}
