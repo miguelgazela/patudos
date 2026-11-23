@@ -122,8 +122,10 @@ function Row({ entry, ctx }: { entry: HojeEntry; ctx: Ctx }) {
       >
         <PetFace pet={pet} size="size-[42px] text-[16px]" />
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-[17px] font-bold">{entry.title}</span>
-          <span className="truncate text-legenda text-tinta-suave">
+          <span className="text-[17px] leading-snug font-bold [overflow-wrap:anywhere]">
+            {entry.title}
+          </span>
+          <span className="text-legenda text-tinta-suave">
             <b className={colorStyles[pet.color].text}>{pet.name}</b> ·{" "}
             {whenLabel(entry, ctx.today)}
           </span>
@@ -167,7 +169,7 @@ function DoneBanner({
         aria-hidden
       />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-corpo font-bold">
+        <p className="text-corpo leading-snug font-bold [overflow-wrap:anywhere]">
           {entry.title} · {pet.name}
         </p>
         <p className="text-legenda text-feito-texto">

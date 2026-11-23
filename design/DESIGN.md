@@ -30,6 +30,8 @@ Guia curto para quem implementa. Valores exatos em `tokens.css`; CSS dos mockups
 
 **Texto sobre Pinheiro:** sempre Branco puro (6,4:1), também nas legendas (nada de Menta nem `white/90`). No código usa `text-branco`: `text-white` e `bg-white/…` não existem (a paleta por defeito foi removida) e saem sem estilo.
 
+**Texto longo:** quebra em vez de cortar com «…». Títulos e legendas de lista (ex.: «Próximos 30 dias» em Hoje) passam a duas ou mais linhas (`overflow-wrap:anywhere`); o botão «Feito» fica fixo à direita. `truncate` só em nomes numa só linha sem alternativa (ex.: título do visualizador).
+
 ### Estados
 
 | Estado | Texto/ícone | Fundo | Contraste |
