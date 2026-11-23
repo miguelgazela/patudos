@@ -88,7 +88,15 @@ export async function getHoje(): Promise<HojeData> {
   const now = new Date();
   const today = todayISO(now);
 
-  const pets = await listPets(profile.id, false);
+  // Em paralelo: animais, ocorrências recorrentes (o cron do passo 2 faz o mesmo
+  // para todos) e a contagem de dispositivos com notificações.
+  const [pets, , { count: pushCount }] = await Promise.all([
+    listPets(profile.id, false),
+    supabase.rpc("refresh_my_occurrences"),
+    supabase
+      .from("push_subscriptions")
+      .select("id", { count: "exact", head: true }),
+  ]);
   const base = {
     meId: profile.id,
     name: profile.name ?? "",
@@ -103,9 +111,6 @@ export async function getHoje(): Promise<HojeData> {
   };
   if (!pets.length)
     return { ...base, groups: empty, treatments: {}, names: {}, hasPush: true };
-
-  // Garante as ocorrências recorrentes (o cron do passo 2 faz o mesmo para todos).
-  await supabase.rpc("refresh_my_occurrences");
 
   const since = new Date(now.getTime() - 3 * 3_600_000).toISOString();
   const until = new Date(now.getTime() + 32 * 86_400_000).toISOString();
@@ -154,32 +159,31 @@ export async function getHoje(): Promise<HojeData> {
         .map((e) => e.sourceId as string),
     ),
   ];
-  const infos = await treatmentInfos(supabase, eventIds, today);
+  const doneBy = [
+    ...new Set(
+      groups.recentlyDone.map((e) => e.doneBy).filter((x): x is string => !!x),
+    ),
+  ];
+  const [infos, profiles] = await Promise.all([
+    treatmentInfos(supabase, eventIds, today),
+    doneBy.length
+      ? supabase
+          .from("profiles")
+          .select("id, name")
+          .in("id", doneBy)
+          .then((r) => r.data)
+      : Promise.resolve(null),
+  ]);
   const treatments: Record<string, TreatmentInfo> = {};
   for (const e of shown) {
     const info = e.sourceId ? infos.get(e.sourceId) : undefined;
     if (info) treatments[e.id] = info;
   }
 
-  const doneBy = [
-    ...new Set(
-      groups.recentlyDone.map((e) => e.doneBy).filter((x): x is string => !!x),
-    ),
-  ];
   const names: Record<string, string> = {};
-  if (doneBy.length) {
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, name")
-      .in("id", doneBy);
-    for (const p of profiles ?? []) {
-      names[p.id] =
-        p.id === profile.id ? "ti" : p.name?.trim() || "outra pessoa";
-    }
+  for (const p of profiles ?? []) {
+    names[p.id] = p.id === profile.id ? "ti" : p.name?.trim() || "outra pessoa";
   }
-  const { count: pushCount } = await supabase
-    .from("push_subscriptions")
-    .select("id", { count: "exact", head: true });
   return { ...base, groups, treatments, names, hasPush: (pushCount ?? 0) > 0 };
 }
 

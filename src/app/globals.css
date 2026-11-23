@@ -200,6 +200,44 @@ body {
   font-size: 17px;
   line-height: 1.45;
   font-variant-numeric: tabular-nums;
+  /* Sem espera de duplo toque no iOS e sem realce cinzento: o feedback é nosso. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Feedback imediato ao toque numa ligação (antes de o ecrã seguinte chegar). */
+a[href]:active,
+a[data-pendente] {
+  opacity: 0.6;
+}
+a[href] {
+  transition: opacity 80ms;
+}
+
+/* Barra fina no topo enquanto a navegação não termina. */
+.nav-progresso {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 3px;
+  transform-origin: left;
+  background: var(--color-pinheiro);
+  animation: nav-progresso 1.2s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes nav-progresso {
+  from {
+    transform: scaleX(0.05);
+  }
+  to {
+    transform: scaleX(0.9);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-progresso {
+    animation: none;
+    transform: scaleX(0.6);
+  }
 }
 
 /* iOS Safari dá largura intrínseca ao input de data e ignora w-full:

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { NavFeedback } from "@/components/nav/nav-feedback";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
 import { Toaster } from "@/components/ui/toast";
 import { RegisterServiceWorker } from "@/components/pwa/register-sw";
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="pt-PT" className={`${jakarta.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <OfflineBanner />
+        <NavFeedback />
         {children}
         <Toaster />
         <RegisterServiceWorker />

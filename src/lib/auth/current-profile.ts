@@ -1,10 +1,11 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 
 import { createClient } from "@/lib/supabase/server";
 
-/** Perfil de quem tem sessão. Sem sessão → /entrar. */
-export async function getCurrentProfile() {
+/** Perfil de quem tem sessão. Sem sessão → /entrar. Uma só consulta por pedido (layout + página). */
+export const getCurrentProfile = cache(async () => {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) redirect("/entrar");
@@ -17,4 +18,4 @@ export async function getCurrentProfile() {
   if (!profile) redirect("/entrar");
 
   return profile;
-}
+});
