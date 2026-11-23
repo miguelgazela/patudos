@@ -27,7 +27,7 @@ describe("vetVisitSchema", () => {
       pet_id: PET,
       visited_on: "2026-11-20",
       reason: " Vacinação ",
-      vet_name: "",
+      clinic_name: "",
       weight_kg: 12.4,
       health_events: [
         { type: "vaccine", title: "Antirrábica", next_due_on: "2027-11-20" },
@@ -38,7 +38,7 @@ describe("vetVisitSchema", () => {
     expect(r.success).toBe(true);
     if (r.success) {
       expect(r.data.reason).toBe("Vacinação");
-      expect(r.data.vet_name).toBeUndefined();
+      expect(r.data.clinic_name).toBeUndefined();
       expect(r.data.health_events[0]?.remind).toBe(true);
     }
   });

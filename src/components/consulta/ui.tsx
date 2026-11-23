@@ -1,11 +1,12 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import { Check, X } from "lucide-react";
-import type { ReactNode } from "react";
+import { Check, Hospital, X } from "lucide-react";
+import { useState, type ReactNode } from "react";
 
 import { PetAvatar } from "@/components/pets/pet-avatar";
 import { Button } from "@/components/ui/button";
+import type { ChosenClinic, ClinicInfo } from "@/lib/clinics/clinic";
 import type { FormPet } from "@/lib/vet-visits/data";
 import { cn } from "@/lib/utils";
 
@@ -235,37 +236,164 @@ export function ReasonField({
   );
 }
 
-/** Veterinário / clínica com sugestões do histórico. */
-export function VetField({
+/**
+ * Clínica da consulta: um cartão com a clínica já escolhida (a habitual do animal).
+ * Tocar abre um painel com as clínicas conhecidas e «Nova clínica» (só o nome), sem sair do ecrã.
+ */
+export function ClinicField({
   value,
+  clinics,
   onChange,
-  suggestions,
 }: {
-  value: string;
-  onChange: (v: string) => void;
-  suggestions: string[];
+  value: ChosenClinic | null;
+  clinics: ClinicInfo[];
+  onChange: (c: ChosenClinic | null) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState("");
+  const known = value ? clinics.find((c) => c.id === value.id) : undefined;
+
+  function pick(c: ChosenClinic | null) {
+    onChange(c);
+    setDraft("");
+    setOpen(false);
+  }
+  function confirmNew() {
+    const name = draft.trim();
+    if (!name) return;
+    const same = clinics.find(
+      (c) => c.name.trim().toLowerCase() === name.toLowerCase(),
+    );
+    pick(same ? { id: same.id, name: same.name } : { id: null, name });
+  }
+
+  // A nova (ainda não gravada) também aparece na lista, já escolhida.
+  const list: ChosenClinic[] = [
+    ...(value && !value.id ? [value] : []),
+    ...clinics.map((c) => ({ id: c.id, name: c.name })),
+  ];
+
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor="vet" className="text-etiqueta">
-        Veterinário / clínica
-      </label>
-      <input
-        id="vet"
-        name="vet_name"
-        list="vets"
-        value={value}
-        maxLength={80}
-        autoComplete="off"
-        autoCapitalize="words"
-        onChange={(e) => onChange(e.target.value)}
-        className="focus:shadow-foco h-campo w-full rounded-campo border-2 border-linha bg-branco px-4 text-corpo font-semibold text-tinta outline-none placeholder:text-placeholder focus:border-pinheiro"
-      />
-      <datalist id="vets">
-        {suggestions.map((s) => (
-          <option key={s} value={s} />
-        ))}
-      </datalist>
+      <span id="clinic-label" className="text-etiqueta">
+        Clínica
+      </span>
+      <button
+        type="button"
+        data-testid="clinic-card"
+        onClick={() => setOpen(true)}
+        className="focus-visible:shadow-foco flex min-h-[4.5rem] w-full items-center gap-3 rounded-cartao border-[1.5px] border-linha bg-branco p-3.5 text-left outline-none"
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-menta text-pinheiro-escuro">
+          <Hospital className="size-5" strokeWidth={2.2} aria-hidden />
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          {value ? (
+            <>
+              <span className="truncate text-[17px] font-bold">
+                {value.name}
+              </span>
+              {known?.phone ? (
+                <span className="truncate text-legenda text-tinta-suave">
+                  {known.phone}
+                </span>
+              ) : null}
+            </>
+          ) : (
+            <span className="text-[17px] font-bold text-tinta-suave">
+              Escolher clínica
+            </span>
+          )}
+        </span>
+        <span className="shrink-0 text-etiqueta font-bold text-pinheiro">
+          {value ? "Mudar" : "Escolher"}
+        </span>
+      </button>
+
+      <Sheet open={open} onOpenChange={setOpen} title="Clínica">
+        <ul className="flex flex-col" role="radiogroup" aria-label="Clínica">
+          {list.map((c) => {
+            const selected = value
+              ? value.id === c.id && value.name === c.name
+              : false;
+            const info = clinics.find((x) => x.id === c.id);
+            return (
+              <li key={c.id ?? `new-${c.name}`}>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => pick(c)}
+                  className="focus-visible:shadow-foco flex min-h-16 w-full items-center gap-3 border-b-[1.5px] border-linha-suave py-2 text-left outline-none"
+                >
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[17px] font-bold">
+                      {c.name}
+                    </span>
+                    {info?.phone || info?.address ? (
+                      <span className="truncate text-legenda text-tinta-suave">
+                        {[info.phone, info.address].filter(Boolean).join(" · ")}
+                      </span>
+                    ) : !c.id ? (
+                      <span className="text-legenda text-tinta-suave">
+                        Nova clínica
+                      </span>
+                    ) : null}
+                  </span>
+                  {selected ? (
+                    <Check
+                      className="size-6 shrink-0 text-pinheiro"
+                      strokeWidth={2.6}
+                      aria-hidden
+                    />
+                  ) : null}
+                </button>
+              </li>
+            );
+          })}
+          {value ? (
+            <li>
+              <button
+                type="button"
+                onClick={() => pick(null)}
+                className="focus-visible:shadow-foco flex min-h-16 w-full items-center border-b-[1.5px] border-linha-suave py-2 text-left text-[17px] font-bold text-tinta-suave outline-none"
+              >
+                Sem clínica
+              </button>
+            </li>
+          ) : null}
+        </ul>
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor="new-clinic" className="text-etiqueta">
+            Nova clínica
+          </label>
+          <input
+            id="new-clinic"
+            value={draft}
+            maxLength={80}
+            autoComplete="off"
+            autoCapitalize="words"
+            placeholder="Nome da clínica"
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                confirmNew();
+              }
+            }}
+            className="focus:shadow-foco h-campo w-full rounded-campo border-2 border-linha bg-branco px-4 text-corpo font-semibold text-tinta outline-none placeholder:text-placeholder focus:border-pinheiro"
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={!draft.trim()}
+            onClick={confirmNew}
+          >
+            Usar esta clínica
+          </Button>
+        </div>
+      </Sheet>
     </div>
   );
 }

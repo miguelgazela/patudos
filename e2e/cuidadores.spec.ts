@@ -7,6 +7,7 @@ import {
 } from "@playwright/test";
 
 import { rows } from "./db";
+import { chooseNewClinic } from "./clinica";
 import { waitForHydratedForm } from "./hydrated";
 import { latestCode, latestMail } from "./mailpit";
 
@@ -147,7 +148,7 @@ test("o dono convida a Mãe, ela entra, regista uma consulta e o dono vê-a", as
   await mom.getByRole("link", { name: /^Consulta\./ }).click();
   await waitForHydratedForm(mom);
   await mom.getByRole("button", { name: "Vacinação", exact: true }).click();
-  await mom.getByLabel("Veterinário / clínica").fill("Dra. Inês");
+  await chooseNewClinic(mom, "Dra. Inês");
   await mom.getByRole("button", { name: "+ Peso" }).click();
   await mom.getByLabel("Peso", { exact: true }).fill("20,5");
   await mom.getByRole("button", { name: "Guardar consulta" }).click();

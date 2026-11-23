@@ -1,7 +1,9 @@
 import { PageSkeleton } from "@/components/nav/skeleton";
 import {
   ChevronRight,
+  MessageCircle,
   Pencil,
+  Phone,
   Pill,
   Scale,
   Syringe,
@@ -12,6 +14,7 @@ import { Suspense, type ReactNode } from "react";
 
 import { BackButton } from "@/components/nav/back-button";
 import { buttonVariants } from "@/components/ui/button";
+import { telHref, visitPlace, whatsappHref } from "@/lib/clinics/clinic";
 import { formatISODate } from "@/lib/dates";
 import { getVisitDetail } from "@/lib/ficha/data";
 import { DOCUMENT_KIND_LABEL, eventTypeLabel } from "@/lib/ficha/labels";
@@ -95,6 +98,7 @@ async function Consulta({
   const d = await getVisitDetail(id, visitId);
   const { visit } = d;
   const base = `/animais/${id}/registo`;
+  const place = visitPlace(visit.clinics?.name, visit.vet_name, visit.clinic);
   const hasDone =
     d.events.length > 0 || d.medications.length > 0 || d.weight !== null;
 
@@ -107,10 +111,28 @@ async function Consulta({
         </h1>
         <p className="text-corpo text-tinta-suave">
           {formatISODate(visit.visited_on)}
-          {[visit.vet_name, visit.clinic].filter(Boolean).length
-            ? ` · ${[visit.vet_name, visit.clinic].filter(Boolean).join(" · ")}`
-            : ""}
+          {place ? ` · ${place}` : ""}
         </p>
+        {visit.clinics?.phone ? (
+          <a
+            href={telHref(visit.clinics.phone)}
+            className="focus-visible:shadow-foco flex min-h-11 w-fit items-center gap-2 text-corpo font-bold text-pinheiro outline-none"
+          >
+            <Phone className="size-5" strokeWidth={2.2} aria-hidden />
+            {visit.clinics.phone}
+          </a>
+        ) : null}
+        {visit.clinics?.phone && whatsappHref(visit.clinics.phone) ? (
+          <a
+            href={whatsappHref(visit.clinics.phone)!}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="focus-visible:shadow-foco flex min-h-11 w-fit items-center gap-2 text-corpo font-bold text-pinheiro outline-none"
+          >
+            <MessageCircle className="size-5" strokeWidth={2.2} aria-hidden />
+            WhatsApp
+          </a>
+        ) : null}
       </header>
 
       <Block id="feito" title="O que foi feito">

@@ -1,3 +1,4 @@
+import { visitPlace } from "@/lib/clinics/clinic";
 import { formatISODate } from "@/lib/dates";
 import { formatAge } from "@/lib/pets/age";
 import { speciesLabel } from "@/lib/pets/labels";
@@ -41,6 +42,12 @@ export function parsePdfOptions(
   };
 }
 
+export type PdfClinic = {
+  name: string;
+  phone: string | null;
+  address: string | null;
+};
+
 export type RawPdfData = {
   pet: {
     name: string;
@@ -52,6 +59,8 @@ export type RawPdfData = {
     microchip: string | null;
   };
   people: { name: string; role: "owner" | "caregiver" }[];
+  /** Clínica habitual do animal. */
+  clinic?: PdfClinic | null;
   events: {
     type: string;
     title: string;
@@ -70,8 +79,10 @@ export type RawPdfData = {
   visits: {
     visited_on: string;
     reason: string | null;
+    /** Campos antigos (texto livre), só para consultas anteriores às clínicas guardadas. */
     vet_name: string | null;
     clinic: string | null;
+    clinics?: PdfClinic | null;
   }[];
 };
 
@@ -85,7 +96,8 @@ export type PdfModel = {
     facts: { label: string; value: string }[];
   };
   contacts: {
-    vet: { name: string | null; clinic: string | null } | null;
+    /** A clínica habitual (ou a da consulta mais recente que tenha uma). */
+    clinic: PdfClinic | null;
     people: { name: string; role: string }[];
   };
   vaccines: PdfEventRow[];
@@ -207,10 +219,20 @@ export function buildPdfModel(
   }
   if (pet.microchip) facts.push({ label: "Chip", value: pet.microchip });
 
-  // Veterinário e clínica: da consulta mais recente que os tenha.
-  const withVet = byDateDesc(raw.visits, (v) => v.visited_on).find(
-    (v) => v.vet_name?.trim() || v.clinic?.trim(),
+  // Clínica: a habitual; se não houver, a da consulta mais recente que tenha uma.
+  const lastClinic = byDateDesc(raw.visits, (v) => v.visited_on).find(
+    (v) => v.clinics?.name?.trim() || v.clinic?.trim() || v.vet_name?.trim(),
   );
+  const clinic: PdfClinic | null =
+    raw.clinic ??
+    lastClinic?.clinics ??
+    (lastClinic
+      ? {
+          name: visitPlace(null, lastClinic.vet_name, lastClinic.clinic),
+          phone: null,
+          address: null,
+        }
+      : null);
 
   const events = inPeriod(
     byDateDesc(raw.events, (e) => e.occurred_on),
@@ -260,9 +282,7 @@ export function buildPdfModel(
         .map<PdfVisitRow>((v) => ({
           date: formatISODate(v.visited_on),
           reason: v.reason?.trim() || "Consulta",
-          vet: [v.vet_name?.trim(), v.clinic?.trim()]
-            .filter(Boolean)
-            .join(" · "),
+          vet: visitPlace(v.clinics?.name, v.vet_name, v.clinic),
         }))
     : null;
 
@@ -277,10 +297,11 @@ export function buildPdfModel(
       facts,
     },
     contacts: {
-      vet: withVet
+      clinic: clinic
         ? {
-            name: withVet.vet_name?.trim() || null,
-            clinic: withVet.clinic?.trim() || null,
+            name: clinic.name.trim(),
+            phone: clinic.phone?.trim() || null,
+            address: clinic.address?.trim() || null,
           }
         : null,
       people: [...raw.people]

@@ -30,6 +30,7 @@ function raw(over: Partial<ExportRaw> = {}): ExportRaw {
     color: "laranja",
     notes: null,
     archived_at: null,
+    clinic_id: "cccccccc-0000-0000-0000-000000000001",
     created_by: ME,
     created_at: T,
     updated_at: T,
@@ -49,6 +50,17 @@ function raw(over: Partial<ExportRaw> = {}): ExportRaw {
       { pet_id: PET, user_id: MAE, role: "caregiver", notify: false },
     ],
     names: { [MAE]: "Mãe" },
+    clinics: [
+      {
+        id: "cccccccc-0000-0000-0000-000000000001",
+        name: "VetLumiar",
+        phone: "217 000 000",
+        address: null,
+        created_by: ME,
+        created_at: T,
+        updated_at: T,
+      },
+    ],
     visits: [],
     weights: [
       {
@@ -195,6 +207,24 @@ describe("buildExport", () => {
     }[];
     documentos: { ficheiro: string }[];
   };
+
+  it("exporta as clínicas (sem autor) e a habitual de cada animal", () => {
+    const j = b.json as {
+      clinicas: Record<string, unknown>[];
+      animais: { clinica_habitual_id: string | null }[];
+    };
+    expect(j.clinicas).toEqual([
+      {
+        id: "cccccccc-0000-0000-0000-000000000001",
+        nome: "VetLumiar",
+        telefone: "217 000 000",
+        morada: null,
+      },
+    ]);
+    expect(j.animais[0]!.clinica_habitual_id).toBe(
+      "cccccccc-0000-0000-0000-000000000001",
+    );
+  });
 
   it("dados.json tem o perfil, os animais e os membros só com nome e papel", () => {
     expect(json.perfil.email).toBe("pedro@example.com");

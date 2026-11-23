@@ -1,3 +1,4 @@
+import type { ChosenClinic } from "@/lib/clinics/clinic";
 import type { MedicationDraft } from "@/lib/vet-visits/schedule";
 
 export type TreatmentItem = {
@@ -39,7 +40,8 @@ export type VisitDraft = {
   petId: string;
   visitDate: string;
   reason: string;
-  vet: string;
+  /** Clínica escolhida (a habitual do animal por defeito); `null` = nenhuma. */
+  clinic: ChosenClinic | null;
   items: Item[];
   /** `null` = o peso não foi acrescentado. */
   weight: string | null;

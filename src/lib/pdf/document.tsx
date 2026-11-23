@@ -2,6 +2,7 @@ import {
   Document,
   Font,
   Image,
+  Link,
   Page,
   Polyline,
   Circle,
@@ -14,6 +15,7 @@ import {
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
+import { telHref } from "@/lib/clinics/clinic";
 import { formatISODate } from "@/lib/dates";
 import type { PetColor } from "@/lib/pets/constants";
 
@@ -321,18 +323,24 @@ export function FichaPdf({
         <Section title="Contactos">
           <View style={s.contacts}>
             <View style={s.contactCol}>
-              <Text style={[s.muted, { fontSize: 8 }]}>VETERINÁRIO</Text>
-              {contacts.vet ? (
+              <Text style={[s.muted, { fontSize: 8 }]}>CLÍNICA</Text>
+              {contacts.clinic ? (
                 <>
-                  {contacts.vet.name ? (
-                    <Text style={s.bold}>{contacts.vet.name}</Text>
+                  <Text style={s.bold}>{contacts.clinic.name}</Text>
+                  {contacts.clinic.phone ? (
+                    <Link
+                      src={telHref(contacts.clinic.phone)}
+                      style={{ color: "inherit", textDecoration: "none" }}
+                    >
+                      {contacts.clinic.phone}
+                    </Link>
                   ) : null}
-                  {contacts.vet.clinic ? (
-                    <Text>{contacts.vet.clinic}</Text>
+                  {contacts.clinic.address ? (
+                    <Text>{contacts.clinic.address}</Text>
                   ) : null}
                 </>
               ) : (
-                <Text style={s.muted}>Sem veterinário registado</Text>
+                <Text style={s.muted}>Sem clínica registada</Text>
               )}
             </View>
             <View style={s.contactCol}>

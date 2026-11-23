@@ -3,6 +3,9 @@ import {
   Bug,
   ChevronRight,
   CalendarClock,
+  Hospital,
+  MessageCircle,
+  Phone,
   Pill,
   Stethoscope,
   Syringe,
@@ -15,6 +18,7 @@ import { Suspense, type ReactNode } from "react";
 import { DueFeito } from "@/components/ficha/due-feito";
 import { Sparkline } from "@/components/ficha/weight-chart";
 import { buttonVariants } from "@/components/ui/button";
+import { telHref, whatsappHref } from "@/lib/clinics/clinic";
 import { formatISODate, todayISO } from "@/lib/dates";
 import { getPetHeader, getSummary } from "@/lib/ficha/data";
 import { dueLabel, upcomingDates, type DueStatus } from "@/lib/ficha/due";
@@ -273,6 +277,69 @@ async function Resumo({
         </div>
       </Section>
 
+      <Section
+        id="clinica"
+        title="Clínica habitual"
+        action={
+          head.isOwner ? (
+            <Link
+              href={`${base}/clinica`}
+              className="focus-visible:shadow-foco flex h-11 items-center rounded-capsula px-2 text-etiqueta font-bold text-pinheiro outline-none"
+            >
+              {summary.clinic ? "Alterar" : "Escolher"}
+            </Link>
+          ) : null
+        }
+      >
+        {summary.clinic ? (
+          <div
+            className={cn(cardClass, "flex flex-col gap-3 p-3.5")}
+            data-testid="habitual-clinic"
+          >
+            <div className="flex items-center gap-3">
+              <IconBubble icon={Hospital} />
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-[17px] font-bold">
+                  {summary.clinic.name}
+                </span>
+                {summary.clinic.address ? (
+                  <span className="text-legenda text-tinta-suave">
+                    {summary.clinic.address}
+                  </span>
+                ) : null}
+              </span>
+            </div>
+            {summary.clinic.phone ? (
+              <div className="flex flex-col gap-2">
+                <a
+                  href={telHref(summary.clinic.phone)}
+                  className={buttonVariants({ variant: "secondary" })}
+                >
+                  <Phone aria-hidden strokeWidth={2.2} />
+                  Ligar · {summary.clinic.phone}
+                </a>
+                {whatsappHref(summary.clinic.phone) ? (
+                  <a
+                    href={whatsappHref(summary.clinic.phone)!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={buttonVariants({ variant: "secondary" })}
+                  >
+                    <MessageCircle aria-hidden strokeWidth={2.2} />
+                    WhatsApp
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <Empty>
+            Ainda sem clínica habitual. A primeira clínica que usares numa
+            consulta fica aqui.
+          </Empty>
+        )}
+      </Section>
+
       <Section id="consulta" title="Última consulta">
         {visit ? (
           <ul className={cardClass}>
@@ -285,7 +352,7 @@ async function Resumo({
                   </span>
                   <span className="truncate text-legenda text-tinta-suave">
                     {formatISODate(visit.visited_on)}
-                    {visit.vet_name ? ` · ${visit.vet_name}` : ""}
+                    {visit.place ? ` · ${visit.place}` : ""}
                   </span>
                   {visit.createdByName ? (
                     <span className="truncate text-legenda text-tinta-suave">

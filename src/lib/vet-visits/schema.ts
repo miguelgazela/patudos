@@ -123,8 +123,9 @@ export const vetVisitSchema = z.object({
     .trim()
     .min(1, "Escreve o motivo.")
     .max(120, "O motivo é demasiado grande."),
-  vet_name: optionalText(80, "O nome é demasiado grande."),
-  clinic: optionalText(80, "O nome da clínica é demasiado grande."),
+  /** Clínica já guardada, ou o nome de uma nova (criada na mesma transação). */
+  clinic_id: uuid("Clínica inválida.").optional(),
+  clinic_name: optionalText(80, "O nome da clínica é demasiado grande."),
   notes: optionalText(2000, "As notas são demasiado grandes."),
   weight_kg: weightKgSchema.optional(),
   health_events: z.array(healthEventSchema).max(20).default([]),
@@ -175,7 +176,9 @@ export type HomeTreatmentPayload = z.output<typeof homeTreatmentSchema>;
 export const visitEditSchema = z.object({
   visited_on: isoDate().optional(),
   reason: vetVisitSchema.shape.reason,
-  vet_name: vetVisitSchema.shape.vet_name,
+  /** `null` = sem clínica. */
+  clinic_id: uuid("Clínica inválida.").nullable().optional(),
+  clinic_name: vetVisitSchema.shape.clinic_name,
   notes: vetVisitSchema.shape.notes,
 });
 export type VisitEditInput = z.input<typeof visitEditSchema>;

@@ -22,6 +22,8 @@ export type ExportRaw = {
   members: { pet_id: string; user_id: string; role: string; notify: boolean }[];
   /** Nome de cada pessoa visível (id → nome). */
   names: Record<string, string>;
+  /** Só as clínicas ligadas aos meus animais ou às suas consultas. */
+  clinics: Tables<"clinics">[];
   visits: Tables<"vet_visits">[];
   weights: Tables<"weights">[];
   events: Tables<"health_events">[];
@@ -190,6 +192,7 @@ export function buildExport(raw: ExportRaw): ExportBundle {
       notas: p.notes,
       arquivado_em: p.archived_at,
       criado_em: p.created_at,
+      clinica_habitual_id: p.clinic_id,
       foto: photoOf.get(p.id) ?? null,
       pasta: folder.get(p.id) ?? null,
       membros: raw.members
@@ -200,6 +203,12 @@ export function buildExport(raw: ExportRaw): ExportBundle {
           eu: m.user_id === me.id,
           ...(m.user_id === me.id ? { recebe_lembretes: m.notify } : {}),
         })),
+    })),
+    clinicas: raw.clinics.map((c) => ({
+      id: c.id,
+      nome: c.name,
+      telefone: c.phone,
+      morada: c.address,
     })),
     consultas: raw.visits.map((v) => stripIds(v, ["created_by"])),
     pesos: raw.weights.map((w) => stripIds(w, ["created_by"])),

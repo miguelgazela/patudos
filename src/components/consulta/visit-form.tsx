@@ -27,11 +27,14 @@ import { resizeToJpeg } from "@/lib/pets/resize-image";
 import { createClient } from "@/lib/supabase/client";
 import { formatCents, formatKg, parseEuroToCents, parseKg } from "@/lib/units";
 import { saveVetVisit } from "@/lib/vet-visits/actions";
+import type { ClinicInfo } from "@/lib/clinics/clinic";
 import type { FormPet, FormPreset } from "@/lib/vet-visits/data";
 import type { Item, VisitDraft } from "@/lib/vet-visits/draft";
 import { buildPayload, effectiveNextDue } from "@/lib/vet-visits/payload";
 import { describeRRule, buildRRule } from "@/lib/vet-visits/schedule";
 import { cn } from "@/lib/utils";
+
+import { useResetOnLeave } from "@/components/registar/use-reset-on-leave";
 
 import { MedicationSheet } from "./medication-sheet";
 import { TreatmentSheet } from "./treatment-sheet";
@@ -42,7 +45,7 @@ import {
   ReasonField,
   Sheet,
   Switch,
-  VetField,
+  ClinicField,
 } from "./ui";
 
 const MAX_ATTACHMENT = 10 * 1024 * 1024;
@@ -75,29 +78,30 @@ export function VisitForm(props: {
   presets: FormPreset[];
   initialPetId: string;
   today: string;
-  vets: string[];
+  clinics: ClinicInfo[];
   products: string[];
   medicines: string[];
 }) {
   const { pets, presets, today } = props;
   const router = useRouter();
-  const [d, setD] = useState<VisitDraft>(() => ({
+  const emptyDraft = (): VisitDraft => ({
     petId: props.initialPetId,
     visitDate: today,
     reason: "",
-    vet: pets.find((p) => p.id === props.initialPetId)?.lastVet ?? "",
+    clinic: pets.find((p) => p.id === props.initialPetId)?.clinic ?? null,
     items: [],
     weight: null,
     cost: "",
     paidBy: null,
     notes: "",
     documentId: null,
-  }));
+  });
+  const [d, setD] = useState<VisitDraft>(emptyDraft);
   const [attachment, setAttachment] = useState<Attachment | null>(null);
   const [attachError, setAttachError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
-  const [vetTouched, setVetTouched] = useState(false);
+  const [clinicTouched, setClinicTouched] = useState(false);
   const [sheet, setSheet] = useState<
     null | "vaccine" | "deworming" | "medication"
   >(null);
@@ -135,8 +139,8 @@ export function VisitForm(props: {
     setD((p) => ({
       ...p,
       petId: id,
-      // O veterinário só muda sozinho enquanto ninguém lhe mexeu.
-      vet: vetTouched ? p.vet : (next.lastVet ?? ""),
+      // A clínica só muda sozinha (para a habitual do novo animal) enquanto ninguém lhe mexeu.
+      clinic: clinicTouched ? p.clinic : next.clinic,
       paidBy: null,
       // O anexo carregado pertence à pasta do animal anterior.
       documentId: null,
@@ -301,6 +305,21 @@ export function VisitForm(props: {
     else router.back();
   }
 
+  // Ao sair do ecrã depois de gravar, volta ao formulário vazio (e não ao «Consulta guardada»).
+  useResetOnLeave(() => {
+    if (!done) return;
+    setDone(null);
+    setD(emptyDraft());
+    setAttachment(null);
+    setAttachError(null);
+    setErrors({});
+    setServerError(null);
+    setClinicTouched(false);
+    setSheet(null);
+    setSummaryOpen(false);
+    uploaded.current = null;
+  });
+
   if (done) return <Success done={done} />;
 
   const nextCount = nextDatesOf(d).length;
@@ -379,13 +398,13 @@ export function VisitForm(props: {
           error={errors.reason}
         />
 
-        <VetField
-          value={d.vet}
-          onChange={(v) => {
-            setVetTouched(true);
-            set("vet", v);
+        <ClinicField
+          value={d.clinic}
+          clinics={props.clinics}
+          onChange={(c) => {
+            setClinicTouched(true);
+            set("clinic", c);
           }}
-          suggestions={props.vets}
         />
 
         {/* O que foi feito? */}
@@ -894,7 +913,7 @@ function Summary({
             </p>
             <p className="truncate text-legenda text-pinheiro-escuro">
               {formatISODate(draft.visitDate)}
-              {draft.vet ? ` · ${draft.vet}` : ""}
+              {draft.clinic ? ` · ${draft.clinic.name}` : ""}
             </p>
           </div>
         </div>

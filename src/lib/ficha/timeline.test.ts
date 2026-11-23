@@ -50,6 +50,7 @@ describe("cronologia", () => {
         visited_on: "2026-11-10",
         reason: "Vacinação",
         vet_name: "Dra. Inês",
+        clinics: { name: "VetLumiar" },
         created_by: "u1",
         created_at: "2026-11-10T10:00:00Z",
       },
@@ -128,7 +129,7 @@ describe("cronologia", () => {
     ]);
     const visit = entries.find((e) => e.kind === "visit")!;
     expect(visit.summary).toBe(
-      "Dra. Inês · Antirrábica · 12,4 kg · 45,00 € · anexo",
+      "VetLumiar · Dra. Inês · Antirrábica · 12,4 kg · 45,00 € · anexo",
     );
     expect(visit.createdBy).toBe("Mãe");
     expect(visit.href).toBe("/animais/p1/consulta/v1");

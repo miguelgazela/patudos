@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { VisitEditForm } from "@/components/consulta/visit-edit-form";
 import { getCurrentProfile } from "@/lib/auth/current-profile";
+import { getKnownClinics } from "@/lib/clinics/data";
 import { formatISODate, todayISO } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 
@@ -30,13 +31,13 @@ async function Editar({
   const { data: visit } = await supabase
     .from("vet_visits")
     .select(
-      "id, pet_id, visited_on, reason, vet_name, notes, created_by, created_at",
+      "id, pet_id, visited_on, reason, clinic_id, notes, created_by, created_at",
     )
     .eq("id", id)
     .maybeSingle();
   if (!visit) notFound();
 
-  const [{ data: pet }, { data: member }, { data: creator }, { data: vets }] =
+  const [{ data: pet }, { data: member }, { data: creator }, clinics] =
     await Promise.all([
       supabase.from("pets").select("name").eq("id", visit.pet_id).single(),
       supabase
@@ -52,12 +53,7 @@ async function Editar({
             .eq("id", visit.created_by)
             .maybeSingle()
         : Promise.resolve({ data: null }),
-      supabase
-        .from("vet_visits")
-        .select("vet_name")
-        .not("vet_name", "is", null)
-        .order("visited_on", { ascending: false })
-        .limit(40),
+      getKnownClinics(),
     ]);
 
   // Só o dono ou quem registou a consulta a edita (a RLS também o garante).
@@ -67,9 +63,7 @@ async function Editar({
 
   const who =
     visit.created_by === profile.id ? "ti" : (creator?.name ?? "outra pessoa");
-  const suggestions = [
-    ...new Set((vets ?? []).map((v) => v.vet_name!.trim()).filter(Boolean)),
-  ].slice(0, 12);
+  const current = clinics.find((c) => c.id === visit.clinic_id);
 
   return (
     <VisitEditForm
@@ -80,10 +74,10 @@ async function Editar({
       initial={{
         visited_on: visit.visited_on,
         reason: visit.reason ?? "",
-        vet_name: visit.vet_name ?? "",
+        clinic: current ? { id: current.id, name: current.name } : null,
         notes: visit.notes ?? "",
       }}
-      vets={suggestions}
+      clinics={clinics}
       registeredBy={`Registada por ${who} em ${formatISODate(visit.created_at.slice(0, 10))}`}
     />
   );

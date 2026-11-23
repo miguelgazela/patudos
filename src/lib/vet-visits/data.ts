@@ -2,6 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
+import type { ChosenClinic, ClinicInfo } from "@/lib/clinics/clinic";
 import { getCurrentProfile } from "@/lib/auth/current-profile";
 import { isPetColor, type PetColor } from "@/lib/pets/constants";
 import { signPhotos } from "@/lib/pets/data";
@@ -18,8 +19,8 @@ export type FormPet = {
   /** Quem pode pagar: os membros do animal (eu primeiro). */
   members: { id: string; name: string }[];
   lastWeight: { kg: number; on: string } | null;
-  /** Veterinário usado na última consulta deste animal. */
-  lastVet: string | null;
+  /** Clínica habitual (ou, se só houver uma conhecida, essa). */
+  clinic: ChosenClinic | null;
 };
 
 export type FormPreset = {
@@ -36,8 +37,8 @@ export type VisitFormData = {
   pets: FormPet[];
   presets: FormPreset[];
   initialPetId: string;
-  /** Sugestões do histórico (as mais recentes primeiro, sem repetidos). */
-  vets: string[];
+  /** Clínicas conhecidas (as dos meus animais), por nome. */
+  clinics: ClinicInfo[];
   products: string[];
   medicines: string[];
 };
@@ -59,12 +60,12 @@ export async function getVisitFormData(
   const profile = await getCurrentProfile();
   const supabase = await createClient();
 
-  const [petsRes, presetsRes, visitsRes, eventsRes, medsRes, weightsRes] =
+  const [petsRes, presetsRes, clinicsRes, eventsRes, medsRes, weightsRes] =
     await Promise.all([
       supabase
         .from("pets")
         .select(
-          "id, name, species, color, photo_path, pet_members(user_id, profiles(name))",
+          "id, name, species, color, photo_path, clinic_id, pet_members(user_id, profiles(name))",
         )
         .is("archived_at", null)
         .order("created_at", { ascending: true }),
@@ -72,13 +73,7 @@ export async function getVisitFormData(
         .from("care_presets")
         .select("id, species, type, name, interval_months")
         .order("sort_order"),
-      supabase
-        .from("vet_visits")
-        .select("pet_id, vet_name")
-        .not("vet_name", "is", null)
-        .order("visited_on", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(60),
+      supabase.from("clinics").select("id, name, phone, address").order("name"),
       supabase
         .from("health_events")
         .select("product")
@@ -103,8 +98,8 @@ export async function getVisitFormData(
     supabase,
     petRows.map((p) => p.photo_path),
   );
-  const visits = visitsRes.data ?? [];
-  const lastVetOverall = visits[0]?.vet_name ?? null;
+  const clinics = clinicsRes.data ?? [];
+  const onlyClinic = clinics.length === 1 ? clinics[0]! : null;
 
   const pets: FormPet[] = petRows.map((p) => {
     const members = p.pet_members
@@ -124,8 +119,10 @@ export async function getVisitFormData(
       photoUrl: p.photo_path ? (photos.get(p.photo_path) ?? null) : null,
       members,
       lastWeight: w ? { kg: Number(w.weight_kg), on: w.measured_on } : null,
-      lastVet:
-        visits.find((v) => v.pet_id === p.id)?.vet_name ?? lastVetOverall,
+      clinic: (() => {
+        const c = clinics.find((x) => x.id === p.clinic_id) ?? onlyClinic;
+        return c ? { id: c.id, name: c.name } : null;
+      })(),
     };
   });
 
@@ -146,7 +143,7 @@ export async function getVisitFormData(
       intervalMonths: r.interval_months,
     })),
     initialPetId,
-    vets: distinct(visits.map((v) => v.vet_name)),
+    clinics,
     products: distinct((eventsRes.data ?? []).map((e) => e.product)),
     medicines: distinct((medsRes.data ?? []).map((m) => m.name)),
   };

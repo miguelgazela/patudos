@@ -55,7 +55,7 @@ async function Registar({
       presets={data.presets}
       initialPetId={data.initialPetId}
       today={todayISO()}
-      vets={data.vets}
+      clinics={data.clinics}
       products={data.products}
       medicines={data.medicines}
     />

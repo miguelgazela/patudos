@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { chooseNewClinic } from "./clinica";
 
 import { todayISO } from "../src/lib/dates";
 import { addDaysISO, suggestNextDue } from "../src/lib/vet-visits/next-due";
@@ -90,10 +91,10 @@ test("registar uma consulta completa e confirmar que ficou gravada", async ({
   await shot(page, "1-vazio");
 
   await tap(page.getByRole("button", { name: "Vacinação", exact: true }));
-  await write(
-    page.getByLabel("Veterinário / clínica"),
-    "Dra. Inês · VetLumiar",
-  );
+  // Clínica nova: abre o painel, escreve o nome e confirma (3 ações).
+  actions += 3;
+  await chooseNewClinic(page, "VetLumiar");
+  await expect(page.getByTestId("clinic-card")).toContainText("VetLumiar");
 
   // Vacina: preset pré-selecionado (Antirrábica) e próxima data sugerida (+1 ano).
   await tap(page.getByRole("button", { name: "+ Vacina" }));
@@ -169,12 +170,15 @@ test("registar uma consulta completa e confirmar que ficou gravada", async ({
   const [visit] = await rows<{
     id: string;
     reason: string;
-    vet_name: string;
+    clinics: { name: string } | null;
     visited_on: string;
-  }>("vet_visits", `pet_id=eq.${petId}&select=id,reason,vet_name,visited_on`);
+  }>(
+    "vet_visits",
+    `pet_id=eq.${petId}&select=id,reason,clinics(name),visited_on`,
+  );
   expect(visit).toMatchObject({
     reason: "Vacinação",
-    vet_name: "Dra. Inês · VetLumiar",
+    clinics: { name: "VetLumiar" },
     visited_on: todayISO(),
   });
   const v = visit!.id;

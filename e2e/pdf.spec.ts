@@ -6,6 +6,7 @@ import {
   type Page,
 } from "@playwright/test";
 import { writeFileSync } from "node:fs";
+import { chooseNewClinic } from "./clinica";
 import { PDFParse } from "pdf-parse";
 
 import { formatISODate, todayISO } from "../src/lib/dates";
@@ -63,7 +64,7 @@ async function registerFullVisit(page: Page) {
   await page.getByRole("button", { name: "Registar" }).click();
   await page.getByRole("link", { name: /^Consulta\./ }).click();
   await page.getByRole("button", { name: "Vacinação", exact: true }).click();
-  await page.getByLabel("Veterinário / clínica").fill("Dra. Inês");
+  await chooseNewClinic(page, "Dra. Inês");
   await page.getByRole("button", { name: "+ Vacina" }).click();
   await page
     .getByRole("dialog", { name: "Vacina ou desparasitação" })

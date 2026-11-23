@@ -32,7 +32,7 @@ export async function loadPdfRaw(petId: string): Promise<PdfRaw | null> {
   const { data: pet } = await supabase
     .from("pets")
     .select(
-      "id, name, species, sex, breed, color, birth_date, neutered, microchip, photo_path, pet_members(user_id, role, profiles(name))",
+      "id, name, species, sex, breed, color, birth_date, neutered, microchip, photo_path, clinics(name, phone, address), pet_members(user_id, role, profiles(name))",
     )
     .eq("id", petId)
     .maybeSingle();
@@ -53,7 +53,9 @@ export async function loadPdfRaw(petId: string): Promise<PdfRaw | null> {
       .eq("pet_id", petId),
     supabase
       .from("vet_visits")
-      .select("visited_on, reason, vet_name, clinic")
+      .select(
+        "visited_on, reason, vet_name, clinic, clinics(name, phone, address)",
+      )
       .eq("pet_id", petId),
   ]);
 
@@ -76,6 +78,7 @@ export async function loadPdfRaw(petId: string): Promise<PdfRaw | null> {
         name: m.profiles?.name?.trim() || "Alguém",
         role: m.role === "owner" ? "owner" : "caregiver",
       })),
+      clinic: pet.clinics ?? null,
       events: events.data ?? [],
       medications: meds.data ?? [],
       weights: (weights.data ?? []).map((w) => ({

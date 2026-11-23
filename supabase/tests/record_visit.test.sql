@@ -1,6 +1,6 @@
 -- RPC record_vet_visit / record_weight / record_home_treatment: tudo ou nada, sempre com RLS.
 begin;
-select plan(19);
+select plan(21);
 
 insert into auth.users (id, instance_id, aud, role, email, created_at, updated_at)
 values
@@ -31,8 +31,7 @@ select public.record_vet_visit($${
   "pet_id": "a0000000-0000-0000-0000-000000000001",
   "visited_on": "2026-11-20",
   "reason": "Vacinação",
-  "vet_name": "Dra. Sofia",
-  "clinic": "Clínica Patinhas",
+  "clinic_name": "Clínica Patinhas",
   "weight_kg": 12.4,
   "health_events": [
     {"type": "vaccine", "title": "Antirrábica", "next_due_on": "2027-11-20"},
@@ -47,6 +46,8 @@ select public.record_vet_visit($${
 
 select isnt((select visit_id from result), null, 'devolve o id da consulta');
 select is((select count(*)::int from public.vet_visits where id = (select visit_id from result) and reason = 'Vacinação' and created_by = 'a1000000-0000-0000-0000-000000000002'), 1, 'grava a consulta (created_by é o cuidador)');
+select is((select c.name from public.vet_visits v join public.clinics c on c.id = v.clinic_id where v.id = (select visit_id from result)), 'Clínica Patinhas', 'cria a clínica nova na mesma transação');
+select is((select c.name from public.pets p join public.clinics c on c.id = p.clinic_id where p.id = 'a0000000-0000-0000-0000-000000000001'), 'Clínica Patinhas', 'a primeira clínica usada passa a habitual (mesmo por um cuidador)');
 select is((select weight_kg from public.weights where vet_visit_id = (select visit_id from result)), 12.4, 'grava o peso ligado à consulta');
 select is((select count(*)::int from public.health_events where vet_visit_id = (select visit_id from result) and occurred_on = '2026-11-20'), 2, 'grava vacina e desparasitação na data da consulta');
 select is((select next_due_on from public.health_events where title = 'Antirrábica'), '2027-11-20'::date, 'guarda next_due_on');

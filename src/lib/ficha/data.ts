@@ -1,5 +1,6 @@
 import "server-only";
 
+import { visitPlace, type ClinicInfo } from "@/lib/clinics/clinic";
 import { DELETED_ACCOUNT } from "@/lib/conta/labels";
 import { notFound } from "next/navigation";
 import { cache } from "react";
@@ -140,7 +141,9 @@ export async function getTimeline(petId: string): Promise<TimelineEntry[]> {
   const [visits, events, meds, weights, splits, docs] = await Promise.all([
     supabase
       .from("vet_visits")
-      .select("id, visited_on, reason, vet_name, created_by, created_at")
+      .select(
+        "id, visited_on, reason, vet_name, clinics(name), created_by, created_at",
+      )
       .eq("pet_id", petId),
     supabase
       .from("health_events")
@@ -228,9 +231,12 @@ export type SummaryData = {
     id: string;
     visited_on: string;
     reason: string | null;
-    vet_name: string | null;
+    /** Clínica (e, em consultas antigas, o veterinário). */
+    place: string;
     createdByName: string | null;
   } | null;
+  /** Clínica habitual do animal. */
+  clinic: ClinicInfo | null;
 };
 
 export async function getSummary(
@@ -239,7 +245,7 @@ export async function getSummary(
 ): Promise<SummaryData> {
   const profile = await getCurrentProfile();
   const supabase = await createClient();
-  const [events, meds, weights, visit] = await Promise.all([
+  const [events, meds, weights, visit, habitual] = await Promise.all([
     supabase
       .from("health_events")
       .select("id, type, title, occurred_on, next_due_on")
@@ -261,11 +267,16 @@ export async function getSummary(
       .limit(12),
     supabase
       .from("vet_visits")
-      .select("id, visited_on, reason, vet_name, created_by")
+      .select("id, visited_on, reason, vet_name, clinics(name), created_by")
       .eq("pet_id", petId)
       .order("visited_on", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("pets")
+      .select("clinics(id, name, phone, address)")
+      .eq("id", petId)
       .maybeSingle(),
   ]);
   const v = visit.data;
@@ -276,12 +287,13 @@ export async function getSummary(
     weights: (weights.data ?? [])
       .map((w) => ({ id: w.id, on: w.measured_on, kg: Number(w.weight_kg) }))
       .reverse(),
+    clinic: habitual.data?.clinics ?? null,
     lastVisit: v
       ? {
           id: v.id,
           visited_on: v.visited_on,
           reason: v.reason,
-          vet_name: v.vet_name,
+          place: visitPlace(v.clinics?.name, v.vet_name),
           createdByName: v.created_by
             ? (names.get(v.created_by) ?? null)
             : DELETED_ACCOUNT,
@@ -327,7 +339,7 @@ export async function getVisitDetail(petId: string, visitId: string) {
   const { data: visit } = await supabase
     .from("vet_visits")
     .select(
-      "id, pet_id, visited_on, reason, vet_name, clinic, notes, created_by, created_at",
+      "id, pet_id, visited_on, reason, vet_name, clinic, clinics(id, name, phone, address), notes, created_by, created_at",
     )
     .eq("id", visitId)
     .eq("pet_id", petId)

@@ -134,7 +134,7 @@ describe("buildPdfModel", () => {
     ]);
     expect(m.weights!.rows.map((w) => w.value)).toEqual(["12,4 kg", "12 kg"]);
     expect(m.visits!.map((v) => v.date)).toEqual(["01/11/2026", "01/06/2026"]);
-    expect(m.visits![1]!.vet).toBe("Dra. Inês · VetLumiar");
+    expect(m.visits![1]!.vet).toBe("VetLumiar · Dra. Inês");
     expect(m.periodLabel).toBe("Historial desde 22/11/2025");
   });
 
@@ -166,9 +166,13 @@ describe("buildPdfModel", () => {
     expect(m.otherEvents).toEqual([]);
   });
 
-  it("contactos: veterinário mais recente que o tenha; pessoas com dono primeiro", () => {
+  it("contactos: clínica da consulta mais recente que a tenha; pessoas com dono primeiro", () => {
     const m = buildPdfModel(raw, { include: "all", period: "all" }, TODAY);
-    expect(m.contacts.vet).toEqual({ name: "Dra. Inês", clinic: "VetLumiar" });
+    expect(m.contacts.clinic).toEqual({
+      name: "VetLumiar · Dra. Inês",
+      phone: null,
+      address: null,
+    });
     expect(m.contacts.people).toEqual([
       { name: "Miguel", role: "Responsável" },
       { name: "Rita", role: "Cuidador" },
@@ -194,7 +198,7 @@ describe("buildPdfModel", () => {
       { include: "all", period: "year" },
       TODAY,
     );
-    expect(m.contacts.vet).toBeNull();
+    expect(m.contacts.clinic).toBeNull();
     expect(m.vaccines).toEqual([]);
     expect(m.header.facts).toEqual([]);
     expect(m.weights!.rows).toEqual([]);
@@ -220,5 +224,47 @@ describe("helpers", () => {
     expect(pdfFileName("Nina")).toBe("ficha-nina.pdf");
     expect(pdfFileName("Tótó da Ação")).toBe("ficha-toto-da-acao.pdf");
     expect(pdfFileName("🐶")).toBe("ficha-animal.pdf");
+  });
+
+  it("clínica habitual com telefone e morada tem prioridade sobre o historial", () => {
+    const withClinic = {
+      ...raw,
+      clinic: {
+        name: " Clínica Patinhas ",
+        phone: "217 000 000",
+        address: null,
+      },
+    };
+    const m = buildPdfModel(
+      withClinic,
+      { include: "all", period: "all" },
+      TODAY,
+    );
+    expect(m.contacts.clinic).toEqual({
+      name: "Clínica Patinhas",
+      phone: "217 000 000",
+      address: null,
+    });
+  });
+
+  it("consultas com clínica guardada mostram o nome da clínica", () => {
+    const m = buildPdfModel(
+      {
+        ...raw,
+        visits: [
+          {
+            visited_on: "2026-11-01",
+            reason: "Revisão",
+            vet_name: null,
+            clinic: null,
+            clinics: { name: "Clínica Patinhas", phone: null, address: null },
+          },
+        ],
+      },
+      { include: "all", period: "all" },
+      TODAY,
+    );
+    expect(m.visits![0]!.vet).toBe("Clínica Patinhas");
+    expect(m.contacts.clinic?.name).toBe("Clínica Patinhas");
   });
 });

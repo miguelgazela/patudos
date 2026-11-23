@@ -9,9 +9,10 @@ import { useState, useTransition } from "react";
 import { ErrorBanner } from "@/components/auth/banner";
 import { TextField } from "@/components/auth/text-field";
 import { Button } from "@/components/ui/button";
+import type { ChosenClinic, ClinicInfo } from "@/lib/clinics/clinic";
 import { deleteVetVisit, updateVetVisit } from "@/lib/vet-visits/actions";
 
-import { ConfirmDialog, ReasonField, VetField } from "./ui";
+import { ClinicField, ConfirmDialog, ReasonField } from "./ui";
 
 /** Ecrã 13 (editar): os campos da consulta e «Apagar consulta». */
 export function VisitEditForm({
@@ -20,7 +21,7 @@ export function VisitEditForm({
   petName,
   today,
   initial,
-  vets,
+  clinics,
   registeredBy,
 }: {
   visitId: string;
@@ -30,10 +31,10 @@ export function VisitEditForm({
   initial: {
     visited_on: string;
     reason: string;
-    vet_name: string;
+    clinic: ChosenClinic | null;
     notes: string;
   };
-  vets: string[];
+  clinics: ClinicInfo[];
   registeredBy: string;
 }) {
   const router = useRouter();
@@ -46,7 +47,15 @@ export function VisitEditForm({
 
   function save() {
     startTransition(async () => {
-      const res = await safely(() => updateVetVisit(visitId, v));
+      const res = await safely(() =>
+        updateVetVisit(visitId, {
+          visited_on: v.visited_on,
+          reason: v.reason,
+          notes: v.notes,
+          clinic_id: v.clinic?.id ?? null,
+          clinic_name: v.clinic && !v.clinic.id ? v.clinic.name : undefined,
+        }),
+      );
       if (!res.ok) {
         setErrors(res.errors ?? {});
         setMessage(res.message);
@@ -111,10 +120,10 @@ export function VisitEditForm({
           onChange={(reason) => setV({ ...v, reason })}
           error={errors.reason}
         />
-        <VetField
-          value={v.vet_name}
-          onChange={(vet_name) => setV({ ...v, vet_name })}
-          suggestions={vets}
+        <ClinicField
+          value={v.clinic}
+          clinics={clinics}
+          onChange={(clinic) => setV({ ...v, clinic })}
         />
         <div className="flex flex-col gap-2">
           <label htmlFor="notes" className="text-etiqueta">

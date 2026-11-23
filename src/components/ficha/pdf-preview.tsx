@@ -73,9 +73,15 @@ export function PdfPreview({
 
       <H>Contactos</H>
       <p>
-        {contacts.vet
-          ? [contacts.vet.name, contacts.vet.clinic].filter(Boolean).join(" · ")
-          : "Sem veterinário registado"}
+        {contacts.clinic
+          ? [
+              contacts.clinic.name,
+              contacts.clinic.phone,
+              contacts.clinic.address,
+            ]
+              .filter(Boolean)
+              .join(" · ")
+          : "Sem clínica registada"}
       </p>
       <p className="text-tinta-suave">
         {contacts.people.map((p) => `${p.name} (${p.role})`).join(", ")}

@@ -9,7 +9,7 @@ const draft = (over: Partial<VisitDraft> = {}): VisitDraft => ({
   petId: PET,
   visitDate: "2026-11-21",
   reason: "Vacinação",
-  vet: "Dra. Inês",
+  clinic: { id: null, name: "VetLumiar" },
   items: [],
   weight: null,
   cost: "",
@@ -117,5 +117,32 @@ describe("buildPayload", () => {
       }),
     );
     expect(errors["health_events.0.title"]).toBe("Escreve o nome.");
+  });
+});
+
+describe("clínica da consulta", () => {
+  it("usa o id de uma clínica conhecida", () => {
+    const id = "c2000000-0000-4000-8000-000000000001";
+    const { payload, errors } = buildPayload(
+      draft({ clinic: { id, name: "VetLumiar" } }),
+    );
+    expect(errors).toEqual({});
+    expect(payload.clinic_id).toBe(id);
+    expect(payload.clinic_name).toBeUndefined();
+  });
+
+  it("manda só o nome de uma clínica nova", () => {
+    const { payload, errors } = buildPayload(
+      draft({ clinic: { id: null, name: "Clínica Nova" } }),
+    );
+    expect(errors).toEqual({});
+    expect(payload.clinic_id).toBeUndefined();
+    expect(payload.clinic_name).toBe("Clínica Nova");
+  });
+
+  it("sem clínica não manda nada", () => {
+    const { payload } = buildPayload(draft({ clinic: null }));
+    expect(payload.clinic_id).toBeUndefined();
+    expect(payload.clinic_name).toBeUndefined();
   });
 });

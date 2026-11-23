@@ -98,6 +98,7 @@ export async function getExportManifest(): Promise<ExportManifest | null> {
     expenses,
     splits,
     documents,
+    clinics,
   ] = await Promise.all([
     all((f, t) =>
       supabase
@@ -140,10 +141,18 @@ export async function getExportManifest(): Promise<ExportManifest | null> {
     all((f, t) =>
       supabase.from("documents").select("*").order("id").range(f, t),
     ),
+    all((f, t) => supabase.from("clinics").select("*").order("id").range(f, t)),
   ]);
 
   const names: Record<string, string> = {};
   for (const p of profiles) if (p.name?.trim()) names[p.id] = p.name.trim();
+
+  // As clínicas visíveis incluem as que criei sem uso; só vão as dos meus animais/consultas.
+  const usedClinics = new Set(
+    [...pets.filter((p) => petIds.has(p.id)), ...mine(visits)].flatMap((r) =>
+      r.clinic_id ? [r.clinic_id] : [],
+    ),
+  );
 
   const raw: ExportRaw = {
     exportedAt: new Date().toISOString(),
@@ -151,6 +160,7 @@ export async function getExportManifest(): Promise<ExportManifest | null> {
     pets: pets.filter((p) => petIds.has(p.id)),
     members: mine(members),
     names,
+    clinics: clinics.filter((c) => usedClinics.has(c.id)),
     visits: mine(visits),
     weights: mine(weights),
     events: mine(events),

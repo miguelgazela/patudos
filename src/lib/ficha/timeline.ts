@@ -6,6 +6,7 @@ import {
   EXPENSE_CATEGORY_LABEL,
   eventTypeLabel,
 } from "./labels";
+import { visitPlace } from "@/lib/clinics/clinic";
 import { describeRRule } from "@/lib/vet-visits/schedule";
 
 export const FILTERS = [
@@ -55,6 +56,7 @@ export type RawVisit = {
   visited_on: string;
   reason: string | null;
   vet_name: string | null;
+  clinics?: { name: string } | null;
   created_by: string | null;
   created_at: string;
 };
@@ -259,7 +261,10 @@ export function buildTimeline(raw: RawTimeline): TimelineEntry[] {
       date: v.visited_on,
       createdAt: v.created_at,
       title: v.reason?.trim() || "Consulta",
-      summary: [v.vet_name, ...(children.get(v.id) ?? [])]
+      summary: [
+        visitPlace(v.clinics?.name, v.vet_name),
+        ...(children.get(v.id) ?? []),
+      ]
         .filter(Boolean)
         .join(" · "),
       href: `${base}/consulta/${v.id}`,

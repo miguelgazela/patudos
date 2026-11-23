@@ -90,6 +90,37 @@ export type Database = {
         };
         Relationships: [];
       };
+      clinics: {
+        Row: {
+          address: string | null;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          name: string;
+          phone: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          address?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          name: string;
+          phone?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          address?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          name?: string;
+          phone?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       documents: {
         Row: {
           created_at: string;
@@ -489,6 +520,7 @@ export type Database = {
           birth_date: string | null;
           birth_date_is_estimate: boolean;
           breed: string | null;
+          clinic_id: string | null;
           color: string;
           created_at: string;
           created_by: string | null;
@@ -508,6 +540,7 @@ export type Database = {
           birth_date?: string | null;
           birth_date_is_estimate?: boolean;
           breed?: string | null;
+          clinic_id?: string | null;
           color?: string;
           created_at?: string;
           created_by?: string | null;
@@ -526,6 +559,7 @@ export type Database = {
           birth_date?: string | null;
           birth_date_is_estimate?: boolean;
           breed?: string | null;
+          clinic_id?: string | null;
           color?: string;
           created_at?: string;
           created_by?: string | null;
@@ -539,7 +573,15 @@ export type Database = {
           species?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "pets_clinic_id_fkey";
+            columns: ["clinic_id"];
+            isOneToOne: false;
+            referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       profiles: {
         Row: {
@@ -737,6 +779,7 @@ export type Database = {
       vet_visits: {
         Row: {
           clinic: string | null;
+          clinic_id: string | null;
           created_at: string;
           created_by: string | null;
           id: string;
@@ -750,6 +793,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           clinic?: string | null;
+          clinic_id?: string | null;
           created_at?: string;
           created_by?: string | null;
           id?: string;
@@ -762,6 +806,7 @@ export type Database = {
         };
         Update: {
           clinic?: string | null;
+          clinic_id?: string | null;
           created_at?: string;
           created_by?: string | null;
           id?: string;
@@ -773,6 +818,13 @@ export type Database = {
           visited_on?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "vet_visits_clinic_id_fkey";
+            columns: ["clinic_id"];
+            isOneToOne: false;
+            referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "vet_visits_pet_id_fkey";
             columns: ["pet_id"];
@@ -842,11 +894,13 @@ export type Database = {
       };
       calendar_feed: { Args: { p_token: string }; Returns: Json };
       can_be_payer: { Args: { p_user_id: string }; Returns: boolean };
+      can_edit_clinic: { Args: { p_clinic_id: string }; Returns: boolean };
       can_edit_expense: { Args: { p_expense_id: string }; Returns: boolean };
       can_edit_pet_record: {
         Args: { p_created_by: string; p_pet_id: string };
         Returns: boolean;
       };
+      can_see_clinic: { Args: { p_clinic_id: string }; Returns: boolean };
       can_see_expense: { Args: { p_expense_id: string }; Returns: boolean };
       claim_due_reminders: { Args: { p_limit?: number }; Returns: Json };
       complete_occurrence: {
@@ -878,6 +932,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      find_or_create_clinic: { Args: { p_name: string }; Returns: string };
       generate_reminder_occurrences: {
         Args: { p_from?: string; p_reminder_id?: string; p_to?: string };
         Returns: number;

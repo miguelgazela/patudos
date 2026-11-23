@@ -76,13 +76,22 @@ export async function updateVetVisit(
     };
   }
   const supabase = await requireUser();
-  const { visited_on, reason, vet_name, notes } = parsed.data;
+  const { visited_on, reason, notes, clinic_name } = parsed.data;
+  let clinic_id = parsed.data.clinic_id ?? null;
+  if (clinic_name) {
+    // Clínica nova (ou uma já conhecida com o mesmo nome): evita duplicados.
+    const found = await supabase.rpc("find_or_create_clinic", {
+      p_name: clinic_name,
+    });
+    if (found.error || !found.data) return { ok: false, message: GENERIC };
+    clinic_id = found.data;
+  }
   const { data, error } = await supabase
     .from("vet_visits")
     .update({
       ...(visited_on ? { visited_on } : {}),
       reason,
-      vet_name: vet_name ?? null,
+      clinic_id,
       notes: notes ?? null,
     })
     .eq("id", visitId)
