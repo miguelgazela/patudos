@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { EmailForm } from "@/components/auth/email-form";
@@ -20,6 +21,23 @@ export default function EntrarPage({ searchParams }: PageProps<"/entrar">) {
         <Suspense fallback={<EmailForm />}>
           <PrefilledEmailForm searchParams={searchParams} />
         </Suspense>
+        <p className="text-center text-legenda text-tinta-suave">
+          Ao continuar, aceitas os{" "}
+          <Link
+            href="/termos"
+            className="font-bold text-pinheiro underline underline-offset-4"
+          >
+            Termos
+          </Link>{" "}
+          e a{" "}
+          <Link
+            href="/privacidade"
+            className="font-bold text-pinheiro underline underline-offset-4"
+          >
+            Política de privacidade
+          </Link>
+          .
+        </p>
       </InstallGate>
     </AuthShell>
   );

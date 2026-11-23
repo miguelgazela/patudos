@@ -1,5 +1,5 @@
 import { PageSkeleton } from "@/components/nav/skeleton";
-import { Check, ChevronRight, Syringe, UserPlus } from "lucide-react";
+import { Bell, Check, ChevronRight, Syringe, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -92,6 +92,24 @@ async function Criado({
           </span>
           <span className="block text-legenda text-tinta-suave">
             Por email, sem configurar nada
+          </span>
+        </span>
+        <ChevronRight className="size-5 text-tinta-suave" aria-hidden />
+      </Link>
+
+      <Link
+        href="/perfil/notificacoes"
+        className="focus-visible:shadow-foco flex items-center gap-3.5 rounded-cartao border-[1.5px] border-linha bg-branco p-4 outline-none"
+      >
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-menta text-pinheiro-escuro">
+          <Bell className="size-6" strokeWidth={2.2} aria-hidden />
+        </span>
+        <span className="flex-1">
+          <span className="block text-corpo font-bold">
+            Ativar as notificações
+          </span>
+          <span className="block text-legenda text-tinta-suave">
+            Para receberes os lembretes no telemóvel
           </span>
         </span>
         <ChevronRight className="size-5 text-tinta-suave" aria-hidden />

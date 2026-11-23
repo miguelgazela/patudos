@@ -1,4 +1,11 @@
-import { Archive, Bell, CalendarDays, FolderOpen, Mail } from "lucide-react";
+import {
+  Archive,
+  Bell,
+  CalendarDays,
+  FolderOpen,
+  Mail,
+  ScrollText,
+} from "lucide-react";
 import { Suspense } from "react";
 
 import { EditNameForm } from "@/components/perfil/edit-name-form";
@@ -95,6 +102,11 @@ async function Perfil() {
               </span>
             ) : undefined
           }
+        />
+        <LinkRow
+          href="/termos"
+          icon={ScrollText}
+          label="Termos e privacidade"
         />
       </RowList>
 

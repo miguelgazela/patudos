@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { HojeList } from "@/components/hoje/hoje-list";
 import { PushPrompt } from "@/components/hoje/push-prompt";
 import { EmptyState } from "@/components/nav/empty-state";
+import { InstallHint } from "@/components/pwa/install-hint";
 import { PetAvatar } from "@/components/pets/pet-avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { greeting, longDate, todayISO } from "@/lib/dates";
@@ -54,6 +55,8 @@ async function Hoje({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
         </h1>
         <p className="text-corpo text-tinta-suave">{longDate(now)}</p>
       </header>
+
+      <InstallHint />
 
       {!data.hasPets ? (
         <EmptyState

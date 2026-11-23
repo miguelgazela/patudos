@@ -22,8 +22,15 @@ async function askForCode(page: Page, email: string) {
   return sentAt;
 }
 
-test("sem sessão, / leva a /entrar", async ({ page }) => {
+test("sem sessão, / mostra a apresentação e uma rota privada leva a /entrar", async ({
+  page,
+}) => {
   await page.goto("/");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(
+    page.getByRole("link", { name: "Começar" }).first(),
+  ).toBeVisible();
+  await page.goto("/animais");
   await expect(page).toHaveURL(/\/entrar$/);
 });
 
