@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ErrorBanner } from "@/components/auth/banner";
 import { Button } from "@/components/ui/button";
 import { failMessage } from "@/lib/client-action";
+import { limitMessages } from "@/lib/limites";
 import {
   buildZip,
   saveZip,
@@ -47,6 +48,10 @@ export function ExportPanel() {
           phase: "error",
           message: "A tua sessão terminou. Entra outra vez e repete.",
         });
+        return;
+      }
+      if (res.status === 429) {
+        setState({ phase: "error", message: limitMessages.export });
         return;
       }
       if (!res.ok) throw new Error(String(res.status));

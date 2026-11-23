@@ -101,3 +101,64 @@ Logs: Supabase → Edge Functions → `send-reminders`; execuções do cron: `se
 ### Local
 
 `supabase/functions/.env` (ignorado pelo git) tem chaves VAPID de desenvolvimento, `CRON_SECRET` e `MAILPIT_URL`. Para testar: `supabase start`, `supabase functions serve` e `npm run test:functions` (Deno; email para o Mailpit, push para um endpoint falso).
+
+## Limites de utilização (Fase 6, passo 3)
+
+Aplicados na base de dados (migração `limites_de_utilizacao`), nunca só no cliente. Pensados para o uso normal nunca os atingir; servem para travar abusos e custos. Os contadores ficam em `rate_limit_events` (por utilizador, ação e janela; limpeza automática ao fim de 2 dias).
+
+| O quê                        | Limite                                                 | Onde                                                            | Mensagem na app                              |
+| ---------------------------- | ------------------------------------------------------ | --------------------------------------------------------------- | -------------------------------------------- |
+| Convites (criar/reenviar)    | 20 por dia por utilizador                              | `invite_to_pet` → `take_rate_limit`                             | «Enviaste muitos convites hoje (máximo 20…)» |
+| Notificação de teste         | 1 por minuto e 10 por dia por utilizador               | Edge Function `send-reminders` → `consume_test_push` (HTTP 429) | «Espera um minuto antes de enviar outra…»    |
+| Animais                      | 30 ativos (não arquivados) por dono                    | trigger `pets_limit`                                            | «Chegaste ao limite de 30 animais ativos…»   |
+| Armazenamento por animal     | 200 MB (fotos + documentos)                            | trigger `documents_quota`, soma de `storage.objects`            | «Este animal já tem 200 MB de ficheiros…»    |
+| Armazenamento por utilizador | 1 GB (ficheiros que carregou)                          | idem                                                            | «Já usaste 1 GB de armazenamento…»           |
+| Exportação de dados          | 3 por hora por utilizador                              | `consume_export` (HTTP 429 no manifesto)                        | «Já pediste 3 exportações na última hora…»   |
+| Feed `.ics`                  | 60 pedidos por hora por token (além da cache de 5 min) | `calendar_feed` devolve `limited` → HTTP 429 + `Retry-After`    | (os calendários só veem 429)                 |
+| Pedidos de código (OTP)      | gerido pelo Supabase Auth (`auth.rate_limit`)          | —                                                               | mensagem própria no ecrã de entrada          |
+
+Notas: o limite de armazenamento é verificado ao gravar o documento (o ficheiro já está carregado; se passar, a gravação falha e a app apaga o ficheiro). As fotos de animais não têm verificação própria (uma por animal, redimensionada, 10 MB no bucket). Para mudar um valor, nova migração a alterar o número na função/trigger respetiva (`take_rate_limit` recebe janelas e máximos).
+
+## Operação
+
+### Verificação de saúde
+
+`GET /api/saude` responde `200 {"ok":true}` se a base de dados responde (função `health_ping`, sem dados) e `503 {"ok":false}` caso contrário. Serve para monitorização externa opcional (por exemplo UptimeRobot, a cada 5 min, no plano gratuito): é só criar um monitor HTTP para `https://patudos-five.vercel.app/api/saude`. Nota: o plano gratuito do Supabase pausa o projeto após 7 dias sem atividade; este monitor também o mantém ativo.
+
+### Logs
+
+- **Cron dos lembretes:** SQL Editor do Supabase:
+  `select jobname, status, return_message, start_time from cron.job_run_details order by start_time desc limit 20;`
+  (o `pg_net` guarda as respostas HTTP da função em `net._http_response`: `select status_code, content, created from net._http_response order by created desc limit 20;`).
+- **Edge Function `send-reminders`:** Supabase → Edge Functions → `send-reminders` → Logs (ou `supabase functions logs`… só no painel em produção). Respostas esperadas: `{"ok":true,...}` do cron; 429 no teste de notificações quando o limite é atingido.
+- **App (Next.js):** Vercel → projeto `patudos` → Logs (Runtime Logs), filtrar por «Error».
+- **Limites atingidos:** `select action, count(*) from rate_limit_events where created_at > now() - interval '1 day' group by 1;`
+
+## Monitorização de erros (Sentry)
+
+Sentry (plano gratuito, **região UE**: dados em Frankfurt) recebe erros do browser, do servidor Next.js (`src/instrumentation.ts`, `onRequestError`) e da Edge Function `send-reminders`. Sem DSN definido, tudo fica desligado e a app funciona na mesma.
+
+Privacidade: `dataCollection` tudo desligado (SDK v11: sem utilizador, cookies, cabeçalhos, corpos nem query strings), sem replays, sem traços de desempenho, sem breadcrumbs, e `beforeSend` ([scrub.ts](../src/lib/sentry/scrub.ts)) remove utilizador, cookies, cabeçalhos, corpos de pedidos e query strings, e troca emails e ids por `[email]`/`:id`. Fica só o tipo de erro, a stack, a rota sem ids, o ambiente e a versão. A política de privacidade lista o Sentry como subcontratante.
+
+### Passos a fazer (utilizador)
+
+1. Criar conta em https://sentry.io/signup/ (com o email que quiseres receber os alertas).
+2. Em **Create a New Organization**, escolher **Data Storage Location: European Union (EU)**. Não se pode mudar depois. Plano **Developer** (gratuito).
+3. Criar um projeto: plataforma **Next.js**, nome `patudos`. Guardar o **DSN** (`https://<chave>@o<n>.ingest.de.sentry.io/<id>`).
+4. Na Vercel (Settings → Environment Variables, Production e Preview), definir:
+   - `SENTRY_DSN` = o DSN
+   - `NEXT_PUBLIC_SENTRY_DSN` = o mesmo DSN (entra no build do browser; o DSN do browser é público por desenho)
+   - opcional, para stack traces legíveis: `SENTRY_AUTH_TOKEN` (Settings → Developer Settings → Organization Tokens), `SENTRY_ORG` (slug da organização), `SENTRY_PROJECT` = `patudos`
+5. Fazer novo deploy na Vercel.
+6. Edge Function (secret no Supabase): `supabase secrets set --project-ref zummozltkillcaaewnlo SENTRY_DSN='<o DSN>'` e `supabase functions deploy send-reminders --project-ref zummozltkillcaaewnlo --no-verify-jwt`.
+7. Alertas por email: no Sentry, **Alerts → Create Alert → Issues**, «When a new issue is created → send a notification to» o teu email (normalmente já existe um alerta por defeito).
+8. Verificar: abrir a app e, num ecrã de teste, forçar um erro (ou no Sentry, **Settings → Projects → patudos → Client Keys → Test**); confirmar que aparece sem emails nem ids.
+
+## Backups (por decidir)
+
+Decisão atual (23/11/2026): **sem backups**. O plano gratuito do Supabase não tem backups automáticos acessíveis; a política de privacidade di-lo claramente. Opções para mais tarde:
+
+- **Supabase Pro** (~25 USD/mês): backups diários com 7 dias de retenção e PITR opcional.
+- **GitHub Actions agendada (grátis)**: `supabase db dump` diário (esquema + dados), cifrado com `age`, chave pública no repositório e privada só com o utilizador, guardado como artefacto com retenção de 30 dias; password da BD como secret do GitHub. Os ficheiros do Storage ficam de fora (ou numa cópia semanal). Se for adotado, voltar a atualizar a política de privacidade (cópias eliminadas em 30 dias) e escrever `docs/backups.md` com o restauro testado.
+
+Risco assumido: perda de dados se o Supabase falhar ou se alguém apagar dados por engano; não há como os recuperar.

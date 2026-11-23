@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { limitMessage } from "@/lib/limites";
 import { createClient } from "@/lib/supabase/server";
 import { LAST_PET_COOKIE } from "@/lib/vet-visits/data";
 
@@ -61,7 +62,7 @@ export async function createDocument(input: unknown): Promise<DocumentResult> {
     .single();
   if (error || !data) {
     await supabase.storage.from("documentos").remove([v.storagePath]);
-    return { ok: false, message: GENERIC };
+    return { ok: false, message: (error && limitMessage(error)) || GENERIC };
   }
 
   (await cookies()).set(LAST_PET_COOKIE, v.petId, {

@@ -117,6 +117,11 @@ export default function PrivacidadePage() {
             lembretes).
           </li>
           <li>
+            <b>Sentry</b>: deteção de erros técnicos da app (o que falhou e em
+            que ecrã). Não recebe emails, nomes, notas nem o conteúdo dos teus
+            registos, e os dados ficam na União Europeia (Alemanha).
+          </li>
+          <li>
             <b>Apple e Google</b>: entrega das notificações push no teu
             telemóvel, se as ativares. Recebem o conteúdo da notificação.
           </li>
@@ -139,15 +144,17 @@ export default function PrivacidadePage() {
       <Section title="Quanto tempo guardamos">
         <p>
           Guardamos os dados enquanto a tua conta existir. Se apagares a conta,
-          apagamos os teus dados pessoais; as cópias de segurança são eliminadas
-          num prazo máximo de 30 dias. Os animais de que és o único dono são
-          apagados com a conta, com todo o historial e ficheiros (ou transferes
-          a posse a outra pessoa antes). Nos animais que continuam, porque
-          outras pessoas cuidam deles, o que registaste e os documentos que
-          carregaste ficam como parte do historial do animal, mas sem o teu
-          nome: passam a aparecer como «Conta apagada». Os convites que enviaste
-          e os dirigidos ao teu email são apagados, e os que ficarem por aceitar
-          caducam.
+          apagamos os teus dados pessoais. Por agora não fazemos cópias de
+          segurança próprias, por isso não ficam cópias dos teus dados noutro
+          lado (isto significa também que, se houver uma falha grave no nosso
+          prestador, não conseguimos recuperar os dados). Os animais de que és o
+          único dono são apagados com a conta, com todo o historial e ficheiros
+          (ou transferes a posse a outra pessoa antes). Nos animais que
+          continuam, porque outras pessoas cuidam deles, o que registaste e os
+          documentos que carregaste ficam como parte do historial do animal, mas
+          sem o teu nome: passam a aparecer como «Conta apagada». Os convites
+          que enviaste e os dirigidos ao teu email são apagados, e os que
+          ficarem por aceitar caducam.
         </p>
       </Section>
 

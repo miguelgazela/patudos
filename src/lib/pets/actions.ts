@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { limitMessage } from "@/lib/limites";
 import { createClient } from "@/lib/supabase/server";
 
 import { PHOTO_MAX_BYTES, petSchema } from "./schemas";
@@ -78,7 +79,9 @@ export async function createPet(
   const id = crypto.randomUUID();
   const { error } = await supabase.from("pets").insert({ id, ...parsed.data });
   if (error) {
-    return { message: "Não conseguimos guardar. Tenta de novo." };
+    return {
+      message: limitMessage(error) ?? "Não conseguimos guardar. Tenta de novo.",
+    };
   }
 
   if (photo) {

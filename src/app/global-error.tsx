@@ -1,16 +1,23 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
+import { useEffect } from "react";
+
 import "./globals.css";
 
 import { ErrorView } from "@/components/nav/error-view";
 
 // Último recurso: falha no próprio layout de raiz. Substitui a página inteira (por isso leva <html>/<body>).
 export default function GlobalError({
+  error,
   reset,
 }: {
   error: Error;
   reset: () => void;
 }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
   return (
     <html lang="pt-PT" className="h-full antialiased">
       <body className="flex min-h-full flex-col">

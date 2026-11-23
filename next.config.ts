@@ -1,3 +1,4 @@
+import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -40,4 +41,11 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Sourcemaps só são enviados se `SENTRY_AUTH_TOKEN`, `SENTRY_ORG` e `SENTRY_PROJECT` estiverem
+// definidos (na Vercel); sem eles o build corre na mesma, sem Sentry.
+export default withSentryConfig(nextConfig, {
+  silent: true,
+  telemetry: false,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
+});

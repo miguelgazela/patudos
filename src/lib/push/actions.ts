@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { limitMessages } from "@/lib/limites";
 import { createClient } from "@/lib/supabase/server";
 
 export type PushResult = { ok: true } | { ok: false; message: string };
@@ -76,6 +77,8 @@ export async function sendTestNotification(): Promise<
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });
+    if (res.status === 429)
+      return { ok: false, message: limitMessages.test_push };
     if (!res.ok)
       return { ok: false, message: "Não conseguimos enviar o teste." };
     const body = (await res.json()) as { sent?: number };

@@ -322,6 +322,12 @@ Deno.test(
         "só a subscrição do próprio utilizador",
       );
 
+      // Segunda notificação no mesmo minuto: limite (429), sem enviar nada
+      const again = await call(token.access_token);
+      assertEquals(again.status, 429);
+      assertEquals((await again.json()).error, "rate_limited");
+      assertEquals(received.length, 1, "a recusada não envia push");
+
       // Chaves que não são de utilizador (anon, service role) não servem
       assertEquals((await call(ANON)).status, 401);
       assertEquals((await call(SERVICE_ROLE)).status, 401);

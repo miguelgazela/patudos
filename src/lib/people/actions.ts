@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { inviteEmail, inviteLink } from "@/lib/email/invite";
 import { sendEmail } from "@/lib/email/send";
+import { limitMessage } from "@/lib/limites";
 import { createClient } from "@/lib/supabase/server";
 
 import { inviteSchema, roleSchema } from "./schemas";
@@ -103,6 +104,7 @@ export async function invitePerson(
       ...raw,
       message:
         rpcMessages[error.message] ??
+        limitMessage(error) ??
         "Não conseguimos criar o convite. Tenta de novo.",
       emailError: error.message in rpcMessages && error.message !== "forbidden",
     };

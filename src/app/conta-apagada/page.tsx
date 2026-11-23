@@ -18,8 +18,8 @@ export default function ContaApagadaPage() {
       </span>
       <h1 className="text-ecra tracking-tight">A tua conta foi apagada</h1>
       <p className="text-corpo text-tinta-suave">
-        Apagámos o teu perfil e os dados que eram só teus. As cópias de
-        segurança são eliminadas num prazo máximo de 30 dias.
+        Apagámos o teu perfil e os dados que eram só teus. Não ficam cópias de
+        segurança deles.
       </p>
       <p className="text-corpo text-tinta-suave">
         Se quiseres voltar, basta entrar com o teu email: começas com uma conta

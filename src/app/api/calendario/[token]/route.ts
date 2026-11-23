@@ -41,6 +41,18 @@ export async function GET(
   // Token inexistente e erro devolvem o mesmo 404: não revela se o token existe.
   if (error || !data) return NOT_FOUND();
 
+  // Limite por token (60 pedidos/hora, na BD): quem martela recebe 429.
+  if ((data as { limited?: boolean }).limited) {
+    return new Response("Demasiados pedidos. Tenta daqui a pouco.", {
+      status: 429,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Retry-After": "600",
+        "Cache-Control": "private, no-store",
+      },
+    });
+  }
+
   const raws = (data as { events: RawEvent[] }).events;
   const events: FeedEvent[] = raws.map((e) => ({
     uid: e.uid,

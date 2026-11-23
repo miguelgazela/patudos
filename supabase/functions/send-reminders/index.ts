@@ -12,6 +12,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import type { ClaimedReminder } from "../_shared/content.ts";
 import { dispatchReminders, type Subscription } from "../_shared/dispatch.ts";
 import { pickSender } from "../_shared/email-transport.ts";
+import { reportError } from "../_shared/sentry.ts";
 import { sendWebPush, type VapidConfig } from "../_shared/webpush.ts";
 
 const env = (k: string) => Deno.env.get(k) ?? undefined;
@@ -39,6 +40,16 @@ async function sendTestPush(
   const { data: auth, error: authError } = await supabase.auth.getUser(jwt);
   if (authError || !auth.user) return json({ error: "unauthorized" }, 401);
   if (!vapid) return json({ error: "config: vapid" }, 500);
+
+  // Limite: 1 por minuto e 10 por dia por utilizador (na BD, para valer também fora da app).
+  const { error: limitError } = await supabase.rpc("consume_test_push", {
+    p_user: auth.user.id,
+  });
+  if (limitError) {
+    return limitError.message === "rate_limited"
+      ? json({ error: "rate_limited" }, 429)
+      : json({ error: "limit" }, 500);
+  }
 
   const { data: subs, error } = await supabase.rpc("push_subscriptions_for", {
     p_user_ids: [auth.user.id],
@@ -68,7 +79,7 @@ async function sendTestPush(
   return json({ ok: true, sent, removed, failed });
 }
 
-Deno.serve(async (req) => {
+async function handle(req: Request): Promise<Response> {
   if (req.method !== "POST") return json({ error: "method" }, 405);
 
   const secret = env("CRON_SECRET");
@@ -121,7 +132,10 @@ Deno.serve(async (req) => {
       p_limit: 100,
     });
     if (error)
+    {
+      await reportError(new Error(`claim: ${error.message}`), "send-reminders", env("SENTRY_DSN"));
       return json({ error: "claim", message: error.message, ...totals }, 500);
+    }
     const items = (data ?? []) as ClaimedReminder[];
     if (items.length === 0) break;
 
@@ -168,4 +182,14 @@ Deno.serve(async (req) => {
   }
 
   return json({ ok: true, ...totals });
+}
+
+Deno.serve(async (req) => {
+  try {
+    return await handle(req);
+  } catch (error) {
+    // Erro inesperado: relatório sem dados pessoais (no-op sem SENTRY_DSN).
+    await reportError(error, "send-reminders", env("SENTRY_DSN"));
+    return json({ error: "internal" }, 500);
+  }
 });

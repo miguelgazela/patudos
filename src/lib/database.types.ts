@@ -600,6 +600,28 @@ export type Database = {
         };
         Relationships: [];
       };
+      rate_limit_events: {
+        Row: {
+          action: string;
+          created_at: string;
+          id: number;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          action: string;
+          created_at?: string;
+          id?: never;
+          user_id: string;
+        };
+        Update: {
+          action?: string;
+          created_at?: string;
+          id?: never;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       reminder_occurrences: {
         Row: {
           created_at: string;
@@ -831,6 +853,8 @@ export type Database = {
         Args: { p_occurrence_id: string; p_treatment?: Json };
         Returns: string;
       };
+      consume_export: { Args: Record<PropertyKey, never>; Returns: undefined };
+      consume_test_push: { Args: { p_user: string }; Returns: undefined };
       delete_account: { Args: { p_pet_ids?: string[] }; Returns: undefined };
       expand_rrule: {
         Args: {
@@ -859,6 +883,7 @@ export type Database = {
         Returns: number;
       };
       get_calendar_token: { Args: Record<PropertyKey, never>; Returns: string };
+      health_ping: { Args: Record<PropertyKey, never>; Returns: boolean };
       insert_health_event: {
         Args: {
           p_default_date: string;
@@ -934,6 +959,15 @@ export type Database = {
       save_reminder: { Args: { payload: Json }; Returns: string };
       shares_pet_with: { Args: { p_user_id: string }; Returns: boolean };
       storage_pet_id: { Args: { p_name: string }; Returns: string };
+      take_rate_limit: {
+        Args: {
+          p_action: string;
+          p_maxes: number[];
+          p_user: string;
+          p_windows: string[];
+        };
+        Returns: undefined;
+      };
       uncomplete_occurrence: {
         Args: { p_occurrence_id: string };
         Returns: undefined;
