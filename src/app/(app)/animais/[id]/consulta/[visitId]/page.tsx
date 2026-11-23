@@ -181,14 +181,14 @@ async function Consulta({
             {d.documents.map((doc) => (
               <li key={doc.id}>
                 <Link href={`/documentos/${doc.id}`} className={rowClass}>
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-[17px] font-bold">
-                        {doc.title}
-                      </span>
-                      <span className="text-legenda text-tinta-suave">
-                        {DOCUMENT_KIND_LABEL[doc.kind] ?? "Documento"}
-                      </span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[17px] font-bold">
+                      {doc.title}
                     </span>
+                    <span className="text-legenda text-tinta-suave">
+                      {DOCUMENT_KIND_LABEL[doc.kind] ?? "Documento"}
+                    </span>
+                  </span>
                   <ChevronRight
                     className="size-5 shrink-0 text-tinta-suave"
                     strokeWidth={2.2}
