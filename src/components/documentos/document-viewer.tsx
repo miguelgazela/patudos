@@ -131,7 +131,7 @@ export function DocumentViewer({ doc }: { doc: DocumentDetail }) {
               : router.replace(`/animais/${doc.petId}/documentos`)
           }
           aria-label="Fechar"
-          className="focus-visible:shadow-foco bg-white/15 flex size-11 shrink-0 items-center justify-center rounded-full outline-none"
+          className="focus-visible:shadow-foco flex size-11 shrink-0 items-center justify-center rounded-full bg-branco/15 outline-none"
         >
           <X className="size-6" strokeWidth={2.2} aria-hidden />
         </button>
@@ -146,7 +146,7 @@ export function DocumentViewer({ doc }: { doc: DocumentDetail }) {
       <div className="flex min-h-0 flex-1 [touch-action:pan-x_pan-y_pinch-zoom] items-center justify-center overflow-auto px-4">
         {doc.isPdf ? (
           <div className="flex flex-col items-center gap-4 text-center text-branco">
-            <span className="bg-white/10 flex size-28 items-center justify-center rounded-cartao">
+            <span className="flex size-28 items-center justify-center rounded-cartao bg-branco/10">
               <FileText className="size-14" strokeWidth={2} aria-hidden />
             </span>
             {doc.url ? (

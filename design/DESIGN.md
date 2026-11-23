@@ -28,6 +28,8 @@ Guia curto para quem implementa. Valores exatos em `tokens.css`; CSS dos mockups
 | Linha | `#D6E0DD` | Contorno de cartões e campos | — |
 | Linha suave | `#E6ECEA` | Separadores, chips neutros, segmentos | — |
 
+**Texto sobre Pinheiro:** sempre Branco puro (6,4:1), também nas legendas (nada de Menta nem `white/90`). No código usa `text-branco`: `text-white` e `bg-white/…` não existem (a paleta por defeito foi removida) e saem sem estilo.
+
 ### Estados
 
 | Estado | Texto/ícone | Fundo | Contraste |

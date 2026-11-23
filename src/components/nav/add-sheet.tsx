@@ -87,7 +87,7 @@ export function AddSheet({
                     className={cn(
                       "focus-visible:shadow-foco flex min-h-[72px] items-center gap-4 rounded-cartao border-[1.5px] px-4 py-3 outline-none active:translate-y-px",
                       featured
-                        ? "text-white border-pinheiro bg-pinheiro"
+                        ? "border-pinheiro bg-pinheiro text-branco"
                         : "border-linha bg-branco text-tinta",
                     )}
                   >
@@ -106,7 +106,7 @@ export function AddSheet({
                       <span
                         className={cn(
                           "text-legenda",
-                          featured ? "text-white/90" : "text-tinta-suave",
+                          featured ? "text-branco" : "text-tinta-suave",
                         )}
                       >
                         {description}
